@@ -50,12 +50,28 @@ modele_base = AutoModelForCausalLM.from_pretrained(
     attn_implementation="eager",
 )
 
+
+def _detect_target_modules(model: Any) -> list[str]:
+    names = [name for name, _ in model.named_modules()]
+    if any(name.endswith("qkv_proj") for name in names):
+        return ["qkv_proj", "o_proj"]
+    if any(name.endswith("q_proj") for name in names) and any(name.endswith("v_proj") for name in names):
+        return ["q_proj", "v_proj"]
+    raise ValueError(
+        "Impossible de detecter les target_modules LoRA compatibles. "
+        "Ajoute un mapping explicite pour cette architecture."
+    )
+
+
+target_modules_lora = _detect_target_modules(modele_base)
+print(f"🔧 Modules LoRA detectes: {target_modules_lora}")
+
 # 3. LA CONFIGURATION LORA (La Clé USB de personnalité)
 # On gèle le cerveau principal et on cible seulement certaines zones pour l'apprentissage
 configuration_lora = LoraConfig(
     r=8, # La taille de notre "clé USB" (8 est un bon standard)
     lora_alpha=16,
-    target_modules=["q_proj", "v_proj"], # On modifie l'Attention du modèle
+    target_modules=target_modules_lora, # On modifie l'Attention du modèle
     lora_dropout=0.05,
     task_type="CAUSAL_LM"
 )
