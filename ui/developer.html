@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Apex Developer API</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: #111c36;
+        --ink: #e7ecff;
+        --muted: #a4b0d6;
+        --line: #2b3a63;
+        --accent: #2dd4bf;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Segoe UI, Arial, sans-serif;
+        background: radial-gradient(circle at 20% 0%, #1e2d54 0%, #0f172a 46%), var(--bg);
+        color: var(--ink);
+      }
+      .wrap { max-width: 980px; margin: 0 auto; padding: 28px 18px 44px; }
+      h1 { margin: 0 0 8px; font-size: 2rem; }
+      p { color: var(--muted); }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 18px; }
+      .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+      code, pre { font-family: Consolas, monospace; }
+      pre {
+        background: #0a1328;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 12px;
+        overflow-x: auto;
+      }
+      a { color: var(--accent); }
+      .pill { display: inline-block; border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; margin-right: 6px; color: var(--muted); }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <h1>Apex Developer API</h1>
+      <p>Production draft documentation for integrating Apex through secure server-side proxies.</p>
+
+      <div>
+        <span class="pill">Auth: X-API-Key</span>
+        <span class="pill">Streaming: SSE</span>
+        <span class="pill">Version: v1 draft</span>
+      </div>
+
+      <section class="grid">
+        <article class="card">
+          <h2>Base URL</h2>
+          <p>Local:</p>
+          <pre>http://127.0.0.1:8000</pre>
+          <p>Production:</p>
+          <pre>https://your-apex-host.example.com</pre>
+        </article>
+
+        <article class="card">
+          <h2>Auth Header</h2>
+          <p>All protected routes require:</p>
+          <pre>X-API-Key: apx_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</pre>
+        </article>
+      </section>
+
+      <section class="card" style="margin-top:14px;">
+        <h2>POST /chat</h2>
+        <p>Single-shot generation.</p>
+<pre>{
+  "question": "Explain Python generators",
+  "mots_max": 180,
+  "task_type": "code"
+}</pre>
+<pre>{
+  "run_id": "uuid",
+  "request_id": "req-id",
+  "status": "succes",
+  "question": "...",
+  "reponse_apex": "..."
+}</pre>
+      </section>
+
+      <section class="card" style="margin-top:14px;">
+        <h2>POST /chat/stream</h2>
+        <p>SSE stream with token deltas.</p>
+<pre>data: {"type":"status","run_id":"...","request_id":"..."}
+
+data: {"type":"delta","value":"token ","run_id":"...","request_id":"..."}
+
+data: {"type":"done","run_id":"...","request_id":"..."}</pre>
+      </section>
+
+      <section class="grid" style="margin-top:14px;">
+        <article class="card">
+          <h2>GET /api/status</h2>
+          <p>Health + runtime info.</p>
+        </article>
+        <article class="card">
+          <h2>GET /api/runs?limit=20</h2>
+          <p>Recent request history preview.</p>
+        </article>
+        <article class="card">
+          <h2>GET /api/usage?days=30</h2>
+          <p>Billing summary + event ledger.</p>
+        </article>
+      </section>
+
+      <p style="margin-top:20px;">See pricing at <a href="/pricing">/pricing</a> and dashboard at <a href="/">/</a>.</p>
+    </main>
+  </body>
+</html>

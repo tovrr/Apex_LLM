@@ -1,0 +1,33 @@
+{
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/__pycache__/**": true,
+    "**/venv/**": true,
+    "**/checkpoint-100/**": true,
+    "**/apex_lora_sauvegarde/**": true,
+    "**/*.safetensors": true,
+    "**/*.pt": true,
+    "**/*.pth": true,
+    "**/*.bin": true
+  },
+  "search.exclude": {
+    "**/__pycache__": true,
+    "**/venv": true,
+    "**/checkpoint-100": true,
+    "**/apex_lora_sauvegarde": true
+  },
+  "python.analysis.exclude": [
+    "**/__pycache__",
+    "**/venv",
+    "**/checkpoint-100",
+    "**/apex_lora_sauvegarde"
+  ],
+  "python.analysis.diagnosticMode": "openFilesOnly",
+  "python.analysis.indexing": false,
+  "python.analysis.autoImportCompletions": false,
+  "python.analysis.typeCheckingMode": "basic",
+  "python.defaultInterpreterPath": "${workspaceFolder}/venv/Scripts/python.exe",
+  "python.envFile": "${workspaceFolder}/.env"
+}

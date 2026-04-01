@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Apex Control Deck</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/ui/assets/styles.css" />
+  </head>
+  <body>
+    <div class="bg-layer"></div>
+    <header class="top-rail">
+      <div class="brand">
+        <span class="brand-badge">Apex</span>
+        <h1>Control Deck</h1>
+      </div>
+      <div class="status-grid" id="statusGrid">
+        <div class="metric-card">
+          <p>Service</p>
+          <strong id="serviceState">...</strong>
+        </div>
+        <div class="metric-card">
+          <p>Model</p>
+          <strong id="modelState">cold</strong>
+        </div>
+        <div class="metric-card">
+          <p>Adapter</p>
+          <strong id="adapterState">unknown</strong>
+        </div>
+        <div class="metric-card">
+          <p>Device</p>
+          <strong id="deviceState">unknown</strong>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="nav-panel">
+        <button class="nav-item active">Chat Ops</button>
+        <button class="nav-item">Prompt Lab</button>
+        <button class="nav-item">Runs</button>
+        <button class="nav-item">Adapters</button>
+        <button class="nav-item">Datasets</button>
+        <button class="nav-item">Eval</button>
+        <button class="nav-item">Deploy</button>
+      </aside>
+
+      <section class="workspace">
+        <div class="composer card">
+          <h2>Structured Prompt Composer</h2>
+          <div class="signal-row">
+            <div class="signal-pill" id="authBadge">Auth: missing</div>
+            <div class="signal-pill" id="runtimeBadge">Runtime: idle</div>
+            <div class="signal-pill" id="runBadge">Run: none</div>
+          </div>
+          <label for="presetSelect">Prompt Preset</label>
+          <select id="presetSelect">
+            <option value="">Select a preset...</option>
+            <option value="quick_brief">Quick brief (concise answer)</option>
+            <option value="debug_api">Debug API issue</option>
+            <option value="product_copy">Product copy generation</option>
+            <option value="code_review">Code review findings</option>
+          </select>
+          <label for="question">User Query</label>
+          <textarea id="question" placeholder="Describe your task for Apex..."></textarea>
+
+          <div class="controls-row">
+            <div>
+              <label for="maxTokens">Max Tokens</label>
+              <input id="maxTokens" type="number" min="1" max="500" value="120" />
+            </div>
+            <div>
+              <label for="apiKey">X-API-Key</label>
+              <input id="apiKey" type="password" placeholder="Paste API key" />
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="runBtn" class="primary">Run Once</button>
+            <button id="clearBtn" class="secondary">Clear</button>
+            <button id="exportBtn" class="secondary">Export Session</button>
+          </div>
+        </div>
+
+        <div class="output card">
+          <div class="tabs">
+            <button class="tab active" data-tab="answer">Answer</button>
+            <button class="tab" data-tab="trace">Trace</button>
+            <button class="tab" data-tab="metrics">Metrics</button>
+            <button class="tab" data-tab="runs">Runs</button>
+            <button class="tab" data-tab="raw">Raw JSON</button>
+          </div>
+
+          <div id="answer" class="tab-panel active"></div>
+          <pre id="trace" class="tab-panel"></pre>
+          <pre id="metrics" class="tab-panel"></pre>
+          <pre id="runs" class="tab-panel"></pre>
+          <pre id="raw" class="tab-panel"></pre>
+        </div>
+      </section>
+    </main>
+
+    <script src="/ui/assets/app.js"></script>
+  </body>
+</html>
