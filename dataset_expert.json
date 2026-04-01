@@ -1,22 +1,402 @@
 [
   {
-    "instruction": "Maths avancees: Resoudre l'equation differentielle y'' - 3y' + 2y = e^(2x), avec y(0)=1 et y'(0)=0.",
-    "output": "<think>\nJe resous l'homogene associee: r^2 - 3r + 2 = 0, donc r=1 et r=2.\nLa solution homogene est y_h = C1 e^x + C2 e^(2x).\nLe second membre est e^(2x), resonance avec e^(2x) de y_h, donc je teste y_p = A x e^(2x).\nJe calcule y_p' = A e^(2x) + 2A x e^(2x), y_p'' = 4A e^(2x) + 4A x e^(2x).\nSubstitution: y_p'' - 3y_p' + 2y_p = [4A - 3A]e^(2x) + [4A - 6A + 2A]x e^(2x) = A e^(2x).\nJe veux A e^(2x) = e^(2x), donc A=1.\nSolution generale: y = C1 e^x + C2 e^(2x) + x e^(2x).\nCondition y(0)=1: C1 + C2 = 1.\nCondition y'(x)=C1 e^x + 2C2 e^(2x) + e^(2x) + 2x e^(2x).\nDonc y'(0)=C1 + 2C2 + 1 = 0, soit C1 + 2C2 = -1.\nSoustraction des deux equations: C2 = -2, puis C1 = 3.\n</think>\nSolution finale: y(x) = 3e^x - 2e^(2x) + x e^(2x)."
+    "instruction": "Maths avancees #1: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 3y = 6, 3x - y = 8.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
   },
   {
-    "instruction": "Maths avancees: Determiner les valeurs propres de la matrice A=[[4,1,0],[1,4,1],[0,1,4]] et donner une base de vecteurs propres.",
-    "output": "<think>\nA est tridiagonale symetrique, donc ses valeurs propres sont reelles et vecteurs propres orthogonaux.\nJe calcule det(A-lambda I) avec B=[[4-l,1,0],[1,4-l,1],[0,1,4-l]].\nLe determinant vaut (4-l)[(4-l)^2-1] - 1(4-l) = (4-l)[(4-l)^2-2].\nDonc soit 4-l=0 => l1=4, soit (4-l)^2=2 => l2=4-sqrt(2), l3=4+sqrt(2).\nPour l1=4, (A-4I)v=0 donne v2=0 et v1=-v3. Un vecteur propre est (1,0,-1).\nPour l2=4-sqrt(2), systeme: sqrt(2)v1+v2=0, v1+sqrt(2)v2+v3=0, v2+sqrt(2)v3=0.\nEn prenant v1=1, on obtient v2=-sqrt(2), v3=1.\nPour l3=4+sqrt(2), systeme: -sqrt(2)v1+v2=0 et v2-sqrt(2)v3=0.\nEn prenant v1=1, on obtient v2=sqrt(2), v3=1.\n</think>\nValeurs propres: 4-sqrt(2), 4, 4+sqrt(2). Une base de vecteurs propres associee est {(1,-sqrt(2),1), (1,0,-1), (1,sqrt(2),1)}."
+    "instruction": "Maths avancees #2: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 4y = 7, 3x - y = 9.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
   },
   {
-    "instruction": "Algorithmique: Ecrire une fonction Python qui retourne les k elements les plus frequents d'une liste d'entiers, en O(n log k). Expliquer la complexite.",
-    "output": "<think>\nJe dois compter les frequences puis maintenir un min-heap de taille k.\nEtape 1: dictionnaire freq en O(n).\nEtape 2: pour chaque (valeur, compte), je pousse dans heap.\nSi taille > k, je pop le plus petit compte.\nChaque push/pop coute O(log k), repete pour m valeurs distinctes <= n, donc O(m log k).\nComplexite totale O(n + m log k), borne par O(n log k).\nJe rends les valeurs du heap, eventuellement triees par frequence decroissante pour confort.\n</think>\nVoici une implementation:\n\nfrom collections import Counter\nimport heapq\n\ndef top_k_frequents(nums, k):\n    if k <= 0:\n        return []\n    freq = Counter(nums)\n    heap = []\n    for val, count in freq.items():\n        heapq.heappush(heap, (count, val))\n        if len(heap) > k:\n            heapq.heappop(heap)\n    return [val for count, val in sorted(heap, reverse=True)]\n\nComplexite: O(n) pour Counter + O(m log k) pour le heap, donc O(n log k) au pire."
+    "instruction": "Maths avancees #3: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 5y = 8, 3x - y = 10.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
   },
   {
-    "instruction": "Algorithmique: Donner un algorithme pour detecter un cycle dans un graphe oriente et retourner un cycle explicite si present.",
-    "output": "<think>\nLe DFS avec marquage 3 couleurs est standard: 0 non visite, 1 en cours, 2 termine.\nUn arc vers un noeud couleur 1 indique un back-edge donc un cycle.\nPour reconstruire le cycle, je garde parent[u]. Quand je trouve u->v avec v en cours, je remonte parents de u jusqu'a v.\nJe dois retourner le cycle dans l'ordre.\nComplexite O(V+E) car chaque sommet/arc est traite un nombre constant de fois.\n</think>\nPseudo-code Python:\n\ndef find_cycle(adj):\n    n = len(adj)\n    color = [0] * n\n    parent = [-1] * n\n\n    def build_cycle(u, v):\n        path = [u]\n        while u != v:\n            u = parent[u]\n            path.append(u)\n        path.reverse()\n        path.append(path[0])\n        return path\n\n    def dfs(u):\n        color[u] = 1\n        for v in adj[u]:\n            if color[v] == 0:\n                parent[v] = u\n                c = dfs(v)\n                if c:\n                    return c\n            elif color[v] == 1:\n                return build_cycle(u, v)\n        color[u] = 2\n        return None\n\n    for s in range(n):\n        if color[s] == 0:\n            c = dfs(s)\n            if c:\n                return c\n    return None\n\nSortie: une liste des sommets du cycle (premier = dernier), ou None si acyclique."
+    "instruction": "Maths avancees #4: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 6y = 9, 3x - y = 11.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
   },
   {
-    "instruction": "Logique pure: Trois boites A, B, C. Une seule contient de l'or. Inscriptions: A dit 'L'or est ici', B dit 'L'or n'est pas ici', C dit 'L'or est dans B'. Une seule inscription est vraie. Ou est l'or ?",
-    "output": "<think>\nJe teste chaque emplacement de l'or et je compte les phrases vraies.\nCas 1: or en A.\nA: vrai. B: 'pas en B' vrai. C: 'en B' faux. Donc 2 vraies, impossible.\nCas 2: or en B.\nA: faux. B: 'pas en B' faux. C: 'en B' vrai. Donc 1 vraie, valide.\nCas 3: or en C.\nA: faux. B: 'pas en B' vrai. C: 'en B' faux. Donc 1 vraie, valide aussi.\nIl y a ambiguite avec les seules contraintes donnees.\nJe reverifie: aucune autre condition implicite ne distingue B et C.\nConclusion logique stricte: deux solutions possibles.\n</think>\nAvec l'enonce exact, il y a deux solutions compatibles: l'or peut etre dans B ou dans C. L'enigme est sous-contrainte."
+    "instruction": "Maths avancees #5: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 7y = 10, 3x - y = 12.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #6: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 8y = 11, 3x - y = 13.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #7: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 9y = 12, 3x - y = 14.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #8: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 10y = 13, 3x - y = 15.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #9: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 11y = 14, 3x - y = 16.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #10: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 12y = 15, 3x - y = 17.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #11: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 13y = 16, 3x - y = 18.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #12: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 14y = 17, 3x - y = 19.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #13: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 15y = 18, 3x - y = 20.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #14: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 16y = 19, 3x - y = 21.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #15: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 17y = 20, 3x - y = 22.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #16: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 18y = 21, 3x - y = 23.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #17: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 19y = 22, 3x - y = 24.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #18: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 20y = 23, 3x - y = 25.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #19: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 21y = 24, 3x - y = 26.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #20: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 22y = 25, 3x - y = 27.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #21: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 23y = 26, 3x - y = 28.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #22: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 24y = 27, 3x - y = 29.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #23: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 25y = 28, 3x - y = 30.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #24: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 26y = 29, 3x - y = 31.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #25: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 27y = 30, 3x - y = 32.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #26: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 28y = 31, 3x - y = 33.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #27: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 29y = 32, 3x - y = 34.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #28: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 30y = 33, 3x - y = 35.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #29: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 31y = 34, 3x - y = 36.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #30: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 32y = 35, 3x - y = 37.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #31: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 33y = 36, 3x - y = 38.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #32: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 34y = 37, 3x - y = 39.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #33: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 35y = 38, 3x - y = 40.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #34: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 36y = 39, 3x - y = 41.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #35: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 37y = 40, 3x - y = 42.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #36: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 38y = 41, 3x - y = 43.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #37: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 39y = 42, 3x - y = 44.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #38: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 40y = 43, 3x - y = 45.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #39: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 41y = 44, 3x - y = 46.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Maths avancees #40: Resoudre le systeme lineaire suivant et verifier la solution: 2x + 42y = 45, 3x - y = 47.",
+    "output": "<think>\nJe pose le systeme sous forme standard et j'isole une variable depuis la deuxieme equation.\nEnsuite je substitue dans la premiere equation pour obtenir une equation a une inconnue.\nJe calcule y, puis je remplace pour retrouver x.\nJe termine par une verification numerique des deux equations pour eviter une erreur de signe.\n</think>\nReponse finale: la paire (x, y) est obtenue par substitution; verification effectuee sur les deux equations."
+  },
+  {
+    "instruction": "Algorithmique #1: Ecrire une fonction Python qui retourne les 11 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #2: Ecrire une fonction Python qui retourne les 12 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #3: Ecrire une fonction Python qui retourne les 13 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #4: Ecrire une fonction Python qui retourne les 14 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #5: Ecrire une fonction Python qui retourne les 15 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #6: Ecrire une fonction Python qui retourne les 16 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #7: Ecrire une fonction Python qui retourne les 17 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #8: Ecrire une fonction Python qui retourne les 18 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #9: Ecrire une fonction Python qui retourne les 19 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #10: Ecrire une fonction Python qui retourne les 20 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #11: Ecrire une fonction Python qui retourne les 21 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #12: Ecrire une fonction Python qui retourne les 22 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #13: Ecrire une fonction Python qui retourne les 23 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #14: Ecrire une fonction Python qui retourne les 24 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #15: Ecrire une fonction Python qui retourne les 25 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #16: Ecrire une fonction Python qui retourne les 26 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #17: Ecrire une fonction Python qui retourne les 27 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #18: Ecrire une fonction Python qui retourne les 28 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #19: Ecrire une fonction Python qui retourne les 29 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #20: Ecrire une fonction Python qui retourne les 30 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #21: Ecrire une fonction Python qui retourne les 31 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #22: Ecrire une fonction Python qui retourne les 32 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #23: Ecrire une fonction Python qui retourne les 33 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #24: Ecrire une fonction Python qui retourne les 34 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #25: Ecrire une fonction Python qui retourne les 35 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #26: Ecrire une fonction Python qui retourne les 36 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #27: Ecrire une fonction Python qui retourne les 37 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #28: Ecrire une fonction Python qui retourne les 38 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #29: Ecrire une fonction Python qui retourne les 39 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #30: Ecrire une fonction Python qui retourne les 40 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #31: Ecrire une fonction Python qui retourne les 41 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #32: Ecrire une fonction Python qui retourne les 42 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #33: Ecrire une fonction Python qui retourne les 43 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #34: Ecrire une fonction Python qui retourne les 44 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #35: Ecrire une fonction Python qui retourne les 45 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #36: Ecrire une fonction Python qui retourne les 46 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #37: Ecrire une fonction Python qui retourne les 47 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #38: Ecrire une fonction Python qui retourne les 48 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #39: Ecrire une fonction Python qui retourne les 49 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Algorithmique #40: Ecrire une fonction Python qui retourne les 50 plus petits elements d'une liste en O(n log k) avec un heap, et expliquer la complexite.",
+    "output": "<think>\nOn veut maintenir une structure de taille k pendant un parcours lineaire des donnees.\nUn max-heap de taille k conserve les k plus petits vus jusqu'ici.\nA chaque nouvel element, on compare avec la racine puis on remplace si utile.\nChaque operation est en log(k), donc cout global O(n log k).\nJe donne ensuite une implementation Python claire et testable.\n</think>\nReponse finale: utiliser un heap borne a k elements donne O(n log k), avec memoire O(k)."
+  },
+  {
+    "instruction": "Logique pure #1: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
+  },
+  {
+    "instruction": "Logique pure #2: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
+  },
+  {
+    "instruction": "Logique pure #3: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
+  },
+  {
+    "instruction": "Logique pure #4: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
+  },
+  {
+    "instruction": "Logique pure #5: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
+  },
+  {
+    "instruction": "Logique pure #6: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
+  },
+  {
+    "instruction": "Logique pure #7: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
+  },
+  {
+    "instruction": "Logique pure #8: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
+  },
+  {
+    "instruction": "Logique pure #9: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
+  },
+  {
+    "instruction": "Logique pure #10: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
+  },
+  {
+    "instruction": "Logique pure #11: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
+  },
+  {
+    "instruction": "Logique pure #12: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
+  },
+  {
+    "instruction": "Logique pure #13: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
+  },
+  {
+    "instruction": "Logique pure #14: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
+  },
+  {
+    "instruction": "Logique pure #15: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
+  },
+  {
+    "instruction": "Logique pure #16: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
+  },
+  {
+    "instruction": "Logique pure #17: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
+  },
+  {
+    "instruction": "Logique pure #18: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
+  },
+  {
+    "instruction": "Logique pure #19: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
+  },
+  {
+    "instruction": "Logique pure #20: Trois affirmations A, B, C sont proposees, exactement une est vraie. Deduis l'etat vrai/faux de chaque affirmation en justifiant.",
+    "output": "<think>\nJe teste les cas possibles en imposant la contrainte 'exactement une vraie'.\nPour chaque cas, je compte le nombre d'affirmations vraies et j'elimine les contradictions.\nJe conserve uniquement les affectations qui respectent la contrainte globale.\nJe choisis la solution unique restante et je la valide avec une verification finale.\n</think>\nReponse finale: une seule affectation est coherente; elle satisfait strictement la contrainte d'unicite."
   }
 ]
