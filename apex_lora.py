@@ -1,4 +1,5 @@
 import torch
+import os
 from typing import Any, cast
 from datasets import load_dataset
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
@@ -10,12 +11,14 @@ print("==========================================")
 print("🚀 DÉMARRAGE DU FINE-TUNING APEX (AVEC LoRA)")
 print("==========================================")
 
+DATASET_FILE = os.getenv("APEX_DATASET_FILE", "dataset_expert.json")
+
 # Garde CPU : BitsAndBytes 4-bit requiert un GPU.
 # Sur CPU seul, on valide uniquement la pipeline de données (smoke test partiel).
 if not torch.cuda.is_available():
     print("⚠️  Pas de GPU détecté — validation de la pipeline de données uniquement.")
     from datasets import load_dataset as _ld
-    _ds = _ld("json", data_files="dataset_expert.json", split="train")
+    _ds = _ld("json", data_files=DATASET_FILE, split="train")
     def _fmt(ex):
         return {"text": f"<|user|>\n{ex['instruction']}\n<|assistant|>\n{ex['output']}"}
     _ds_fmt = _ds.map(_fmt)
@@ -83,7 +86,7 @@ modele_apex.print_trainable_parameters()
 
 # 4. LES DONNÉES D'ENTRAÎNEMENT (Ce qu'on veut lui apprendre)
 # Chargement du dataset local de distillation
-dataset = load_dataset("json", data_files="dataset_expert.json", split="train")
+dataset = load_dataset("json", data_files=DATASET_FILE, split="train")
 
 def format_prompt(exemple):
     texte = f"<|user|>\n{exemple['instruction']}\n<|assistant|>\n{exemple['output']}"

@@ -1,0 +1,22 @@
+{
+  "name": "official_baseline_local_phi3_ollama",
+  "created_at_utc": "2026-04-01T23:11:00.034480+00:00",
+  "source_report": "evals/reports/eval_20260401T231100Z.json",
+  "apex_url": "http://127.0.0.1:8010",
+  "model_tier": "fast",
+  "total": 20,
+  "passed": 13,
+  "failed": 7,
+  "overall_score": 0.7583,
+  "median_latency_ms": 16930.0,
+  "failed_ids": [
+    "h001",
+    "h002",
+    "h007",
+    "h009",
+    "h015",
+    "h016",
+    "h017"
+  ],
+  "notes": "Reference baseline before LoRA v2 focused distillation."
+}

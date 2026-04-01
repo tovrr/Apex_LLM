@@ -1,0 +1,402 @@
+[
+  {
+    "instruction": "Calculus fail-fix #1: Given f(x)=x^3-6x^2+9x+1, find all critical points and classify each as minimum, maximum, or neither.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0 for critical points.\nUse f''(x)=6x-12 to classify each critical point.\nAt x=1, f''(1)<0 so this point is a local maximum.\nAt x=3, f''(3)>0 so this point is a local minimum.\n</think>\nCritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "Calculus fail-fix #2: Given f(x)=x^3-6x^2+9x+1, find all critical points and classify each as minimum, maximum, or neither.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0 for critical points.\nUse f''(x)=6x-12 to classify each critical point.\nAt x=1, f''(1)<0 so this point is a local maximum.\nAt x=3, f''(3)>0 so this point is a local minimum.\n</think>\nCritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "Calculus fail-fix #3: Given f(x)=x^3-6x^2+9x+1, find all critical points and classify each as minimum, maximum, or neither.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0 for critical points.\nUse f''(x)=6x-12 to classify each critical point.\nAt x=1, f''(1)<0 so this point is a local maximum.\nAt x=3, f''(3)>0 so this point is a local minimum.\n</think>\nCritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "Calculus fail-fix #4: Given f(x)=x^3-6x^2+9x+1, find all critical points and classify each as minimum, maximum, or neither.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0 for critical points.\nUse f''(x)=6x-12 to classify each critical point.\nAt x=1, f''(1)<0 so this point is a local maximum.\nAt x=3, f''(3)>0 so this point is a local minimum.\n</think>\nCritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "Calculus fail-fix #5: Given f(x)=x^3-6x^2+9x+1, find all critical points and classify each as minimum, maximum, or neither.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0 for critical points.\nUse f''(x)=6x-12 to classify each critical point.\nAt x=1, f''(1)<0 so this point is a local maximum.\nAt x=3, f''(3)>0 so this point is a local minimum.\n</think>\nCritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "Calculus fail-fix #6: Given f(x)=x^3-6x^2+9x+1, find all critical points and classify each as minimum, maximum, or neither.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0 for critical points.\nUse f''(x)=6x-12 to classify each critical point.\nAt x=1, f''(1)<0 so this point is a local maximum.\nAt x=3, f''(3)>0 so this point is a local minimum.\n</think>\nCritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "Calculus fail-fix #7: Given f(x)=x^3-6x^2+9x+1, find all critical points and classify each as minimum, maximum, or neither.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0 for critical points.\nUse f''(x)=6x-12 to classify each critical point.\nAt x=1, f''(1)<0 so this point is a local maximum.\nAt x=3, f''(3)>0 so this point is a local minimum.\n</think>\nCritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "Calculus fail-fix #8: Given f(x)=x^3-6x^2+9x+1, find all critical points and classify each as minimum, maximum, or neither.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0 for critical points.\nUse f''(x)=6x-12 to classify each critical point.\nAt x=1, f''(1)<0 so this point is a local maximum.\nAt x=3, f''(3)>0 so this point is a local minimum.\n</think>\nCritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "Calculus fail-fix #9: Given f(x)=x^3-6x^2+9x+1, find all critical points and classify each as minimum, maximum, or neither.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0 for critical points.\nUse f''(x)=6x-12 to classify each critical point.\nAt x=1, f''(1)<0 so this point is a local maximum.\nAt x=3, f''(3)>0 so this point is a local minimum.\n</think>\nCritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "Calculus fail-fix #10: Given f(x)=x^3-6x^2+9x+1, find all critical points and classify each as minimum, maximum, or neither.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0 for critical points.\nUse f''(x)=6x-12 to classify each critical point.\nAt x=1, f''(1)<0 so this point is a local maximum.\nAt x=3, f''(3)>0 so this point is a local minimum.\n</think>\nCritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "Calculus fail-fix #11: Given f(x)=x^3-6x^2+9x+1, find all critical points and classify each as minimum, maximum, or neither.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0 for critical points.\nUse f''(x)=6x-12 to classify each critical point.\nAt x=1, f''(1)<0 so this point is a local maximum.\nAt x=3, f''(3)>0 so this point is a local minimum.\n</think>\nCritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "Calculus fail-fix #12: Given f(x)=x^3-6x^2+9x+1, find all critical points and classify each as minimum, maximum, or neither.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0 for critical points.\nUse f''(x)=6x-12 to classify each critical point.\nAt x=1, f''(1)<0 so this point is a local maximum.\nAt x=3, f''(3)>0 so this point is a local minimum.\n</think>\nCritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "Calculus fail-fix #13: Given f(x)=x^3-6x^2+9x+1, find all critical points and classify each as minimum, maximum, or neither.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0 for critical points.\nUse f''(x)=6x-12 to classify each critical point.\nAt x=1, f''(1)<0 so this point is a local maximum.\nAt x=3, f''(3)>0 so this point is a local minimum.\n</think>\nCritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "Calculus fail-fix #14: Given f(x)=x^3-6x^2+9x+1, find all critical points and classify each as minimum, maximum, or neither.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0 for critical points.\nUse f''(x)=6x-12 to classify each critical point.\nAt x=1, f''(1)<0 so this point is a local maximum.\nAt x=3, f''(3)>0 so this point is a local minimum.\n</think>\nCritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE fail-fix #1: Service has p95=420ms and p99=1200ms. Give exactly 2 mitigations and expected effect.",
+    "output": "<think>\nTail latency suggests queueing and slow downstream calls.\nMitigation 1 should reduce repeated expensive reads with cache.\nMitigation 2 should cap worst-case waits via timeout and fallback.\nEstimate impact on p95 and p99 explicitly.\n</think>\n1) Add cache for hot reads: expected p95 drops to about 250-300ms.\n2) Add strict timeout (e.g. 300ms) + fallback: expected p99 drops to about 500-700ms."
+  },
+  {
+    "instruction": "SRE fail-fix #2: Service has p95=420ms and p99=1200ms. Give exactly 2 mitigations and expected effect.",
+    "output": "<think>\nTail latency suggests queueing and slow downstream calls.\nMitigation 1 should reduce repeated expensive reads with cache.\nMitigation 2 should cap worst-case waits via timeout and fallback.\nEstimate impact on p95 and p99 explicitly.\n</think>\n1) Add cache for hot reads: expected p95 drops to about 250-300ms.\n2) Add strict timeout (e.g. 300ms) + fallback: expected p99 drops to about 500-700ms."
+  },
+  {
+    "instruction": "SRE fail-fix #3: Service has p95=420ms and p99=1200ms. Give exactly 2 mitigations and expected effect.",
+    "output": "<think>\nTail latency suggests queueing and slow downstream calls.\nMitigation 1 should reduce repeated expensive reads with cache.\nMitigation 2 should cap worst-case waits via timeout and fallback.\nEstimate impact on p95 and p99 explicitly.\n</think>\n1) Add cache for hot reads: expected p95 drops to about 250-300ms.\n2) Add strict timeout (e.g. 300ms) + fallback: expected p99 drops to about 500-700ms."
+  },
+  {
+    "instruction": "SRE fail-fix #4: Service has p95=420ms and p99=1200ms. Give exactly 2 mitigations and expected effect.",
+    "output": "<think>\nTail latency suggests queueing and slow downstream calls.\nMitigation 1 should reduce repeated expensive reads with cache.\nMitigation 2 should cap worst-case waits via timeout and fallback.\nEstimate impact on p95 and p99 explicitly.\n</think>\n1) Add cache for hot reads: expected p95 drops to about 250-300ms.\n2) Add strict timeout (e.g. 300ms) + fallback: expected p99 drops to about 500-700ms."
+  },
+  {
+    "instruction": "SRE fail-fix #5: Service has p95=420ms and p99=1200ms. Give exactly 2 mitigations and expected effect.",
+    "output": "<think>\nTail latency suggests queueing and slow downstream calls.\nMitigation 1 should reduce repeated expensive reads with cache.\nMitigation 2 should cap worst-case waits via timeout and fallback.\nEstimate impact on p95 and p99 explicitly.\n</think>\n1) Add cache for hot reads: expected p95 drops to about 250-300ms.\n2) Add strict timeout (e.g. 300ms) + fallback: expected p99 drops to about 500-700ms."
+  },
+  {
+    "instruction": "SRE fail-fix #6: Service has p95=420ms and p99=1200ms. Give exactly 2 mitigations and expected effect.",
+    "output": "<think>\nTail latency suggests queueing and slow downstream calls.\nMitigation 1 should reduce repeated expensive reads with cache.\nMitigation 2 should cap worst-case waits via timeout and fallback.\nEstimate impact on p95 and p99 explicitly.\n</think>\n1) Add cache for hot reads: expected p95 drops to about 250-300ms.\n2) Add strict timeout (e.g. 300ms) + fallback: expected p99 drops to about 500-700ms."
+  },
+  {
+    "instruction": "SRE fail-fix #7: Service has p95=420ms and p99=1200ms. Give exactly 2 mitigations and expected effect.",
+    "output": "<think>\nTail latency suggests queueing and slow downstream calls.\nMitigation 1 should reduce repeated expensive reads with cache.\nMitigation 2 should cap worst-case waits via timeout and fallback.\nEstimate impact on p95 and p99 explicitly.\n</think>\n1) Add cache for hot reads: expected p95 drops to about 250-300ms.\n2) Add strict timeout (e.g. 300ms) + fallback: expected p99 drops to about 500-700ms."
+  },
+  {
+    "instruction": "SRE fail-fix #8: Service has p95=420ms and p99=1200ms. Give exactly 2 mitigations and expected effect.",
+    "output": "<think>\nTail latency suggests queueing and slow downstream calls.\nMitigation 1 should reduce repeated expensive reads with cache.\nMitigation 2 should cap worst-case waits via timeout and fallback.\nEstimate impact on p95 and p99 explicitly.\n</think>\n1) Add cache for hot reads: expected p95 drops to about 250-300ms.\n2) Add strict timeout (e.g. 300ms) + fallback: expected p99 drops to about 500-700ms."
+  },
+  {
+    "instruction": "SRE fail-fix #9: Service has p95=420ms and p99=1200ms. Give exactly 2 mitigations and expected effect.",
+    "output": "<think>\nTail latency suggests queueing and slow downstream calls.\nMitigation 1 should reduce repeated expensive reads with cache.\nMitigation 2 should cap worst-case waits via timeout and fallback.\nEstimate impact on p95 and p99 explicitly.\n</think>\n1) Add cache for hot reads: expected p95 drops to about 250-300ms.\n2) Add strict timeout (e.g. 300ms) + fallback: expected p99 drops to about 500-700ms."
+  },
+  {
+    "instruction": "SRE fail-fix #10: Service has p95=420ms and p99=1200ms. Give exactly 2 mitigations and expected effect.",
+    "output": "<think>\nTail latency suggests queueing and slow downstream calls.\nMitigation 1 should reduce repeated expensive reads with cache.\nMitigation 2 should cap worst-case waits via timeout and fallback.\nEstimate impact on p95 and p99 explicitly.\n</think>\n1) Add cache for hot reads: expected p95 drops to about 250-300ms.\n2) Add strict timeout (e.g. 300ms) + fallback: expected p99 drops to about 500-700ms."
+  },
+  {
+    "instruction": "SRE fail-fix #11: Service has p95=420ms and p99=1200ms. Give exactly 2 mitigations and expected effect.",
+    "output": "<think>\nTail latency suggests queueing and slow downstream calls.\nMitigation 1 should reduce repeated expensive reads with cache.\nMitigation 2 should cap worst-case waits via timeout and fallback.\nEstimate impact on p95 and p99 explicitly.\n</think>\n1) Add cache for hot reads: expected p95 drops to about 250-300ms.\n2) Add strict timeout (e.g. 300ms) + fallback: expected p99 drops to about 500-700ms."
+  },
+  {
+    "instruction": "SRE fail-fix #12: Service has p95=420ms and p99=1200ms. Give exactly 2 mitigations and expected effect.",
+    "output": "<think>\nTail latency suggests queueing and slow downstream calls.\nMitigation 1 should reduce repeated expensive reads with cache.\nMitigation 2 should cap worst-case waits via timeout and fallback.\nEstimate impact on p95 and p99 explicitly.\n</think>\n1) Add cache for hot reads: expected p95 drops to about 250-300ms.\n2) Add strict timeout (e.g. 300ms) + fallback: expected p99 drops to about 500-700ms."
+  },
+  {
+    "instruction": "SRE fail-fix #13: Service has p95=420ms and p99=1200ms. Give exactly 2 mitigations and expected effect.",
+    "output": "<think>\nTail latency suggests queueing and slow downstream calls.\nMitigation 1 should reduce repeated expensive reads with cache.\nMitigation 2 should cap worst-case waits via timeout and fallback.\nEstimate impact on p95 and p99 explicitly.\n</think>\n1) Add cache for hot reads: expected p95 drops to about 250-300ms.\n2) Add strict timeout (e.g. 300ms) + fallback: expected p99 drops to about 500-700ms."
+  },
+  {
+    "instruction": "SRE fail-fix #14: Service has p95=420ms and p99=1200ms. Give exactly 2 mitigations and expected effect.",
+    "output": "<think>\nTail latency suggests queueing and slow downstream calls.\nMitigation 1 should reduce repeated expensive reads with cache.\nMitigation 2 should cap worst-case waits via timeout and fallback.\nEstimate impact on p95 and p99 explicitly.\n</think>\n1) Add cache for hot reads: expected p95 drops to about 250-300ms.\n2) Add strict timeout (e.g. 300ms) + fallback: expected p99 drops to about 500-700ms."
+  },
+  {
+    "instruction": "Queue math fail-fix #1: If arrivals are 120 req/s and processing is 100 req/s, estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet growth rate is arrivals minus service rate.\n120-100=20 req/s net backlog growth.\n15 minutes is 900 seconds.\nBacklog increase is 20*900=18000 requests.\n</think>\nBacklog growth after 15 minutes is 18000 requests."
+  },
+  {
+    "instruction": "Queue math fail-fix #2: If arrivals are 120 req/s and processing is 100 req/s, estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet growth rate is arrivals minus service rate.\n120-100=20 req/s net backlog growth.\n15 minutes is 900 seconds.\nBacklog increase is 20*900=18000 requests.\n</think>\nBacklog growth after 15 minutes is 18000 requests."
+  },
+  {
+    "instruction": "Queue math fail-fix #3: If arrivals are 120 req/s and processing is 100 req/s, estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet growth rate is arrivals minus service rate.\n120-100=20 req/s net backlog growth.\n15 minutes is 900 seconds.\nBacklog increase is 20*900=18000 requests.\n</think>\nBacklog growth after 15 minutes is 18000 requests."
+  },
+  {
+    "instruction": "Queue math fail-fix #4: If arrivals are 120 req/s and processing is 100 req/s, estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet growth rate is arrivals minus service rate.\n120-100=20 req/s net backlog growth.\n15 minutes is 900 seconds.\nBacklog increase is 20*900=18000 requests.\n</think>\nBacklog growth after 15 minutes is 18000 requests."
+  },
+  {
+    "instruction": "Queue math fail-fix #5: If arrivals are 120 req/s and processing is 100 req/s, estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet growth rate is arrivals minus service rate.\n120-100=20 req/s net backlog growth.\n15 minutes is 900 seconds.\nBacklog increase is 20*900=18000 requests.\n</think>\nBacklog growth after 15 minutes is 18000 requests."
+  },
+  {
+    "instruction": "Queue math fail-fix #6: If arrivals are 120 req/s and processing is 100 req/s, estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet growth rate is arrivals minus service rate.\n120-100=20 req/s net backlog growth.\n15 minutes is 900 seconds.\nBacklog increase is 20*900=18000 requests.\n</think>\nBacklog growth after 15 minutes is 18000 requests."
+  },
+  {
+    "instruction": "Queue math fail-fix #7: If arrivals are 120 req/s and processing is 100 req/s, estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet growth rate is arrivals minus service rate.\n120-100=20 req/s net backlog growth.\n15 minutes is 900 seconds.\nBacklog increase is 20*900=18000 requests.\n</think>\nBacklog growth after 15 minutes is 18000 requests."
+  },
+  {
+    "instruction": "Queue math fail-fix #8: If arrivals are 120 req/s and processing is 100 req/s, estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet growth rate is arrivals minus service rate.\n120-100=20 req/s net backlog growth.\n15 minutes is 900 seconds.\nBacklog increase is 20*900=18000 requests.\n</think>\nBacklog growth after 15 minutes is 18000 requests."
+  },
+  {
+    "instruction": "Queue math fail-fix #9: If arrivals are 120 req/s and processing is 100 req/s, estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet growth rate is arrivals minus service rate.\n120-100=20 req/s net backlog growth.\n15 minutes is 900 seconds.\nBacklog increase is 20*900=18000 requests.\n</think>\nBacklog growth after 15 minutes is 18000 requests."
+  },
+  {
+    "instruction": "Queue math fail-fix #10: If arrivals are 120 req/s and processing is 100 req/s, estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet growth rate is arrivals minus service rate.\n120-100=20 req/s net backlog growth.\n15 minutes is 900 seconds.\nBacklog increase is 20*900=18000 requests.\n</think>\nBacklog growth after 15 minutes is 18000 requests."
+  },
+  {
+    "instruction": "Queue math fail-fix #11: If arrivals are 120 req/s and processing is 100 req/s, estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet growth rate is arrivals minus service rate.\n120-100=20 req/s net backlog growth.\n15 minutes is 900 seconds.\nBacklog increase is 20*900=18000 requests.\n</think>\nBacklog growth after 15 minutes is 18000 requests."
+  },
+  {
+    "instruction": "Queue math fail-fix #12: If arrivals are 120 req/s and processing is 100 req/s, estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet growth rate is arrivals minus service rate.\n120-100=20 req/s net backlog growth.\n15 minutes is 900 seconds.\nBacklog increase is 20*900=18000 requests.\n</think>\nBacklog growth after 15 minutes is 18000 requests."
+  },
+  {
+    "instruction": "Queue math fail-fix #13: If arrivals are 120 req/s and processing is 100 req/s, estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet growth rate is arrivals minus service rate.\n120-100=20 req/s net backlog growth.\n15 minutes is 900 seconds.\nBacklog increase is 20*900=18000 requests.\n</think>\nBacklog growth after 15 minutes is 18000 requests."
+  },
+  {
+    "instruction": "Queue math fail-fix #14: If arrivals are 120 req/s and processing is 100 req/s, estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet growth rate is arrivals minus service rate.\n120-100=20 req/s net backlog growth.\n15 minutes is 900 seconds.\nBacklog increase is 20*900=18000 requests.\n</think>\nBacklog growth after 15 minutes is 18000 requests."
+  },
+  {
+    "instruction": "Translation fail-fix #1: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and include the notion of holdout set.\nUse clear French terminology used in ML evaluation.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Translation fail-fix #2: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and include the notion of holdout set.\nUse clear French terminology used in ML evaluation.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Translation fail-fix #3: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and include the notion of holdout set.\nUse clear French terminology used in ML evaluation.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Translation fail-fix #4: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and include the notion of holdout set.\nUse clear French terminology used in ML evaluation.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Translation fail-fix #5: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and include the notion of holdout set.\nUse clear French terminology used in ML evaluation.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Translation fail-fix #6: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and include the notion of holdout set.\nUse clear French terminology used in ML evaluation.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Translation fail-fix #7: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and include the notion of holdout set.\nUse clear French terminology used in ML evaluation.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Translation fail-fix #8: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and include the notion of holdout set.\nUse clear French terminology used in ML evaluation.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Translation fail-fix #9: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and include the notion of holdout set.\nUse clear French terminology used in ML evaluation.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Translation fail-fix #10: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and include the notion of holdout set.\nUse clear French terminology used in ML evaluation.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Translation fail-fix #11: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and include the notion of holdout set.\nUse clear French terminology used in ML evaluation.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Translation fail-fix #12: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and include the notion of holdout set.\nUse clear French terminology used in ML evaluation.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Translation fail-fix #13: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and include the notion of holdout set.\nUse clear French terminology used in ML evaluation.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Translation fail-fix #14: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and include the notion of holdout set.\nUse clear French terminology used in ML evaluation.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Retry fail-fix #1: Write Python retry wrapper with exponential backoff. Must include retry, sleep, and backoff terms.",
+    "output": "<think>\nImplement bounded retry loop with exponential backoff.\nUse time.sleep for wait strategy and clear exception policy.\n</think>\nUse retry attempts with exponential backoff and time.sleep:\ndef retry_call(fn, max_retry=5, base=0.2):\n    import time\n    for attempt in range(max_retry):\n        try:\n            return fn()\n        except Exception:\n            if attempt == max_retry - 1:\n                raise\n            backoff = base * (2 ** attempt)\n            time.sleep(backoff)\n"
+  },
+  {
+    "instruction": "Retry fail-fix #2: Write Python retry wrapper with exponential backoff. Must include retry, sleep, and backoff terms.",
+    "output": "<think>\nImplement bounded retry loop with exponential backoff.\nUse time.sleep for wait strategy and clear exception policy.\n</think>\nUse retry attempts with exponential backoff and time.sleep:\ndef retry_call(fn, max_retry=5, base=0.2):\n    import time\n    for attempt in range(max_retry):\n        try:\n            return fn()\n        except Exception:\n            if attempt == max_retry - 1:\n                raise\n            backoff = base * (2 ** attempt)\n            time.sleep(backoff)\n"
+  },
+  {
+    "instruction": "Retry fail-fix #3: Write Python retry wrapper with exponential backoff. Must include retry, sleep, and backoff terms.",
+    "output": "<think>\nImplement bounded retry loop with exponential backoff.\nUse time.sleep for wait strategy and clear exception policy.\n</think>\nUse retry attempts with exponential backoff and time.sleep:\ndef retry_call(fn, max_retry=5, base=0.2):\n    import time\n    for attempt in range(max_retry):\n        try:\n            return fn()\n        except Exception:\n            if attempt == max_retry - 1:\n                raise\n            backoff = base * (2 ** attempt)\n            time.sleep(backoff)\n"
+  },
+  {
+    "instruction": "Retry fail-fix #4: Write Python retry wrapper with exponential backoff. Must include retry, sleep, and backoff terms.",
+    "output": "<think>\nImplement bounded retry loop with exponential backoff.\nUse time.sleep for wait strategy and clear exception policy.\n</think>\nUse retry attempts with exponential backoff and time.sleep:\ndef retry_call(fn, max_retry=5, base=0.2):\n    import time\n    for attempt in range(max_retry):\n        try:\n            return fn()\n        except Exception:\n            if attempt == max_retry - 1:\n                raise\n            backoff = base * (2 ** attempt)\n            time.sleep(backoff)\n"
+  },
+  {
+    "instruction": "Retry fail-fix #5: Write Python retry wrapper with exponential backoff. Must include retry, sleep, and backoff terms.",
+    "output": "<think>\nImplement bounded retry loop with exponential backoff.\nUse time.sleep for wait strategy and clear exception policy.\n</think>\nUse retry attempts with exponential backoff and time.sleep:\ndef retry_call(fn, max_retry=5, base=0.2):\n    import time\n    for attempt in range(max_retry):\n        try:\n            return fn()\n        except Exception:\n            if attempt == max_retry - 1:\n                raise\n            backoff = base * (2 ** attempt)\n            time.sleep(backoff)\n"
+  },
+  {
+    "instruction": "Retry fail-fix #6: Write Python retry wrapper with exponential backoff. Must include retry, sleep, and backoff terms.",
+    "output": "<think>\nImplement bounded retry loop with exponential backoff.\nUse time.sleep for wait strategy and clear exception policy.\n</think>\nUse retry attempts with exponential backoff and time.sleep:\ndef retry_call(fn, max_retry=5, base=0.2):\n    import time\n    for attempt in range(max_retry):\n        try:\n            return fn()\n        except Exception:\n            if attempt == max_retry - 1:\n                raise\n            backoff = base * (2 ** attempt)\n            time.sleep(backoff)\n"
+  },
+  {
+    "instruction": "Retry fail-fix #7: Write Python retry wrapper with exponential backoff. Must include retry, sleep, and backoff terms.",
+    "output": "<think>\nImplement bounded retry loop with exponential backoff.\nUse time.sleep for wait strategy and clear exception policy.\n</think>\nUse retry attempts with exponential backoff and time.sleep:\ndef retry_call(fn, max_retry=5, base=0.2):\n    import time\n    for attempt in range(max_retry):\n        try:\n            return fn()\n        except Exception:\n            if attempt == max_retry - 1:\n                raise\n            backoff = base * (2 ** attempt)\n            time.sleep(backoff)\n"
+  },
+  {
+    "instruction": "Retry fail-fix #8: Write Python retry wrapper with exponential backoff. Must include retry, sleep, and backoff terms.",
+    "output": "<think>\nImplement bounded retry loop with exponential backoff.\nUse time.sleep for wait strategy and clear exception policy.\n</think>\nUse retry attempts with exponential backoff and time.sleep:\ndef retry_call(fn, max_retry=5, base=0.2):\n    import time\n    for attempt in range(max_retry):\n        try:\n            return fn()\n        except Exception:\n            if attempt == max_retry - 1:\n                raise\n            backoff = base * (2 ** attempt)\n            time.sleep(backoff)\n"
+  },
+  {
+    "instruction": "Retry fail-fix #9: Write Python retry wrapper with exponential backoff. Must include retry, sleep, and backoff terms.",
+    "output": "<think>\nImplement bounded retry loop with exponential backoff.\nUse time.sleep for wait strategy and clear exception policy.\n</think>\nUse retry attempts with exponential backoff and time.sleep:\ndef retry_call(fn, max_retry=5, base=0.2):\n    import time\n    for attempt in range(max_retry):\n        try:\n            return fn()\n        except Exception:\n            if attempt == max_retry - 1:\n                raise\n            backoff = base * (2 ** attempt)\n            time.sleep(backoff)\n"
+  },
+  {
+    "instruction": "Retry fail-fix #10: Write Python retry wrapper with exponential backoff. Must include retry, sleep, and backoff terms.",
+    "output": "<think>\nImplement bounded retry loop with exponential backoff.\nUse time.sleep for wait strategy and clear exception policy.\n</think>\nUse retry attempts with exponential backoff and time.sleep:\ndef retry_call(fn, max_retry=5, base=0.2):\n    import time\n    for attempt in range(max_retry):\n        try:\n            return fn()\n        except Exception:\n            if attempt == max_retry - 1:\n                raise\n            backoff = base * (2 ** attempt)\n            time.sleep(backoff)\n"
+  },
+  {
+    "instruction": "Retry fail-fix #11: Write Python retry wrapper with exponential backoff. Must include retry, sleep, and backoff terms.",
+    "output": "<think>\nImplement bounded retry loop with exponential backoff.\nUse time.sleep for wait strategy and clear exception policy.\n</think>\nUse retry attempts with exponential backoff and time.sleep:\ndef retry_call(fn, max_retry=5, base=0.2):\n    import time\n    for attempt in range(max_retry):\n        try:\n            return fn()\n        except Exception:\n            if attempt == max_retry - 1:\n                raise\n            backoff = base * (2 ** attempt)\n            time.sleep(backoff)\n"
+  },
+  {
+    "instruction": "Retry fail-fix #12: Write Python retry wrapper with exponential backoff. Must include retry, sleep, and backoff terms.",
+    "output": "<think>\nImplement bounded retry loop with exponential backoff.\nUse time.sleep for wait strategy and clear exception policy.\n</think>\nUse retry attempts with exponential backoff and time.sleep:\ndef retry_call(fn, max_retry=5, base=0.2):\n    import time\n    for attempt in range(max_retry):\n        try:\n            return fn()\n        except Exception:\n            if attempt == max_retry - 1:\n                raise\n            backoff = base * (2 ** attempt)\n            time.sleep(backoff)\n"
+  },
+  {
+    "instruction": "Retry fail-fix #13: Write Python retry wrapper with exponential backoff. Must include retry, sleep, and backoff terms.",
+    "output": "<think>\nImplement bounded retry loop with exponential backoff.\nUse time.sleep for wait strategy and clear exception policy.\n</think>\nUse retry attempts with exponential backoff and time.sleep:\ndef retry_call(fn, max_retry=5, base=0.2):\n    import time\n    for attempt in range(max_retry):\n        try:\n            return fn()\n        except Exception:\n            if attempt == max_retry - 1:\n                raise\n            backoff = base * (2 ** attempt)\n            time.sleep(backoff)\n"
+  },
+  {
+    "instruction": "Retry fail-fix #14: Write Python retry wrapper with exponential backoff. Must include retry, sleep, and backoff terms.",
+    "output": "<think>\nImplement bounded retry loop with exponential backoff.\nUse time.sleep for wait strategy and clear exception policy.\n</think>\nUse retry attempts with exponential backoff and time.sleep:\ndef retry_call(fn, max_retry=5, base=0.2):\n    import time\n    for attempt in range(max_retry):\n        try:\n            return fn()\n        except Exception:\n            if attempt == max_retry - 1:\n                raise\n            backoff = base * (2 ** attempt)\n            time.sleep(backoff)\n"
+  },
+  {
+    "instruction": "Instruction fail-fix #1: Respond in exactly one sentence: why use request IDs in APIs? The sentence must include the word trace.",
+    "output": "<think>\nOne sentence only and include the token trace.\nExplain debugging and correlation value succinctly.\n</think>\nRequest IDs allow teams to trace one call across logs and services for faster debugging."
+  },
+  {
+    "instruction": "Instruction fail-fix #2: Respond in exactly one sentence: why use request IDs in APIs? The sentence must include the word trace.",
+    "output": "<think>\nOne sentence only and include the token trace.\nExplain debugging and correlation value succinctly.\n</think>\nRequest IDs allow teams to trace one call across logs and services for faster debugging."
+  },
+  {
+    "instruction": "Instruction fail-fix #3: Respond in exactly one sentence: why use request IDs in APIs? The sentence must include the word trace.",
+    "output": "<think>\nOne sentence only and include the token trace.\nExplain debugging and correlation value succinctly.\n</think>\nRequest IDs allow teams to trace one call across logs and services for faster debugging."
+  },
+  {
+    "instruction": "Instruction fail-fix #4: Respond in exactly one sentence: why use request IDs in APIs? The sentence must include the word trace.",
+    "output": "<think>\nOne sentence only and include the token trace.\nExplain debugging and correlation value succinctly.\n</think>\nRequest IDs allow teams to trace one call across logs and services for faster debugging."
+  },
+  {
+    "instruction": "Instruction fail-fix #5: Respond in exactly one sentence: why use request IDs in APIs? The sentence must include the word trace.",
+    "output": "<think>\nOne sentence only and include the token trace.\nExplain debugging and correlation value succinctly.\n</think>\nRequest IDs allow teams to trace one call across logs and services for faster debugging."
+  },
+  {
+    "instruction": "Instruction fail-fix #6: Respond in exactly one sentence: why use request IDs in APIs? The sentence must include the word trace.",
+    "output": "<think>\nOne sentence only and include the token trace.\nExplain debugging and correlation value succinctly.\n</think>\nRequest IDs allow teams to trace one call across logs and services for faster debugging."
+  },
+  {
+    "instruction": "Instruction fail-fix #7: Respond in exactly one sentence: why use request IDs in APIs? The sentence must include the word trace.",
+    "output": "<think>\nOne sentence only and include the token trace.\nExplain debugging and correlation value succinctly.\n</think>\nRequest IDs allow teams to trace one call across logs and services for faster debugging."
+  },
+  {
+    "instruction": "Instruction fail-fix #8: Respond in exactly one sentence: why use request IDs in APIs? The sentence must include the word trace.",
+    "output": "<think>\nOne sentence only and include the token trace.\nExplain debugging and correlation value succinctly.\n</think>\nRequest IDs allow teams to trace one call across logs and services for faster debugging."
+  },
+  {
+    "instruction": "Instruction fail-fix #9: Respond in exactly one sentence: why use request IDs in APIs? The sentence must include the word trace.",
+    "output": "<think>\nOne sentence only and include the token trace.\nExplain debugging and correlation value succinctly.\n</think>\nRequest IDs allow teams to trace one call across logs and services for faster debugging."
+  },
+  {
+    "instruction": "Instruction fail-fix #10: Respond in exactly one sentence: why use request IDs in APIs? The sentence must include the word trace.",
+    "output": "<think>\nOne sentence only and include the token trace.\nExplain debugging and correlation value succinctly.\n</think>\nRequest IDs allow teams to trace one call across logs and services for faster debugging."
+  },
+  {
+    "instruction": "Instruction fail-fix #11: Respond in exactly one sentence: why use request IDs in APIs? The sentence must include the word trace.",
+    "output": "<think>\nOne sentence only and include the token trace.\nExplain debugging and correlation value succinctly.\n</think>\nRequest IDs allow teams to trace one call across logs and services for faster debugging."
+  },
+  {
+    "instruction": "Instruction fail-fix #12: Respond in exactly one sentence: why use request IDs in APIs? The sentence must include the word trace.",
+    "output": "<think>\nOne sentence only and include the token trace.\nExplain debugging and correlation value succinctly.\n</think>\nRequest IDs allow teams to trace one call across logs and services for faster debugging."
+  },
+  {
+    "instruction": "Instruction fail-fix #13: Respond in exactly one sentence: why use request IDs in APIs? The sentence must include the word trace.",
+    "output": "<think>\nOne sentence only and include the token trace.\nExplain debugging and correlation value succinctly.\n</think>\nRequest IDs allow teams to trace one call across logs and services for faster debugging."
+  },
+  {
+    "instruction": "Instruction fail-fix #14: Respond in exactly one sentence: why use request IDs in APIs? The sentence must include the word trace.",
+    "output": "<think>\nOne sentence only and include the token trace.\nExplain debugging and correlation value succinctly.\n</think>\nRequest IDs allow teams to trace one call across logs and services for faster debugging."
+  },
+  {
+    "instruction": "Metrics fail-fix #1: Given TP=90, FP=30, FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75.\nRecall=TP/(TP+FN)=90/100=0.9.\nReturn both values explicitly.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Metrics fail-fix #2: Given TP=90, FP=30, FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75.\nRecall=TP/(TP+FN)=90/100=0.9.\nReturn both values explicitly.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Metrics fail-fix #3: Given TP=90, FP=30, FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75.\nRecall=TP/(TP+FN)=90/100=0.9.\nReturn both values explicitly.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Metrics fail-fix #4: Given TP=90, FP=30, FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75.\nRecall=TP/(TP+FN)=90/100=0.9.\nReturn both values explicitly.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Metrics fail-fix #5: Given TP=90, FP=30, FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75.\nRecall=TP/(TP+FN)=90/100=0.9.\nReturn both values explicitly.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Metrics fail-fix #6: Given TP=90, FP=30, FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75.\nRecall=TP/(TP+FN)=90/100=0.9.\nReturn both values explicitly.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Metrics fail-fix #7: Given TP=90, FP=30, FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75.\nRecall=TP/(TP+FN)=90/100=0.9.\nReturn both values explicitly.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Metrics fail-fix #8: Given TP=90, FP=30, FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75.\nRecall=TP/(TP+FN)=90/100=0.9.\nReturn both values explicitly.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Metrics fail-fix #9: Given TP=90, FP=30, FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75.\nRecall=TP/(TP+FN)=90/100=0.9.\nReturn both values explicitly.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Metrics fail-fix #10: Given TP=90, FP=30, FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75.\nRecall=TP/(TP+FN)=90/100=0.9.\nReturn both values explicitly.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Metrics fail-fix #11: Given TP=90, FP=30, FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75.\nRecall=TP/(TP+FN)=90/100=0.9.\nReturn both values explicitly.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Metrics fail-fix #12: Given TP=90, FP=30, FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75.\nRecall=TP/(TP+FN)=90/100=0.9.\nReturn both values explicitly.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Metrics fail-fix #13: Given TP=90, FP=30, FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75.\nRecall=TP/(TP+FN)=90/100=0.9.\nReturn both values explicitly.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Metrics fail-fix #14: Given TP=90, FP=30, FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75.\nRecall=TP/(TP+FN)=90/100=0.9.\nReturn both values explicitly.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Metrics fail-fix #15: Given TP=90, FP=30, FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75.\nRecall=TP/(TP+FN)=90/100=0.9.\nReturn both values explicitly.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Metrics fail-fix #16: Given TP=90, FP=30, FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75.\nRecall=TP/(TP+FN)=90/100=0.9.\nReturn both values explicitly.\n</think>\nprecision = 0.75, recall = 0.9"
+  }
+]
