@@ -17,6 +17,7 @@ from threading import Lock
 from threading import Thread
 from datetime import datetime, timezone
 from dotenv import load_dotenv
+import httpx
 import key_store
 
 # Les outils des pros (HuggingFace)
@@ -38,7 +39,7 @@ if os.path.isdir(UI_DIR):
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("apex_api")
-load_dotenv()
+load_dotenv(override=True)
 
 # ── Key store bootstrap ────────────────────────────────────────────────────────
 key_store.init_db()
@@ -156,6 +157,21 @@ MODEL_LORA_DIRS: dict[str, str] = {
     "default": os.getenv("APEX_MODEL_DEFAULT_LORA_DIR", "./apex_lora_sauvegarde"),
     "reasoning": os.getenv("APEX_MODEL_REASONING_LORA_DIR", ""),
 }
+
+# ── Ollama backend (optional) ─────────────────────────────────────────────────
+# Set APEX_OLLAMA_URL=http://127.0.0.1:11434 to delegate inference to Ollama.
+# Ollama model names per tier (override with APEX_OLLAMA_MODEL_FAST, etc.)
+APEX_OLLAMA_URL = os.getenv("APEX_OLLAMA_URL", "").rstrip("/")
+OLLAMA_MODEL_NAMES: dict[str, str] = {
+    "fast": os.getenv("APEX_OLLAMA_MODEL_FAST", "phi3:mini"),
+    "default": os.getenv("APEX_OLLAMA_MODEL_DEFAULT", "qwen2.5:7b"),
+    "reasoning": os.getenv("APEX_OLLAMA_MODEL_REASONING", "qwen2.5:14b"),
+}
+OLLAMA_NUM_CTX = int(os.getenv("APEX_OLLAMA_NUM_CTX", "4096"))
+
+
+def _ollama_active() -> bool:
+    return bool(APEX_OLLAMA_URL)
 
 tokenizer: Any | None = None
 modele_apex: Any | None = None
@@ -327,7 +343,36 @@ def _preparer_inputs(question: str) -> tuple[str, Any]:
     return prompt, inputs
 
 
+async def _generer_reponse_ollama(question: str, mots_max: int, selected_tier: str) -> str:
+    """Delegate generation to a local Ollama instance."""
+    ollama_model = OLLAMA_MODEL_NAMES[selected_tier]
+    payload = {
+        "model": ollama_model,
+        "prompt": f"<|user|>\n{question}\n<|assistant|>\n",
+        "stream": False,
+        "options": {"num_predict": mots_max, "temperature": 0.7, "num_ctx": OLLAMA_NUM_CTX},
+    }
+    try:
+        async with httpx.AsyncClient(timeout=DELAI_GENERATION_SEC) as client:
+            r = await client.post(f"{APEX_OLLAMA_URL}/api/generate", json=payload)
+            r.raise_for_status()
+            data = r.json()
+            return data.get("response", "").strip()
+    except httpx.TimeoutException as exc:
+        raise HTTPException(status_code=504, detail="Temps de génération dépassé (Ollama).") from exc
+    except Exception as exc:
+        logger.exception("Erreur Ollama pendant la génération")
+        raise HTTPException(status_code=500, detail=f"Erreur Ollama: {exc}") from exc
+
+
 async def _generer_reponse(question: str, mots_max: int, model_tier: str | None = None) -> tuple[str, str]:
+    selected_tier = _normalize_tier(model_tier)
+
+    if _ollama_active():
+        reponse = await _generer_reponse_ollama(question, mots_max, selected_tier)
+        _model_runtime_state_by_tier[selected_tier] = "ready"
+        return reponse, selected_tier
+
     selected_tier = _charger_modele_runtime(model_tier)
     assert tokenizer is not None and modele_apex is not None
 
@@ -359,6 +404,39 @@ async def _generer_reponse(question: str, mots_max: int, model_tier: str | None 
 
 
 async def _streamer_tokens(question: str, mots_max: int, model_tier: str | None = None) -> Any:
+    selected_tier = _normalize_tier(model_tier)
+
+    if _ollama_active():
+        # Ollama streaming: use stream=True and yield chunks.
+        ollama_model = OLLAMA_MODEL_NAMES[selected_tier]
+        payload = {
+            "model": ollama_model,
+            "prompt": f"<|user|>\n{question}\n<|assistant|>\n",
+            "stream": True,
+            "options": {"num_predict": mots_max, "temperature": 0.7, "num_ctx": OLLAMA_NUM_CTX},
+        }
+        try:
+            async with httpx.AsyncClient(timeout=DELAI_GENERATION_SEC) as client:
+                async with client.stream("POST", f"{APEX_OLLAMA_URL}/api/generate", json=payload) as resp:
+                    resp.raise_for_status()
+                    async for line in resp.aiter_lines():
+                        if not line:
+                            continue
+                        try:
+                            chunk = json.loads(line)
+                            fragment = chunk.get("response", "")
+                            if fragment:
+                                yield fragment, selected_tier
+                            if chunk.get("done"):
+                                break
+                        except json.JSONDecodeError:
+                            continue
+        except httpx.TimeoutException as exc:
+            raise HTTPException(status_code=504, detail="Temps de génération dépassé (Ollama).") from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=f"Erreur Ollama stream: {exc}") from exc
+        return
+
     selected_tier = _charger_modele_runtime(model_tier)
     assert tokenizer is not None and modele_apex is not None
 
