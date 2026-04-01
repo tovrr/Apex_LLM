@@ -18,3 +18,7 @@ checkpoint-*/
 
 # Notebook checkpoints
 .ipynb_checkpoints/
+
+# Runtime data artifacts (local-only)
+data/*.db
+data/*.jsonl
