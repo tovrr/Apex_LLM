@@ -2,6 +2,8 @@
 
 Private AI workspace for builders and teams.
 
+![Apex LLM Hero](assets/apex-hero.svg)
+
 [![Tests](https://github.com/tovrr/Apex_LLM/actions/workflows/ci.yml/badge.svg)](https://github.com/tovrr/Apex_LLM/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
 [![API](https://img.shields.io/badge/API-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
@@ -24,6 +26,27 @@ Apex LLM is a production-minded local AI platform with streaming chat, secure AP
 - Usage and billing primitives: /api/usage + usage_events ledger.
 - Local control UI: /, developer portal: /developer, pricing draft: /pricing.
 - Test suite: 35 passing tests.
+
+## Benchmark Snapshot
+
+The table below is a practical target profile for local developer setups.
+
+| Tier | Typical Model Class | Target Throughput (tok/s) | Target First-Token Latency |
+| --- | --- | ---: | ---: |
+| fast | 1B-3B | 35-90 | 250-900 ms |
+| default | 7B-8B | 18-45 | 500-1800 ms |
+| reasoning | 20B-30B | 8-25 | 1200-5000 ms |
+
+How to benchmark Apex consistently:
+
+1. Warm each tier with one request.
+2. Run 20 prompts per tier (task_type mixed: code, reasoning, factual).
+3. Compute p50 and p95 for first-token latency and output throughput.
+4. Publish a monthly snapshot in README to build trust with visitors.
+
+Reference command:
+
+python evals/run_evals.py --url http://127.0.0.1:8000 --key YOUR_API_KEY
 
 ## Quick Start
 

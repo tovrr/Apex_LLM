@@ -1,0 +1,43 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1324"/>
+      <stop offset="1" stop-color="#162644"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="220" y1="120" x2="980" y2="520" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF6B35"/>
+      <stop offset="1" stop-color="#2DD4BF"/>
+    </linearGradient>
+    <filter id="blur" x="0" y="0" width="1200" height="630" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="32"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" rx="28" fill="url(#bg)"/>
+
+  <g opacity="0.28" filter="url(#blur)">
+    <circle cx="260" cy="170" r="140" fill="#FF6B35"/>
+    <circle cx="970" cy="440" r="180" fill="#2DD4BF"/>
+  </g>
+
+  <rect x="72" y="72" width="1056" height="486" rx="22" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)"/>
+
+  <text x="110" y="180" fill="#FFFFFF" font-family="Segoe UI, Arial, sans-serif" font-size="64" font-weight="700">Apex LLM</text>
+  <text x="110" y="230" fill="#AFC5EB" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="500">Private AI Workspace Platform</text>
+
+  <g>
+    <rect x="110" y="286" width="260" height="70" rx="14" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.16)"/>
+    <text x="132" y="328" fill="#E6F0FF" font-family="Consolas, monospace" font-size="24" font-weight="700">Streaming API</text>
+
+    <rect x="390" y="286" width="320" height="70" rx="14" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.16)"/>
+    <text x="412" y="328" fill="#E6F0FF" font-family="Consolas, monospace" font-size="24" font-weight="700">Usage Metering</text>
+
+    <rect x="730" y="286" width="300" height="70" rx="14" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.16)"/>
+    <text x="752" y="328" fill="#E6F0FF" font-family="Consolas, monospace" font-size="24" font-weight="700">Model Routing</text>
+  </g>
+
+  <text x="110" y="430" fill="#AFC5EB" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="500">FastAPI • SSE • Evals • Quotas • Tools • Retrieval-Ready</text>
+
+  <rect x="110" y="468" width="420" height="46" rx="10" fill="url(#accent)"/>
+  <text x="130" y="498" fill="#08111F" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700">Build, Measure, Route, Scale</text>
+</svg>
