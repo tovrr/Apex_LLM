@@ -1,0 +1,50 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" rx="24" fill="#0D152B"/>
+  <text x="42" y="56" fill="#EFF6FF" font-family="Segoe UI, Arial" font-size="34" font-weight="700">Apex LLM Architecture</text>
+
+  <g>
+    <rect x="60" y="120" width="220" height="84" rx="12" fill="#1A2A4A" stroke="#3A5484"/>
+    <text x="86" y="166" fill="#D9E8FF" font-family="Segoe UI, Arial" font-size="21" font-weight="600">Quill / UI Client</text>
+
+    <rect x="340" y="120" width="220" height="84" rx="12" fill="#1A2A4A" stroke="#3A5484"/>
+    <text x="362" y="166" fill="#D9E8FF" font-family="Segoe UI, Arial" font-size="21" font-weight="600">Secure Proxy</text>
+
+    <rect x="620" y="120" width="250" height="84" rx="12" fill="#1A2A4A" stroke="#3A5484"/>
+    <text x="652" y="166" fill="#D9E8FF" font-family="Segoe UI, Arial" font-size="21" font-weight="600">FastAPI Gateway</text>
+
+    <rect x="930" y="120" width="210" height="84" rx="12" fill="#1A2A4A" stroke="#3A5484"/>
+    <text x="958" y="166" fill="#D9E8FF" font-family="Segoe UI, Arial" font-size="21" font-weight="600">Model Router</text>
+
+    <path d="M280 162H340" stroke="#FF8A5B" stroke-width="4"/>
+    <path d="M560 162H620" stroke="#FF8A5B" stroke-width="4"/>
+    <path d="M870 162H930" stroke="#FF8A5B" stroke-width="4"/>
+  </g>
+
+  <g>
+    <rect x="120" y="290" width="280" height="100" rx="14" fill="#12203D" stroke="#3A5484"/>
+    <text x="150" y="336" fill="#CFE3FF" font-family="Segoe UI, Arial" font-size="24" font-weight="600">Auth + Quotas</text>
+
+    <rect x="460" y="290" width="280" height="100" rx="14" fill="#12203D" stroke="#3A5484"/>
+    <text x="490" y="336" fill="#CFE3FF" font-family="Segoe UI, Arial" font-size="24" font-weight="600">Streaming + v2 API</text>
+
+    <rect x="800" y="290" width="280" height="100" rx="14" fill="#12203D" stroke="#3A5484"/>
+    <text x="836" y="336" fill="#CFE3FF" font-family="Segoe UI, Arial" font-size="24" font-weight="600">Evals + Reports</text>
+  </g>
+
+  <g>
+    <rect x="120" y="474" width="240" height="112" rx="14" fill="#1B2B4F" stroke="#4A6AA3"/>
+    <text x="152" y="520" fill="#EAF3FF" font-family="Segoe UI, Arial" font-size="22" font-weight="600">fast</text>
+    <text x="152" y="552" fill="#9EC0F0" font-family="Segoe UI, Arial" font-size="17">1B-3B local</text>
+
+    <rect x="418" y="474" width="280" height="112" rx="14" fill="#1B2B4F" stroke="#4A6AA3"/>
+    <text x="450" y="520" fill="#EAF3FF" font-family="Segoe UI, Arial" font-size="22" font-weight="600">default</text>
+    <text x="450" y="552" fill="#9EC0F0" font-family="Segoe UI, Arial" font-size="17">7B-8B sweet spot</text>
+
+    <rect x="756" y="474" width="324" height="112" rx="14" fill="#1B2B4F" stroke="#4A6AA3"/>
+    <text x="788" y="520" fill="#EAF3FF" font-family="Segoe UI, Arial" font-size="22" font-weight="600">reasoning</text>
+    <text x="788" y="552" fill="#9EC0F0" font-family="Segoe UI, Arial" font-size="17">27B heavy expert</text>
+  </g>
+
+  <path d="M1035 204V262" stroke="#FF8A5B" stroke-width="4"/>
+  <path d="M1035 390V474" stroke="#FF8A5B" stroke-width="4"/>
+</svg>

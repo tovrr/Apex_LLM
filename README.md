@@ -11,6 +11,20 @@ Private AI workspace for builders and teams.
 
 Apex LLM is a production-minded local AI platform with streaming chat, secure API keys, usage metering, evals, and model-tier routing.
 
+## Live Demo
+
+![Apex Demo](assets/apex-demo.svg)
+
+Live endpoints:
+
+- Control Deck: http://127.0.0.1:8000/
+- Developer docs: http://127.0.0.1:8000/developer
+- Pricing draft: http://127.0.0.1:8000/pricing
+
+## Architecture
+
+![Apex Architecture](assets/architecture.svg)
+
 ## Why Apex
 
 - Modern API stack: FastAPI + SSE streaming + request IDs.
@@ -139,6 +153,26 @@ These routes inject secrets server-side and keep browser/mobile clients key-safe
 - Public API docs hardening.
 - Billing provider wiring on top of usage_events.
 - Retrieval layer and enterprise controls.
+
+## Public Roadmap
+
+### Q2 2026
+
+- Harden API docs and SDK examples.
+- Add production billing hooks and token bundles.
+- Launch retrieval v1 with citations and scoped context.
+
+### Q3 2026
+
+- Team workspaces with RBAC and audit trails.
+- Latency and quality dashboards by model tier.
+- Reliability targets and incident runbook publication.
+
+### Q4 2026
+
+- Advanced tool orchestration for coding workflows.
+- Enterprise controls: retention and policy layers.
+- Public benchmark board for monthly model comparisons.
 
 ## Contributing
 
