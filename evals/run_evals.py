@@ -77,13 +77,14 @@ def call_apex(
     api_key: str,
     question: str,
     mots_max: int = 200,
+    model_tier: str = "default",
     timeout: int = 30,
 ) -> tuple[str, float]:
     """
     Call POST /chat. Returns (response_text, latency_ms).
     Raises urllib.error.URLError on network failure.
     """
-    payload = json.dumps({"question": question, "mots_max": mots_max}).encode()
+    payload = json.dumps({"question": question, "mots_max": mots_max, "model_tier": model_tier}).encode()
     req = urllib.request.Request(
         f"{base_url.rstrip('/')}/chat",
         data=payload,
@@ -115,6 +116,7 @@ def run_evals(
     api_key: str,
     prompts_path: str,
     out_dir: str,
+    model_tier: str,
     timeout: int,
 ) -> int:
     """
@@ -136,7 +138,13 @@ def run_evals(
         prompt = case["prompt"]
 
         try:
-            response_text, latency_ms = call_apex(base_url, api_key, prompt, timeout=timeout)
+            response_text, latency_ms = call_apex(
+                base_url,
+                api_key,
+                prompt,
+                model_tier=model_tier,
+                timeout=timeout,
+            )
             verdict = score_response(response_text, case)
             status = "pass" if verdict["passed"] else "fail"
             if verdict["passed"]:
@@ -187,6 +195,7 @@ def run_evals(
     report = {
         "timestamp":      datetime.now(timezone.utc).isoformat(),
         "apex_url":       base_url,
+        "model_tier":     model_tier,
         "total":          total,
         "passed":         passed_count,
         "failed":         failed_count,
@@ -230,6 +239,7 @@ def main() -> None:
     parser.add_argument("--key",     default=os.getenv("APEX_API_KEY", ""), help="Apex API key")
     parser.add_argument("--prompts", default=os.path.join(here, "golden_prompts.jsonl"))
     parser.add_argument("--out",     default=os.path.join(here, "reports"))
+    parser.add_argument("--model-tier", default="fast", choices=["fast", "default", "reasoning"])
     parser.add_argument("--timeout", type=int, default=30)
     args = parser.parse_args()
 
@@ -237,7 +247,7 @@ def main() -> None:
         print("ERROR: No API key. Pass --key or set APEX_API_KEY in .env", file=sys.stderr)
         sys.exit(1)
 
-    sys.exit(run_evals(args.url, args.key, args.prompts, args.out, args.timeout))
+    sys.exit(run_evals(args.url, args.key, args.prompts, args.out, args.model_tier, args.timeout))
 
 
 if __name__ == "__main__":
