@@ -30,5 +30,6 @@ jobs:
           APEX_SKIP_MODEL_LOAD: "1"
           APEX_RATE_LIMIT_PER_WINDOW: "200"
           APEX_KEYS_DB: "${{ github.workspace }}/data/apex_keys_ci.db"
+          PYTHONPATH: "${{ github.workspace }}"
         run: |
-          pytest -q
+          python -m pytest -q
