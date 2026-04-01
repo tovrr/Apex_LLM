@@ -47,7 +47,7 @@ The table below is a practical target profile for local developer setups.
 
 | Tier | Typical Model Class | Target Throughput (tok/s) | Target First-Token Latency |
 | --- | --- | ---: | ---: |
-| fast | 1B-3B | 35-90 | 250-900 ms |
+| fast | Phi-3 Mini 3.8B | 35-90 | 250-900 ms |
 | default | 7B-8B | 18-45 | 500-1800 ms |
 | reasoning | 20B-30B | 8-25 | 1200-5000 ms |
 
@@ -111,9 +111,9 @@ GET /api/tools
 
 ## Model Tiers
 
-- fast: lightweight local fallback.
-- default: 7B/8B sweet spot for daily usage.
-- reasoning: heavy model for complex coding and reasoning tasks.
+- **fast**: [Phi-3 Mini 4k (3.8B)](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct) — best intelligence/memory ratio for CPU-only (i7 + 16 GB RAM).
+- **default**: 7B/8B sweet spot for daily usage (Qwen 2.5 7B recommended).
+- **reasoning**: heavy model for complex coding and reasoning tasks (Qwen 3.5 27B Opus Distilled).
 
 Configured in .env with:
 - APEX_MODEL_DEFAULT_TIER

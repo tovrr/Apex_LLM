@@ -143,7 +143,7 @@ class _FakeTokenizer:
 
 
 MODEL_TIERS = ("fast", "default", "reasoning")
-DEFAULT_MODEL_NAME = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+DEFAULT_MODEL_NAME = "microsoft/Phi-3-mini-4k-instruct"
 DEFAULT_MODEL_TIER = os.getenv("APEX_MODEL_DEFAULT_TIER", "default")
 
 MODEL_NAMES: dict[str, str] = {
@@ -196,7 +196,7 @@ def _charger_modele_runtime(tier: str | None = None) -> str:
 
         try:
             nom_modele_base = MODEL_NAMES[selected_tier]
-            tokenizer = AutoTokenizer.from_pretrained(nom_modele_base)
+            tokenizer = AutoTokenizer.from_pretrained(nom_modele_base, trust_remote_code=True)
 
             utilise_cuda = torch.cuda.is_available()
             dtype_modele = torch.float16 if utilise_cuda else torch.float32
@@ -207,6 +207,7 @@ def _charger_modele_runtime(tier: str | None = None) -> str:
                 nom_modele_base,
                 torch_dtype=dtype_modele,
                 device_map=device_map_modele,
+                trust_remote_code=True,
             )
 
             dossier_lora = MODEL_LORA_DIRS.get(selected_tier, "")

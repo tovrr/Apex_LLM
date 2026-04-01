@@ -10,10 +10,25 @@ print("==========================================")
 print("🚀 DÉMARRAGE DU FINE-TUNING APEX (AVEC LoRA)")
 print("==========================================")
 
+# Garde CPU : BitsAndBytes 4-bit requiert un GPU.
+# Sur CPU seul, on valide uniquement la pipeline de données (smoke test partiel).
+if not torch.cuda.is_available():
+    print("⚠️  Pas de GPU détecté — validation de la pipeline de données uniquement.")
+    from datasets import load_dataset as _ld
+    _ds = _ld("json", data_files="dataset_expert.json", split="train")
+    def _fmt(ex):
+        return {"text": f"<|user|>\n{ex['instruction']}\n<|assistant|>\n{ex['output']}"}
+    _ds_fmt = _ds.map(_fmt)
+    print(f"\n✅ Dataset chargé : {len(_ds_fmt)} exemples")
+    print("\n🔎 Premier prompt formaté (smoke test) :")
+    print(_ds_fmt[0]["text"])
+    print("\n✅ Pipeline data OK — lance le script sur une machine avec GPU pour l'entraînement complet.")
+    raise SystemExit(0)
+
 # 1. LE CHOIX DU MODÈLE DE BASE
-# On prend TinyLlama (1.1 Milliard de paramètres) car il tourne sur presque tous les PC.
-# (Tu pourras le remplacer par "mistralai/Mistral-7B-v0.1" si tu as un très gros PC plus tard)
-nom_modele = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+# On utilise Phi-3 Mini (3.8B) de Microsoft — meilleur ratio intelligence/mémoire pour CPU i7 + 16 Go RAM.
+# (Tu pourras le remplacer par "Qwen/Qwen2.5-7B-Instruct" si tu as un PC plus puissant)
+nom_modele = "microsoft/Phi-3-mini-4k-instruct"
 
 # 2. LA COMPRESSION (4-bit)
 # On compresse le modèle pour qu'il rentre dans ta carte graphique
@@ -31,7 +46,8 @@ modele_base = AutoModelForCausalLM.from_pretrained(
     nom_modele,
     quantization_config=quant_config,
     torch_dtype=torch.float16,
-    device_map="auto"
+    device_map="auto",
+    attn_implementation="eager",
 )
 
 # 3. LA CONFIGURATION LORA (La Clé USB de personnalité)
@@ -50,15 +66,16 @@ modele_apex.print_trainable_parameters()
 # Tu verras qu'on n'entraîne qu'environ 0.1% du modèle entier !
 
 # 4. LES DONNÉES D'ENTRAÎNEMENT (Ce qu'on veut lui apprendre)
-# Pour l'exemple, on télécharge un mini dataset de citations/instructions
-dataset = load_dataset("Abirate/english_quotes", split="train[:500]")
+# Chargement du dataset local de distillation
+dataset = load_dataset("json", data_files="dataset_expert.json", split="train")
 
 def format_prompt(exemple):
-    # On explique au modèle comment formuler sa réponse
-    texte = f"<|user|>\nVoici une citation :\n<|assistant|>\n{exemple['quote']} - {exemple['author']}"
+    texte = f"<|user|>\n{exemple['instruction']}\n<|assistant|>\n{exemple['output']}"
     return {"text": texte}
 
 dataset_formate = dataset.map(format_prompt)
+print("\n🔎 Premier prompt formaté (smoke test):")
+print(dataset_formate[0]["text"])
 
 # 5. L'ENTRAÎNEMENT AUTOMATIQUE (Grâce à TRL)
 # SFTTrainer (Supervised Fine-Tuning) gère toute la boucle compliquée qu'on codait à la main avant !
@@ -68,7 +85,7 @@ parametres_entrainement = TrainingArguments(
     gradient_accumulation_steps=4,
     learning_rate=2e-4,
     logging_steps=10,
-    max_steps=10, # On fait juste 100 étapes pour ce test rapide
+    max_steps=10, # Smoke test rapide
     optim="paged_adamw_8bit"
 )
 
