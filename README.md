@@ -1,56 +1,126 @@
-# Model Card for apex_lora_sauvegarde
+# Apex LLM
 
-## Metadata
+Apex LLM is a local-first FastAPI gateway for chat inference, model-tier routing, usage metering, and LoRA experimentation.
 
-- Base model: TinyLlama/TinyLlama-1.1B-Chat-v1.0
-- Library: peft
-- Pipeline: text-generation
-- Tags: lora, sft, transformers, trl
-- License: license
+![Apex Hero](assets/apex-hero.svg)
 
-## Summary
+[![CI](https://github.com/tovrr/Apex_LLM/actions/workflows/ci.yml/badge.svg)](https://github.com/tovrr/Apex_LLM/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/Python-3.12-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-API-0ea5e9)
 
-This model is a fine-tuned version of [TinyLlama/TinyLlama-1.1B-Chat-v1.0](https://huggingface.co/TinyLlama/TinyLlama-1.1B-Chat-v1.0).
-It has been trained using [TRL](https://github.com/huggingface/trl).
+## What You Get
+
+- FastAPI chat API with API-key auth and quotas.
+- Request-id structured logging and usage ledger.
+- Model tiers: fast, default, reasoning.
+- v2 chat contract with context chunks and tools metadata.
+- LoRA training pipeline with Colab-ready notebook.
+- Quill proxy templates for server-side key injection.
+
+## Architecture
+
+![Apex Architecture](assets/architecture.svg)
+
+## Live Demo Snapshot
+
+![Apex Demo](assets/apex-demo.svg)
+
+## Current Model Routing
+
+- fast: microsoft/Phi-3-mini-4k-instruct
+- default: Qwen/Qwen2.5-7B-Instruct
+- reasoning: Jackrong/Qwen3.5-27B-Claude-4.6-Opus-Reasoning-Distilled
+
+Routing is configured via environment variables in [.env.example](.env.example).
 
 ## Quick Start
 
-```python
-from transformers import pipeline
+### 1) Install dependencies
 
-question = "If you had a time machine, but could only go to the past or the future once and never return, which would you choose and why?"
-generator = pipeline("text-generation", model="None", device="cuda")
-output = generator(
-    [{"role": "user", "content": question}],
-    max_new_tokens=128,
-    return_full_text=False,
-)[0]
-print(output["generated_text"])
+```powershell
+python -m venv venv
+venv\Scripts\python.exe -m pip install --upgrade pip
+venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-## Training Procedure
+### 2) Configure environment
 
-This model was trained with SFT.
+Create [.env](.env) from [.env.example](.env.example) and set at least:
 
-### Framework Versions
-
-- PEFT: 0.18.1
-- TRL: 0.29.1
-- Transformers: 5.0.0
-- PyTorch: 2.10.0+cu128
-- Datasets: 4.0.0
-- Tokenizers: 0.22.2
-
-## Citation
-
-Cite TRL as:
-
-```bibtex
-@software{vonwerra2020trl,
-  title   = {{TRL: Transformers Reinforcement Learning}},
-  author  = {von Werra, Leandro and Belkada, Younes and Tunstall, Lewis and Beeching, Edward and Thrush, Tristan and Lambert, Nathan and Huang, Shengyi and Rasul, Kashif and Gallouédec, Quentin},
-  license = {Apache-2.0},
-  url     = {https://github.com/huggingface/trl},
-  year    = {2020}
-}
+```dotenv
+APEX_API_KEY=your_key_here
+APEX_MODEL_FAST_NAME=microsoft/Phi-3-mini-4k-instruct
+APEX_MODEL_FAST_LORA_DIR=./apex_lora_sauvegarde
 ```
+
+For local low-RAM development, you can bypass heavy model loading:
+
+```dotenv
+APEX_SKIP_MODEL_LOAD=1
+```
+
+### 3) Run API
+
+```powershell
+venv\Scripts\python.exe -m uvicorn serveur_api:app --reload
+```
+
+Health check:
+
+```powershell
+Invoke-RestMethod -Uri "http://127.0.0.1:8000/health" -Method GET
+```
+
+## API Surface
+
+- POST /chat
+- POST /chat/stream
+- POST /chat/v2
+- GET /api/tools
+- GET /api/usage
+- GET /api/status
+- GET /api/runs
+- GET /developer
+- GET /pricing
+
+## Distillation Workflow
+
+### Local validation
+
+Validate dataset file format and minimum size:
+
+```powershell
+venv\Scripts\python.exe evals/validate_dataset_expert.py --file dataset_expert.json --min-count 100
+```
+
+Generate a 100-example template dataset (project helper):
+
+```powershell
+venv\Scripts\python.exe evals/generate_dataset_expert_100.py
+```
+
+### GPU training (Colab)
+
+Use [colab_smoke_test.ipynb](colab_smoke_test.ipynb), then export apex_lora_final.zip and update [apex_lora_sauvegarde](apex_lora_sauvegarde).
+
+## Testing
+
+```powershell
+venv\Scripts\python.exe -m pytest -q
+```
+
+CI runs on push and pull request through [ci.yml](.github/workflows/ci.yml).
+
+## Repository Map
+
+- [serveur_api.py](serveur_api.py): FastAPI server and model routing.
+- [key_store.py](key_store.py): API keys, quotas, usage events.
+- [apex_lora.py](apex_lora.py): LoRA training entrypoint.
+- [dataset_expert.json](dataset_expert.json): Distillation dataset.
+- [evals](evals): Dataset validation and eval helpers.
+- [quill-proxy](quill-proxy): Next.js proxy templates.
+
+## Notes
+
+- Keep secrets out of git. Use [.env](.env) locally.
+- LoRA artifacts and backups should stay local unless intentionally published.
