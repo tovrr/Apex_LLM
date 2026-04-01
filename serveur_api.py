@@ -196,7 +196,7 @@ def _charger_modele_runtime(tier: str | None = None) -> str:
 
         try:
             nom_modele_base = MODEL_NAMES[selected_tier]
-            tokenizer = AutoTokenizer.from_pretrained(nom_modele_base, trust_remote_code=True)
+            tokenizer = AutoTokenizer.from_pretrained(nom_modele_base)
 
             utilise_cuda = torch.cuda.is_available()
             dtype_modele = torch.float16 if utilise_cuda else torch.float32
@@ -207,7 +207,7 @@ def _charger_modele_runtime(tier: str | None = None) -> str:
                 nom_modele_base,
                 torch_dtype=dtype_modele,
                 device_map=device_map_modele,
-                trust_remote_code=True,
+                attn_implementation="eager",
             )
 
             dossier_lora = MODEL_LORA_DIRS.get(selected_tier, "")

@@ -106,6 +106,18 @@ def _connect() -> sqlite3.Connection:
     return conn
 
 
+def _ensure_events_schema(conn: sqlite3.Connection) -> None:
+    """Backfill columns for older DB files created before schema extensions."""
+    cols = {
+        row["name"]
+        for row in conn.execute("PRAGMA table_info(usage_events)").fetchall()
+    }
+    if "task_type" not in cols:
+        conn.execute(
+            "ALTER TABLE usage_events ADD COLUMN task_type TEXT NOT NULL DEFAULT 'default'"
+        )
+
+
 # ── Public API ─────────────────────────────────────────────────────────────────
 
 
@@ -120,6 +132,7 @@ def init_db() -> None:
                 stmt = stmt.strip()
                 if stmt:
                     conn.execute(stmt)
+            _ensure_events_schema(conn)
             conn.commit()
 
 
