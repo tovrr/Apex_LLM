@@ -113,6 +113,19 @@ body {
 }
 
 .workspace {
+  display: block;
+}
+
+.workspace-view {
+  display: none;
+}
+
+.workspace-view.active {
+  display: block;
+  animation: reveal 0.24s ease both;
+}
+
+.chatops-grid {
   display: grid;
   grid-template-columns: 1.1fr 1fr;
   gap: 14px;
@@ -252,6 +265,186 @@ button {
   display: block;
 }
 
+.view-card {
+  min-height: 520px;
+}
+
+.view-note {
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin-top: 0;
+}
+
+.deck-data {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  min-height: 390px;
+  padding: 12px;
+  white-space: pre-wrap;
+  overflow: auto;
+  background: #fff;
+  font-family: "IBM Plex Mono", monospace;
+  margin: 0;
+}
+
+.view-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+.view-actions.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.inline-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ── Ollama Setup Panel ──────────────────────────────────────────────────── */
+.ollama-setup-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.ollama-header-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ollama-label {
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.6;
+}
+
+.ollama-url-label {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78rem;
+  opacity: 0.55;
+  flex: 1;
+}
+
+.ollama-models-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ollama-model-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: 0.85rem;
+}
+
+.ollama-model-row.ready {
+  border-color: rgba(34, 197, 94, 0.3);
+  background: rgba(34, 197, 94, 0.05);
+}
+
+.ollama-model-row.missing {
+  border-color: rgba(234, 88, 12, 0.3);
+  background: rgba(234, 88, 12, 0.04);
+}
+
+.ollama-model-row.error-row {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.model-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-ok   { background: #22c55e; }
+.dot-missing { background: #ea580c; }
+
+.model-name {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 500;
+  flex: 1;
+}
+
+.tier-tag {
+  font-size: 0.72rem;
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: rgba(0,0,0,0.07);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.model-status-text {
+  font-size: 0.78rem;
+  opacity: 0.55;
+}
+
+.model-error {
+  color: #c53030;
+  font-size: 0.82rem;
+}
+
+.model-hint {
+  font-size: 0.78rem;
+  opacity: 0.6;
+}
+
+.model-hint code {
+  font-family: "IBM Plex Mono", monospace;
+  background: rgba(0,0,0,0.07);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+button.small {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.ollama-pull-log {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.75rem;
+  background: #0d0d0d;
+  color: #a3e635;
+  padding: 10px 14px;
+  border-radius: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  margin-top: 4px;
+}
+
+.view-sep {
+  border: none;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  margin: 14px 0;
+}
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+
 #answer {
   font-family: "Space Grotesk", sans-serif;
   line-height: 1.45;
@@ -301,7 +494,11 @@ button {
     grid-template-columns: 1fr;
   }
 
-  .workspace {
+  .chatops-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .view-actions.two-col {
     grid-template-columns: 1fr;
   }
 }

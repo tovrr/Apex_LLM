@@ -41,66 +41,201 @@
 
     <main class="layout">
       <aside class="nav-panel">
-        <button class="nav-item active">Chat Ops</button>
-        <button class="nav-item">Prompt Lab</button>
-        <button class="nav-item">Runs</button>
-        <button class="nav-item">Adapters</button>
-        <button class="nav-item">Datasets</button>
-        <button class="nav-item">Eval</button>
-        <button class="nav-item">Deploy</button>
+        <button class="nav-item active" data-view="chat-ops">Chat Ops</button>
+        <button class="nav-item" data-view="prompt-lab">Prompt Lab</button>
+        <button class="nav-item" data-view="runs">Runs</button>
+        <button class="nav-item" data-view="adapters">Adapters</button>
+        <button class="nav-item" data-view="datasets">Datasets</button>
+        <button class="nav-item" data-view="eval">Eval</button>
+        <button class="nav-item" data-view="deploy">Deploy</button>
       </aside>
 
       <section class="workspace">
-        <div class="composer card">
-          <h2>Structured Prompt Composer</h2>
-          <div class="signal-row">
-            <div class="signal-pill" id="authBadge">Auth: missing</div>
-            <div class="signal-pill" id="runtimeBadge">Runtime: idle</div>
-            <div class="signal-pill" id="runBadge">Run: none</div>
-          </div>
-          <label for="presetSelect">Prompt Preset</label>
-          <select id="presetSelect">
-            <option value="">Select a preset...</option>
-            <option value="quick_brief">Quick brief (concise answer)</option>
-            <option value="debug_api">Debug API issue</option>
-            <option value="product_copy">Product copy generation</option>
-            <option value="code_review">Code review findings</option>
-          </select>
-          <label for="question">User Query</label>
-          <textarea id="question" placeholder="Describe your task for Apex..."></textarea>
+        <div class="workspace-view active" data-view="chat-ops">
+          <div class="chatops-grid">
+            <div class="composer card">
+              <h2>Structured Prompt Composer</h2>
+              <div class="signal-row">
+                <div class="signal-pill" id="authBadge">Auth: missing</div>
+                <div class="signal-pill" id="runtimeBadge">Runtime: idle</div>
+                <div class="signal-pill" id="runBadge">Run: none</div>
+              </div>
+              <label for="presetSelect">Prompt Preset</label>
+              <select id="presetSelect">
+                <option value="">Select a preset...</option>
+                <option value="quick_brief">Quick brief (concise answer)</option>
+                <option value="debug_api">Debug API issue</option>
+                <option value="product_copy">Product copy generation</option>
+                <option value="code_review">Code review findings</option>
+              </select>
+              <label for="question">User Query</label>
+              <textarea id="question" placeholder="Describe your task for Apex..."></textarea>
 
-          <div class="controls-row">
-            <div>
-              <label for="maxTokens">Max Tokens</label>
-              <input id="maxTokens" type="number" min="1" max="500" value="120" />
-            </div>
-            <div>
-              <label for="apiKey">X-API-Key</label>
-              <input id="apiKey" type="password" placeholder="Paste API key" />
-            </div>
-          </div>
+              <div class="controls-row">
+                <div>
+                  <label for="maxTokens">Max Tokens</label>
+                  <input id="maxTokens" type="number" min="1" max="500" value="120" />
+                </div>
+                <div>
+                  <label for="apiKey">X-API-Key</label>
+                  <input id="apiKey" type="password" placeholder="Paste API key" />
+                </div>
+              </div>
 
-          <div class="actions">
-            <button id="runBtn" class="primary">Run Once</button>
-            <button id="clearBtn" class="secondary">Clear</button>
-            <button id="exportBtn" class="secondary">Export Session</button>
+              <div class="actions">
+                <button id="runBtn" class="primary">Run Once</button>
+                <button id="clearBtn" class="secondary">Clear</button>
+                <button id="exportBtn" class="secondary">Export Session</button>
+              </div>
+            </div>
+
+            <div class="output card">
+              <div class="tabs">
+                <button class="tab active" data-tab="answer">Answer</button>
+                <button class="tab" data-tab="trace">Trace</button>
+                <button class="tab" data-tab="metrics">Metrics</button>
+                <button class="tab" data-tab="runs">Runs</button>
+                <button class="tab" data-tab="raw">Raw JSON</button>
+              </div>
+
+              <div id="answer" class="tab-panel active"></div>
+              <pre id="trace" class="tab-panel"></pre>
+              <pre id="metrics" class="tab-panel"></pre>
+              <pre id="runs" class="tab-panel"></pre>
+              <pre id="raw" class="tab-panel"></pre>
+            </div>
           </div>
         </div>
 
-        <div class="output card">
-          <div class="tabs">
-            <button class="tab active" data-tab="answer">Answer</button>
-            <button class="tab" data-tab="trace">Trace</button>
-            <button class="tab" data-tab="metrics">Metrics</button>
-            <button class="tab" data-tab="runs">Runs</button>
-            <button class="tab" data-tab="raw">Raw JSON</button>
+        <div class="workspace-view" data-view="prompt-lab">
+          <div class="card view-card">
+            <h2>Prompt Lab</h2>
+            <p class="view-note">Preset catalog and available model/tool capabilities.</p>
+            <div class="view-actions">
+              <button id="promptLabRefreshBtn" class="secondary">Refresh Capabilities</button>
+            </div>
+            <pre id="promptLabContent" class="deck-data"></pre>
           </div>
+        </div>
 
-          <div id="answer" class="tab-panel active"></div>
-          <pre id="trace" class="tab-panel"></pre>
-          <pre id="metrics" class="tab-panel"></pre>
-          <pre id="runs" class="tab-panel"></pre>
-          <pre id="raw" class="tab-panel"></pre>
+        <div class="workspace-view" data-view="runs">
+          <div class="card view-card">
+            <h2>Runs</h2>
+            <p class="view-note">Latest execution history from server run ledger.</p>
+            <div class="view-actions">
+              <button id="runsRefreshBtn" class="secondary">Refresh Runs</button>
+            </div>
+            <pre id="runsPageContent" class="deck-data"></pre>
+          </div>
+        </div>
+
+        <div class="workspace-view" data-view="adapters">
+          <div class="card view-card">
+            <h2>Adapters</h2>
+            <p class="view-note">Current model and adapter runtime state.</p>
+            <div class="view-actions two-col">
+              <div>
+                <label for="adapterTierSelect">Tier</label>
+                <select id="adapterTierSelect">
+                  <option value="fast">fast</option>
+                  <option value="default">default</option>
+                  <option value="reasoning">reasoning</option>
+                </select>
+              </div>
+              <div class="inline-buttons">
+                <button id="adapterDefaultBtn" class="secondary">Set Default Tier</button>
+                <button id="adapterReloadBtn" class="secondary">Reload Tier</button>
+              </div>
+            </div>
+            <pre id="adaptersContent" class="deck-data"></pre>
+          </div>
+        </div>
+
+        <div class="workspace-view" data-view="datasets">
+          <div class="card view-card">
+            <h2>Datasets</h2>
+            <p class="view-note">Retrieval contract and context chunk limits from API capabilities.</p>
+            <div class="view-actions two-col">
+              <div>
+                <label for="datasetFileInput">Dataset File</label>
+                <input id="datasetFileInput" type="text" value="dataset_expert.json" />
+              </div>
+              <div>
+                <label for="datasetMinCountInput">Min Count</label>
+                <input id="datasetMinCountInput" type="number" min="1" value="100" />
+              </div>
+            </div>
+            <div class="view-actions">
+              <button id="datasetValidateBtn" class="secondary">Validate Dataset</button>
+            </div>
+            <pre id="datasetsContent" class="deck-data"></pre>
+          </div>
+        </div>
+
+        <div class="workspace-view" data-view="eval">
+          <div class="card view-card">
+            <h2>Eval</h2>
+            <p class="view-note">Current model routing and tool-calling feature contract.</p>
+            <div class="view-actions two-col">
+              <div>
+                <label for="evalTierSelect">Model Tier</label>
+                <select id="evalTierSelect">
+                  <option value="fast">fast</option>
+                  <option value="default">default</option>
+                  <option value="reasoning">reasoning</option>
+                </select>
+              </div>
+              <div>
+                <label for="evalPromptsInput">Prompts File</label>
+                <input id="evalPromptsInput" type="text" value="evals/golden_prompts.jsonl" />
+              </div>
+            </div>
+            <div class="view-actions">
+              <button id="evalRunBtn" class="secondary">Run Eval Job</button>
+              <button id="evalJobsRefreshBtn" class="secondary">Refresh Jobs</button>
+            </div>
+            <pre id="evalContent" class="deck-data"></pre>
+          </div>
+        </div>
+
+        <div class="workspace-view" data-view="deploy">
+          <div class="card view-card">
+            <h2>Deploy &amp; Ollama Setup</h2>
+            <p class="view-note">Ollama connection health, model presence, and usage summary.</p>
+
+            <div class="ollama-setup-grid" id="ollamaSetupGrid">
+              <div class="ollama-header-row">
+                <span class="ollama-label">Ollama</span>
+                <span class="signal-pill" id="ollamaConnPill">Checking…</span>
+                <span id="ollamaUrlLabel" class="ollama-url-label"></span>
+                <button id="ollamaRefreshBtn" class="secondary small">Refresh</button>
+              </div>
+              <div class="ollama-models-list" id="ollamaModelsList">
+                <div class="ollama-model-row skeleton">
+                  <span>Loading…</span>
+                </div>
+              </div>
+              <div class="ollama-pull-log" id="ollamaPullLog" style="display:none"></div>
+            </div>
+
+            <hr class="view-sep" />
+
+            <div class="view-actions two-col">
+              <div>
+                <label for="deployTierSelect">Warm Tier</label>
+                <select id="deployTierSelect">
+                  <option value="fast">fast</option>
+                  <option value="default">default</option>
+                  <option value="reasoning">reasoning</option>
+                </select>
+              </div>
+              <div class="inline-buttons">
+                <button id="deployReloadBtn" class="secondary">Reload Runtime</button>
+                <button id="deployUsageBtn" class="secondary">Refresh Usage</button>
+              </div>
+            </div>
+            <pre id="deployContent" class="deck-data"></pre>
+          </div>
         </div>
       </section>
     </main>

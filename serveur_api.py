@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 import torch
 import os
 import logging
-from typing import Any, Literal, cast
+from typing import Any, Literal, AsyncIterator, cast
 import asyncio
 import time
 import json
@@ -121,7 +121,7 @@ async def request_context_middleware(request: Request, call_next: Any) -> Any:
 # ==========================================
 # 2. LE CHEF CUISINIER (Fusion Base + LoRA)
 # ==========================================
-print("👨‍🍳 Le serveur s'allume...")
+print("[apex] Le serveur s'allume...")
 
 
 class _FakeModel:
@@ -168,6 +168,12 @@ OLLAMA_MODEL_NAMES: dict[str, str] = {
     "reasoning": os.getenv("APEX_OLLAMA_MODEL_REASONING", "qwen2.5:14b"),
 }
 OLLAMA_NUM_CTX = int(os.getenv("APEX_OLLAMA_NUM_CTX", "4096"))
+APEX_OLLAMA_COMPAT_REQUIRE_KEY = (os.getenv("APEX_OLLAMA_COMPAT_REQUIRE_KEY", "0") or "0").strip().lower() in {
+    "1",
+    "true",
+    "yes",
+    "on",
+}
 
 
 def _ollama_active() -> bool:
@@ -186,6 +192,100 @@ def _normalize_tier(tier: str | None) -> str:
     if candidate not in MODEL_TIERS:
         return "default"
     return candidate
+
+
+def _tier_from_ollama_model(model: str | None) -> str:
+    candidate = (model or "").strip().lower()
+    # Strip provider prefix — e.g. "ollama/apex:fast" → "apex:fast"
+    if "/" in candidate:
+        candidate = candidate.rsplit("/", 1)[-1]
+    if not candidate:
+        return _normalize_tier(None)
+
+    static_map = {
+        "apex:fast": "fast",
+        "apex:default": "default",
+        "apex:reasoning": "reasoning",
+        # Accept raw Ollama model names as tier aliases
+        "phi3:mini": "fast",
+        "phi3": "fast",
+        "qwen2.5:7b": "default",
+        "qwen2.5:14b": "reasoning",
+    }
+    if candidate in static_map:
+        return static_map[candidate]
+
+    if "reason" in candidate or "14b" in candidate or "27b" in candidate:
+        return "reasoning"
+    if "7b" in candidate or "8b" in candidate or "default" in candidate:
+        return "default"
+    if "fast" in candidate or "mini" in candidate or "3b" in candidate:
+        return "fast"
+    return _normalize_tier(None)
+
+
+def _verifier_cle_api_compat(request: Request) -> None:
+    if not APEX_OLLAMA_COMPAT_REQUIRE_KEY:
+        return
+
+    cle_api = (request.headers.get("X-API-Key") or "").strip()
+    if not cle_api:
+        auth = (request.headers.get("Authorization") or "").strip()
+        if auth.lower().startswith("bearer "):
+            cle_api = auth[7:].strip()
+
+    if not cle_api or key_store.verify_key(cle_api) is None:
+        raise HTTPException(status_code=403, detail="Accès refusé : Clé API invalide pour mode Ollama compatible.")
+
+
+def _extraire_question_depuis_prompt(prompt: str) -> str:
+    texte = (prompt or "").strip()
+    marqueur = "<|user|>"
+    if marqueur in texte:
+        texte = texte.split(marqueur)[-1]
+    if "<|assistant|>" in texte:
+        texte = texte.split("<|assistant|>")[0]
+    return texte.strip() or (prompt or "")
+
+
+def _messages_vers_prompt(messages: list[dict[str, Any]], system: str | None = None) -> str:
+    lignes: list[str] = []
+    if system:
+        lignes.append(f"<system>\n{system.strip()}\n</system>")
+    for message in messages:
+        role = str(message.get("role", "user")).strip().lower()
+        raw_content = message.get("content", "")
+        # OpenClaw / newer Ollama clients may send content as a list of objects
+        if isinstance(raw_content, list):
+            parts: list[str] = []
+            for part in raw_content:
+                if isinstance(part, dict):
+                    parts.append(str(part.get("text", part.get("content", ""))))
+                else:
+                    parts.append(str(part))
+            content = " ".join(parts).strip()
+        else:
+            content = str(raw_content).strip()
+        if not content:
+            continue
+        lignes.append(f"<{role}>\n{content}\n</{role}>")
+    return "\n".join(lignes).strip()
+
+
+def _mots_max_depuis_options(options: dict[str, Any]) -> int:
+    brut = options.get("num_predict", options.get("max_tokens", 512))
+    try:
+        valeur = int(brut)
+    except (TypeError, ValueError):
+        valeur = 512
+    # -1 means "no limit" in Ollama — cap at 2048 for safety
+    if valeur < 0:
+        valeur = 2048
+    return max(1, min(valeur, 4096))
+
+
+def _ndjson(data: dict[str, Any]) -> str:
+    return json.dumps(data, ensure_ascii=False) + "\n"
 
 
 def _charger_modele_runtime(tier: str | None = None) -> str:
@@ -521,6 +621,43 @@ class RequeteClientV2(BaseModel):
     context_chunks: list[ContextChunkV2] = Field(default_factory=list, max_length=8)
     tools: list[ToolSpecV2] = Field(default_factory=list, max_length=12)
     tool_choice: Literal["auto", "none"] = "auto"
+
+
+class OllamaGenerateRequest(BaseModel):
+    model: str = "apex:default"
+    prompt: str = ""
+    system: str | None = None
+    template: str | None = None
+    context: list[int] | None = None
+    stream: bool = False
+    raw: bool = False
+    format: str | None = None
+    keep_alive: str | None = None
+    options: dict[str, Any] = Field(default_factory=dict)
+
+    model_config = {"extra": "ignore"}
+
+
+class OllamaMessage(BaseModel):
+    role: str = "user"
+    content: Any = ""          # str OR list[{type, text}] for multimodal
+    images: list[str] | None = None
+    tool_calls: list[dict[str, Any]] | None = None
+
+    model_config = {"extra": "ignore"}
+
+
+class OllamaChatRequest(BaseModel):
+    model: str = "apex:default"
+    messages: list[OllamaMessage] = Field(default_factory=list)
+    tools: list[dict[str, Any]] | None = None   # tool definitions from client
+    system: str | None = None                   # optional system prompt override
+    stream: bool = False
+    format: str | None = None
+    keep_alive: str | None = None
+    options: dict[str, Any] = Field(default_factory=dict)
+
+    model_config = {"extra": "ignore"}
 
 
 def _build_prompt_v2(requete: RequeteClientV2) -> str:
@@ -875,6 +1012,499 @@ async def api_tools() -> dict[str, Any]:
         },
     }
 
+
+@app.get("/api/version")
+async def ollama_compat_version(request: Request) -> dict[str, str]:
+    _verifier_cle_api_compat(request)
+    return {"version": "0.3.12"}
+
+
+@app.get("/api/tags")
+async def ollama_compat_tags(request: Request) -> dict[str, Any]:
+    _verifier_cle_api_compat(request)
+    now_iso = datetime.now(timezone.utc).isoformat()
+    models: list[dict[str, Any]] = []
+    for tier in MODEL_TIERS:
+        model_name = f"apex:{tier}"
+        base_name = MODEL_NAMES.get(tier, DEFAULT_MODEL_NAME)
+        digest = uuid.uuid5(uuid.NAMESPACE_DNS, f"apex-{tier}-{base_name}").hex
+        models.append(
+            {
+                "name": model_name,
+                "model": model_name,
+                "modified_at": now_iso,
+                "size": 0,
+                "digest": digest,
+                "details": {
+                    "format": "gguf",
+                    "family": "apex",
+                    "families": ["apex"],
+                    "parameter_size": "dynamic",
+                    "quantization_level": "mixed",
+                },
+            }
+        )
+    return {"models": models}
+
+
+@app.post("/api/generate")
+async def ollama_compat_generate(payload: OllamaGenerateRequest, request: Request) -> Any:
+    _verifier_cle_api_compat(request)
+    selected_tier = _tier_from_ollama_model(payload.model)
+    base_prompt = _extraire_question_depuis_prompt(payload.prompt)
+    # Prepend system prompt if provided
+    question = f"{payload.system.strip()}\n\n{base_prompt}" if payload.system else base_prompt
+    mots_max = _mots_max_depuis_options(payload.options)
+    created_at = datetime.now(timezone.utc).isoformat()
+    t0_ns = time.perf_counter_ns()
+
+    if not payload.stream:
+        reponse, selected_tier = await _generer_reponse(question, mots_max, selected_tier)
+        total_ns = time.perf_counter_ns() - t0_ns
+        return {
+            "model": f"apex:{selected_tier}",
+            "created_at": created_at,
+            "response": reponse,
+            "done": True,
+            "done_reason": "stop",
+            "context": [],
+            "total_duration": total_ns,
+            "load_duration": 0,
+            "prompt_eval_count": len(question.split()),
+            "eval_count": len(reponse.split()),
+            "eval_duration": total_ns,
+        }
+
+    async def stream_generate() -> AsyncIterator[str]:
+        eval_count = 0
+        try:
+            async for fragment, streamed_tier in _streamer_tokens(question, mots_max, selected_tier):
+                eval_count += len(fragment.split())
+                yield _ndjson(
+                    {
+                        "model": f"apex:{streamed_tier}",
+                        "created_at": created_at,
+                        "response": fragment,
+                        "done": False,
+                    }
+                )
+            total_ns = time.perf_counter_ns() - t0_ns
+            yield _ndjson(
+                {
+                    "model": f"apex:{selected_tier}",
+                    "created_at": created_at,
+                    "response": "",
+                    "done": True,
+                    "done_reason": "stop",
+                    "total_duration": total_ns,
+                    "load_duration": 0,
+                    "prompt_eval_count": len(question.split()),
+                    "eval_count": eval_count,
+                    "eval_duration": total_ns,
+                }
+            )
+        except HTTPException as exc:
+            yield _ndjson(
+                {
+                    "model": f"apex:{selected_tier}",
+                    "created_at": created_at,
+                    "response": "",
+                    "done": True,
+                    "error": str(exc.detail),
+                }
+            )
+
+    return StreamingResponse(stream_generate(), media_type="application/x-ndjson")
+
+
+@app.post("/api/chat")
+async def ollama_compat_chat(payload: OllamaChatRequest, request: Request) -> Any:
+    _verifier_cle_api_compat(request)
+    raw_msgs = [m.model_dump() for m in payload.messages]
+    selected_tier = _tier_from_ollama_model(payload.model)
+    prompt = _messages_vers_prompt(raw_msgs, system=payload.system)
+    if not prompt:
+        raise HTTPException(status_code=422, detail="messages est vide pour /api/chat compatible Ollama.")
+    mots_max = _mots_max_depuis_options(payload.options)
+    created_at = datetime.now(timezone.utc).isoformat()
+    t0_ns = time.perf_counter_ns()
+
+    if not payload.stream:
+        reponse, selected_tier = await _generer_reponse(prompt, mots_max, selected_tier)
+        total_ns = time.perf_counter_ns() - t0_ns
+        return {
+            "model": f"apex:{selected_tier}",
+            "created_at": created_at,
+            "message": {"role": "assistant", "content": reponse},
+            "done": True,
+            "done_reason": "stop",
+            "total_duration": total_ns,
+            "load_duration": 0,
+            "prompt_eval_count": len(prompt.split()),
+            "eval_count": len(reponse.split()),
+            "eval_duration": total_ns,
+        }
+
+    async def stream_chat() -> AsyncIterator[str]:
+        eval_count = 0
+        try:
+            async for fragment, streamed_tier in _streamer_tokens(prompt, mots_max, selected_tier):
+                eval_count += len(fragment.split())
+                yield _ndjson(
+                    {
+                        "model": f"apex:{streamed_tier}",
+                        "created_at": created_at,
+                        "message": {"role": "assistant", "content": fragment},
+                        "done": False,
+                    }
+                )
+            total_ns = time.perf_counter_ns() - t0_ns
+            yield _ndjson(
+                {
+                    "model": f"apex:{selected_tier}",
+                    "created_at": created_at,
+                    "message": {"role": "assistant", "content": ""},
+                    "done": True,
+                    "done_reason": "stop",
+                    "total_duration": total_ns,
+                    "load_duration": 0,
+                    "prompt_eval_count": len(prompt.split()),
+                    "eval_count": eval_count,
+                    "eval_duration": total_ns,
+                }
+            )
+        except HTTPException as exc:
+            yield _ndjson(
+                {
+                    "model": f"apex:{selected_tier}",
+                    "created_at": created_at,
+                    "message": {"role": "assistant", "content": ""},
+                    "done": True,
+                    "error": str(exc.detail),
+                }
+            )
+
+    return StreamingResponse(stream_chat(), media_type="application/x-ndjson")
+
+
+class _OllamaShowRequest(BaseModel):
+    name: str = "apex:default"
+    model: str | None = None
+    model_config = {"extra": "ignore"}
+
+
+@app.post("/api/show")
+async def ollama_compat_show(payload: _OllamaShowRequest, request: Request) -> dict[str, Any]:
+    _verifier_cle_api_compat(request)
+    model_name = payload.model or payload.name
+    tier = _tier_from_ollama_model(model_name)
+    base_name = MODEL_NAMES.get(tier, DEFAULT_MODEL_NAME)
+    digest = uuid.uuid5(uuid.NAMESPACE_DNS, f"apex-{tier}-{base_name}").hex
+    return {
+        "modelfile": f"# Apex model — tier: {tier}\nFROM {base_name}",
+        "parameters": f"num_predict 512\nnum_ctx {OLLAMA_NUM_CTX}\ntemperature 0.7",
+        "template": "{{ if .System }}<system>\n{{ .System }}\n</system>\n{{ end }}{{ range .Messages }}<{{ .Role }}>\n{{ .Content }}\n</{{ .Role }}>\n{{ end }}",
+        "details": {
+            "format": "gguf",
+            "family": "apex",
+            "families": ["apex"],
+            "parameter_size": "dynamic",
+            "quantization_level": "none",
+        },
+        "model_info": {
+            "general.architecture": "apex",
+            "general.file_type": 0,
+            "general.parameter_count": 0,
+        },
+        "digest": digest,
+    }
+
+
+@app.get("/api/ps")
+async def ollama_compat_ps(request: Request) -> dict[str, Any]:
+    _verifier_cle_api_compat(request)
+    now_iso = datetime.now(timezone.utc).isoformat()
+    running = []
+    for tier in MODEL_TIERS:
+        state = _model_runtime_state_by_tier.get(tier, "cold")
+        if state == "ready" or (tier == DEFAULT_MODEL_TIER and _ollama_active()):
+            running.append({
+                "name": f"apex:{tier}",
+                "model": f"apex:{tier}",
+                "size": 0,
+                "digest": uuid.uuid5(uuid.NAMESPACE_DNS, f"apex-{tier}").hex,
+                "details": {"format": "gguf", "family": "apex", "parameter_size": "dynamic"},
+                "expires_at": "",
+                "size_vram": 0,
+            })
+    return {"models": running}
+
+
+class _OllamaPullRequest(BaseModel):
+    name: str = ""
+    model: str | None = None
+    stream: bool = True
+    model_config = {"extra": "ignore"}
+
+
+@app.post("/api/pull")
+async def ollama_compat_pull(payload: _OllamaPullRequest, request: Request) -> Any:
+    """Fake pull — Apex models are always local."""
+    _verifier_cle_api_compat(request)
+    model_name = payload.model or payload.name
+    if not payload.stream:
+        return {"status": "success"}
+
+    async def _stream() -> AsyncIterator[str]:
+        yield _ndjson({"status": f"pulling manifest for {model_name}"})
+        yield _ndjson({"status": "verifying sha256 digest"})
+        yield _ndjson({"status": "writing manifest"})
+        yield _ndjson({"status": "success"})
+
+    return StreamingResponse(_stream(), media_type="application/x-ndjson")
+
+
+@app.delete("/api/delete")
+async def ollama_compat_delete(request: Request) -> dict[str, str]:
+    """Fake delete — Apex models cannot be deleted via API."""
+    _verifier_cle_api_compat(request)
+    return {"status": "ok"}
+
+
+class _OllamaEmbedRequest(BaseModel):
+    model: str = "apex:default"
+    prompt: str | None = None
+    input: Any = None      # str or list[str]
+    options: dict[str, Any] = Field(default_factory=dict)
+    model_config = {"extra": "ignore"}
+
+
+def _fake_embedding(text: str) -> list[float]:
+    """Deterministic fake 768-dim embedding seeded from text hash."""
+    import hashlib
+    seed = int(hashlib.sha256(text.encode()).hexdigest(), 16) % (2**31)
+    rng = __import__("random").Random(seed)
+    return [round(rng.gauss(0, 1), 6) for _ in range(768)]
+
+
+@app.post("/api/embeddings")
+@app.post("/api/embed")
+async def ollama_compat_embed(payload: _OllamaEmbedRequest, request: Request) -> dict[str, Any]:
+    _verifier_cle_api_compat(request)
+    texts: list[str] = []
+    if payload.input is not None:
+        texts = [payload.input] if isinstance(payload.input, str) else list(payload.input)
+    elif payload.prompt:
+        texts = [payload.prompt]
+    embeddings = [_fake_embedding(t) for t in texts]
+    # Ollama /api/embed returns {"embeddings": [[...], ...]}
+    # Ollama /api/embeddings (legacy) returns {"embedding": [...]}
+    if request.url.path.endswith("/api/embeddings"):
+        return {"embedding": embeddings[0] if embeddings else []}
+    return {"model": payload.model, "embeddings": embeddings}
+
+
+# ── Control Deck action endpoints ─────────────────────────────────────────────
+
+class _TierPayload(BaseModel):
+    tier: str = "fast"
+
+
+@app.post("/api/adapter/set-default-tier")
+async def set_default_tier(payload: _TierPayload, cle_api: str = Security(header_cle)) -> dict[str, Any]:
+    tier = _normalize_tier(payload.tier)
+    # Update the global default at runtime (does not persist .env but works until restart)
+    global DEFAULT_MODEL_TIER
+    DEFAULT_MODEL_TIER = tier
+    return {"status": "ok", "default_tier": tier}
+
+
+@app.post("/api/adapter/reload")
+async def reload_adapter(payload: _TierPayload, cle_api: str = Security(header_cle)) -> dict[str, Any]:
+    tier = _normalize_tier(payload.tier)
+    if _ollama_active():
+        ollama_model = OLLAMA_MODEL_NAMES[tier]
+        try:
+            async with httpx.AsyncClient(timeout=10) as client:
+                await client.post(f"{APEX_OLLAMA_URL}/api/pull", json={"name": ollama_model, "stream": False})
+        except Exception as exc:
+            logger.warning("Ollama pull on reload failed: %s", exc)
+        _model_runtime_state_by_tier[tier] = "ready"
+        return {"status": "ok", "tier": tier, "mode": "ollama", "model": ollama_model}
+    # HF path: just reset state so next call re-loads
+    _model_runtime_state_by_tier[tier] = "cold"
+    return {"status": "ok", "tier": tier, "mode": "hf", "message": "marked cold, will reload on next request"}
+
+
+class _DatasetValidatePayload(BaseModel):
+    file: str = "dataset_expert.json"
+    min_count: int = 100
+
+
+@app.post("/api/dataset/validate")
+async def validate_dataset(payload: _DatasetValidatePayload, cle_api: str = Security(header_cle)) -> dict[str, Any]:
+    import pathlib, re as _re
+    safe_name = pathlib.Path(payload.file).name  # strip any path traversal
+    path = pathlib.Path(safe_name)
+    if not path.exists():
+        raise HTTPException(status_code=404, detail=f"File not found: {safe_name}")
+    try:
+        import json as _json
+        data = _json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        raise HTTPException(status_code=422, detail=f"JSON parse error: {exc}") from exc
+    entries = data if isinstance(data, list) else data.get("data", [])
+    count = len(entries)
+    ok = count >= payload.min_count
+    return {
+        "file": safe_name,
+        "count": count,
+        "min_count": payload.min_count,
+        "valid": ok,
+        "message": "OK" if ok else f"Only {count} entries, expected >= {payload.min_count}",
+    }
+
+
+_eval_jobs: list[dict[str, Any]] = []
+
+
+class _EvalRunPayload(BaseModel):
+    tier: str = "fast"
+    prompts_file: str = "evals/golden_prompts.jsonl"
+
+
+@app.post("/api/eval/run")
+async def run_eval(payload: _EvalRunPayload, cle_api: str = Security(header_cle)) -> dict[str, Any]:
+    import pathlib, uuid as _uuid
+    job_id = _uuid.uuid4().hex[:8]
+    job: dict[str, Any] = {
+        "id": job_id,
+        "tier": _normalize_tier(payload.tier),
+        "prompts_file": payload.prompts_file,
+        "status": "queued",
+        "started_at": datetime.now(timezone.utc).isoformat(),
+        "result": None,
+    }
+    _eval_jobs.append(job)
+
+    async def _run_bg() -> None:
+        job["status"] = "running"
+        prompts_path = pathlib.Path(payload.prompts_file)
+        if not prompts_path.exists():
+            job["status"] = "error"
+            job["result"] = f"Prompts file not found: {payload.prompts_file}"
+            return
+        try:
+            import json as _json
+            prompts = [_json.loads(l) for l in prompts_path.read_text(encoding="utf-8").splitlines() if l.strip()]
+            results = []
+            for p in prompts[:10]:  # Cap at 10 for quick eval
+                q = p.get("prompt", p.get("question", ""))
+                if not q:
+                    continue
+                resp, _ = await _generer_reponse(q, 120, job["tier"])
+                results.append({"prompt": q[:80], "response": resp[:120]})
+            job["status"] = "done"
+            job["result"] = {"ran": len(results), "samples": results[:3]}
+        except Exception as exc:
+            job["status"] = "error"
+            job["result"] = str(exc)
+
+    asyncio.create_task(_run_bg())
+    return {"job_id": job_id, "status": "queued"}
+
+
+@app.get("/api/eval/jobs")
+async def get_eval_jobs() -> dict[str, Any]:
+    return {"jobs": list(reversed(_eval_jobs[-20:]))}
+
+
+# ── Ollama onboarding endpoints ───────────────────────────────────────────────
+
+@app.get("/api/ollama/status")
+async def ollama_status() -> dict[str, Any]:
+    """Check Ollama connectivity and which required models are present."""
+    required = list(OLLAMA_MODEL_NAMES.values())
+    if not APEX_OLLAMA_URL:
+        return {
+            "connected": False,
+            "url": "",
+            "error": "APEX_OLLAMA_URL is not set in .env",
+            "required_models": {m: "not_checked" for m in required},
+        }
+    try:
+        async with httpx.AsyncClient(timeout=5) as client:
+            r = await client.get(f"{APEX_OLLAMA_URL}/api/tags")
+            r.raise_for_status()
+            installed_names = {m["name"] for m in r.json().get("models", [])}
+    except Exception as exc:
+        return {
+            "connected": False,
+            "url": APEX_OLLAMA_URL,
+            "error": str(exc),
+            "required_models": {m: "unreachable" for m in required},
+        }
+
+    model_status: dict[str, str] = {}
+    for m in required:
+        # Ollama stores names like "phi3:mini" — check exact and prefix match
+        if m in installed_names or any(n.startswith(m.split(":")[0]) for n in installed_names):
+            model_status[m] = "ready"
+        else:
+            model_status[m] = "missing"
+
+    all_ready = all(v == "ready" for v in model_status.values())
+    return {
+        "connected": True,
+        "url": APEX_OLLAMA_URL,
+        "error": None,
+        "required_models": model_status,
+        "all_ready": all_ready,
+        "tier_map": {
+            "fast": OLLAMA_MODEL_NAMES["fast"],
+            "default": OLLAMA_MODEL_NAMES["default"],
+            "reasoning": OLLAMA_MODEL_NAMES["reasoning"],
+        },
+        "hint": None if all_ready else "Pull missing models using the buttons below.",
+    }
+
+
+class _OllamaPullModelPayload(BaseModel):
+    model: str
+
+
+@app.post("/api/ollama/pull")
+async def ollama_pull_model(payload: _OllamaPullModelPayload) -> StreamingResponse:
+    """Pull a model from Ollama registry, streaming progress as NDJSON."""
+    if not APEX_OLLAMA_URL:
+        raise HTTPException(status_code=503, detail="APEX_OLLAMA_URL not configured.")
+
+    model = payload.model.strip()
+    if not model:
+        raise HTTPException(status_code=422, detail="model is required.")
+
+    async def _stream_pull() -> AsyncIterator[str]:
+        try:
+            async with httpx.AsyncClient(timeout=600) as client:
+                async with client.stream(
+                    "POST",
+                    f"{APEX_OLLAMA_URL}/api/pull",
+                    json={"name": model, "stream": True},
+                ) as resp:
+                    if resp.status_code >= 400:
+                        body = await resp.aread()
+                        yield _ndjson({"status": "error", "error": body.decode(errors="replace")})
+                        return
+                    async for line in resp.aiter_lines():
+                        if line.strip():
+                            yield line + "\n"
+        except Exception as exc:
+            yield _ndjson({"status": "error", "error": str(exc)})
+
+    return StreamingResponse(_stream_pull(), media_type="application/x-ndjson")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 
 @app.get("/")
 async def ui_index() -> FileResponse:
