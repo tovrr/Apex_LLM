@@ -29,6 +29,66 @@ from peft import PeftModel
 # ==========================================
 app = FastAPI(title="Apex Pro API", description="L'API officielle de Quill AI (Modèle Fine-Tuné)")
 
+APEX_DEFAULT_SYSTEM_PROMPT = """You are Apex, an advanced AI assistant created and trained by the user.
+
+## Core Identity
+- You are Apex, a capable AI assistant designed to assist with a wide range of tasks
+- You are helpful, honest, direct, and thoughtful in all interactions
+- You prioritize accuracy and clarity over brevity
+
+## Your Capabilities
+You excel at:
+- Software development and coding across multiple languages
+- Technical analysis and problem-solving
+- Creative writing and content generation
+- Research and information synthesis
+- Data analysis and explanations
+- General knowledge and reasoning
+
+## Behavioral Guidelines
+1. **Honesty First**: If you don't know something, say so clearly. Never fabricate information or pretend certainty you don't have
+2. **Precision**: Use exact terminology. When technical precision matters, prioritize it over simplicity
+3. **Reasoning**: Show your thinking. Explain your logic and reasoning when relevant
+4. **Completeness**: Provide thorough answers. Include context and edge cases when important
+5. **Clarification**: Ask clarifying questions when requests are ambiguous
+6. **Nuance**: Acknowledge complexity and multiple perspectives when they exist
+
+## What NOT to Do
+- Do not claim capabilities you lack
+- Do not make up facts, articles, citations, or code examples
+- Do not ignore important context or disclaimers
+- Do not be unnecessarily verbose
+- Do not refuse legitimate requests that are safe and legal
+- Do not lecture or condescend
+
+## Response Style
+- Be natural and conversational while remaining professional
+- Match the user's technical level when possible
+- Use formatting (code blocks, lists, emphasis) to improve clarity
+- Keep responses focused on what was asked
+- Provide working examples when relevant to the request
+
+## For Coding Tasks
+- Provide complete, working code examples
+- Explain trade-offs and alternatives when relevant
+- Include error handling and edge cases
+- Comment complex logic
+- Suggest testing approaches when appropriate
+
+## For Creative Tasks
+- Respect the user's creative vision
+- Offer variations and alternatives
+- Build on feedback iteratively
+- Maintain consistency within the creative work
+
+## For Analysis Tasks
+- Present multiple viewpoints when applicable
+- Support claims with reasoning
+- Acknowledge uncertainty and limitations
+- Provide actionable insights when possible
+
+You are direct and efficient—avoid unnecessary pleasantries while remaining respectful. Your goal is to be genuinely useful."""
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UI_DIR = os.path.join(BASE_DIR, "ui")
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -248,10 +308,21 @@ def _extraire_question_depuis_prompt(prompt: str) -> str:
     return texte.strip() or (prompt or "")
 
 
+def _extraire_systeme_depuis_prompt(prompt: str) -> tuple[str, str]:
+    """Extract system prompt (if present) and return (system_prompt, remaining_prompt)."""
+    import re
+    match = re.match(r'<system>\n(.*?)\n</system>\n(.*)', prompt, re.DOTALL)
+    if match:
+        return match.group(1).strip(), match.group(2).strip()
+    return "", prompt.strip()
+
+
 def _messages_vers_prompt(messages: list[dict[str, Any]], system: str | None = None) -> str:
     lignes: list[str] = []
-    if system:
-        lignes.append(f"<system>\n{system.strip()}\n</system>")
+    # Use provided system prompt or fall back to Apex default
+    effective_system = system if system else APEX_DEFAULT_SYSTEM_PROMPT
+    if effective_system:
+        lignes.append(f"<system>\n{effective_system.strip()}\n</system>")
     for message in messages:
         role = str(message.get("role", "user")).strip().lower()
         raw_content = message.get("content", "")
@@ -270,6 +341,30 @@ def _messages_vers_prompt(messages: list[dict[str, Any]], system: str | None = N
             continue
         lignes.append(f"<{role}>\n{content}\n</{role}>")
     return "\n".join(lignes).strip()
+
+
+def _tools_vers_prompt(tools: list[dict[str, Any]] | None) -> str:
+    if not tools:
+        return ""
+
+    lignes: list[str] = ["[TOOLS_AVAILABLE]"]
+    for tool in tools:
+        if not isinstance(tool, dict):
+            continue
+        fn = tool.get("function", tool)
+        if not isinstance(fn, dict):
+            continue
+        name = str(fn.get("name", "tool")).strip()
+        desc = str(fn.get("description", "")).strip()
+        params = fn.get("parameters", {})
+        lignes.append(f"- {name}: {desc}")
+        if params:
+            try:
+                lignes.append(f"  params={json.dumps(params, ensure_ascii=False)}")
+            except Exception:
+                lignes.append("  params=<unserializable>")
+    lignes.append("[/TOOLS_AVAILABLE]")
+    return "\n".join(lignes)
 
 
 def _mots_max_depuis_options(options: dict[str, Any]) -> int:
@@ -446,9 +541,28 @@ def _preparer_inputs(question: str) -> tuple[str, Any]:
 async def _generer_reponse_ollama(question: str, mots_max: int, selected_tier: str) -> str:
     """Delegate generation to a local Ollama instance."""
     ollama_model = OLLAMA_MODEL_NAMES[selected_tier]
+    
+    # Extract system prompt if present
+    system_prompt, remaining_prompt = _extraire_systeme_depuis_prompt(question)
+    if not system_prompt:
+        system_prompt = APEX_DEFAULT_SYSTEM_PROMPT
+    
+    # For phi3:mini, we need to force the system prompt by prefixing it directly
+    # Use a strong prompt injection that phi3:mini will respect
+    enforced_prompt = f"""<|system|>
+{system_prompt}
+
+You must respond according to the above system prompt. Do not deviate from it.
+<|end|>
+
+<|user|>
+{remaining_prompt}
+<|assistant|>
+"""
+    
     payload = {
         "model": ollama_model,
-        "prompt": f"<|user|>\n{question}\n<|assistant|>\n",
+        "prompt": enforced_prompt,
         "stream": False,
         "options": {"num_predict": mots_max, "temperature": 0.7, "num_ctx": OLLAMA_NUM_CTX},
     }
@@ -509,9 +623,27 @@ async def _streamer_tokens(question: str, mots_max: int, model_tier: str | None 
     if _ollama_active():
         # Ollama streaming: use stream=True and yield chunks.
         ollama_model = OLLAMA_MODEL_NAMES[selected_tier]
+        
+        # Extract system prompt if present
+        system_prompt, remaining_prompt = _extraire_systeme_depuis_prompt(question)
+        if not system_prompt:
+            system_prompt = APEX_DEFAULT_SYSTEM_PROMPT
+        
+        # For phi3:mini, we need to force the system prompt by prefixing it directly
+        enforced_prompt = f"""<|system|>
+{system_prompt}
+
+You must respond according to the above system prompt. Do not deviate from it.
+<|end|>
+
+<|user|>
+{remaining_prompt}
+<|assistant|>
+"""
+        
         payload = {
             "model": ollama_model,
-            "prompt": f"<|user|>\n{question}\n<|assistant|>\n",
+            "prompt": enforced_prompt,
             "stream": True,
             "options": {"num_predict": mots_max, "temperature": 0.7, "num_ctx": OLLAMA_NUM_CTX},
         }
@@ -1032,6 +1164,7 @@ async def ollama_compat_tags(request: Request) -> dict[str, Any]:
             {
                 "name": model_name,
                 "model": model_name,
+                "capabilities": ["completion", "tools"],
                 "modified_at": now_iso,
                 "size": 0,
                 "digest": digest,
@@ -1052,8 +1185,9 @@ async def ollama_compat_generate(payload: OllamaGenerateRequest, request: Reques
     _verifier_cle_api_compat(request)
     selected_tier = _tier_from_ollama_model(payload.model)
     base_prompt = _extraire_question_depuis_prompt(payload.prompt)
-    # Prepend system prompt if provided
-    question = f"{payload.system.strip()}\n\n{base_prompt}" if payload.system else base_prompt
+    # Prepend system prompt (use default if not provided)
+    effective_system = payload.system if payload.system else APEX_DEFAULT_SYSTEM_PROMPT
+    question = f"{effective_system.strip()}\n\n{base_prompt}" if effective_system else base_prompt
     mots_max = _mots_max_depuis_options(payload.options)
     created_at = datetime.now(timezone.utc).isoformat()
     t0_ns = time.perf_counter_ns()
@@ -1123,6 +1257,9 @@ async def ollama_compat_chat(payload: OllamaChatRequest, request: Request) -> An
     raw_msgs = [m.model_dump() for m in payload.messages]
     selected_tier = _tier_from_ollama_model(payload.model)
     prompt = _messages_vers_prompt(raw_msgs, system=payload.system)
+    tools_hint = _tools_vers_prompt(payload.tools)
+    if tools_hint:
+        prompt = f"{tools_hint}\n\n{prompt}" if prompt else tools_hint
     if not prompt:
         raise HTTPException(status_code=422, detail="messages est vide pour /api/chat compatible Ollama.")
     mots_max = _mots_max_depuis_options(payload.options)
@@ -1202,6 +1339,7 @@ async def ollama_compat_show(payload: _OllamaShowRequest, request: Request) -> d
     digest = uuid.uuid5(uuid.NAMESPACE_DNS, f"apex-{tier}-{base_name}").hex
     return {
         "modelfile": f"# Apex model — tier: {tier}\nFROM {base_name}",
+        "capabilities": ["completion", "tools"],
         "parameters": f"num_predict 512\nnum_ctx {OLLAMA_NUM_CTX}\ntemperature 0.7",
         "template": "{{ if .System }}<system>\n{{ .System }}\n</system>\n{{ end }}{{ range .Messages }}<{{ .Role }}>\n{{ .Content }}\n</{{ .Role }}>\n{{ end }}",
         "details": {
