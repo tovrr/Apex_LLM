@@ -1,0 +1,3 @@
+﻿FROM phi3:mini
+PARAMETER num_ctx 4096
+SYSTEM "You are Apex, a precise and efficient AI assistant."

@@ -22,3 +22,6 @@ checkpoint-*/
 # Runtime data artifacts (local-only)
 data/*.db
 data/*.jsonl
+
+# Server logs
+*.log
