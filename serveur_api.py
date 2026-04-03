@@ -235,6 +235,11 @@ APEX_OLLAMA_COMPAT_REQUIRE_KEY = (os.getenv("APEX_OLLAMA_COMPAT_REQUIRE_KEY", "0
     "on",
 }
 
+# ── Xiaomi MiMo fallback (quota MiniMax dépassé) ───────────────────────────────
+XIAOMI_MIMO_API_KEY = os.getenv("XIAOMI_MIMO_API_KEY", "").strip()
+XIAOMI_MIMO_BASE_URL = os.getenv("XIAOMI_MIMO_BASE_URL", "https://api.minimax.chat/v1").rstrip("/")
+XIAOMI_MIMO_MODEL = os.getenv("XIAOMI_MIMO_MODEL", "MiMo-7B-Instruct")
+
 
 def _ollama_active() -> bool:
     return bool(APEX_OLLAMA_URL)
@@ -289,6 +294,9 @@ def _verifier_cle_api_compat(request: Request) -> None:
         return
 
     cle_api = (request.headers.get("X-API-Key") or "").strip()
+    if not cle_api:
+        # Anthropic-style header
+        cle_api = (request.headers.get("x-api-key") or "").strip()
     if not cle_api:
         auth = (request.headers.get("Authorization") or "").strip()
         if auth.lower().startswith("bearer "):
@@ -792,6 +800,133 @@ class OllamaChatRequest(BaseModel):
     model_config = {"extra": "ignore"}
 
 
+class OpenAIChatMessage(BaseModel):
+    role: str = "user"
+    content: Any = ""
+    name: str | None = None
+    tool_call_id: str | None = None
+
+    model_config = {"extra": "ignore"}
+
+
+class OpenAIChatRequest(BaseModel):
+    model: str = "apex:default"
+    messages: list[OpenAIChatMessage] = Field(default_factory=list)
+    tools: list[dict[str, Any]] | None = None
+    tool_choice: str | dict[str, Any] | None = None
+    stream: bool = False
+    max_tokens: int | None = None
+    temperature: float | None = None
+
+    model_config = {"extra": "ignore"}
+
+
+class AnthropicMessage(BaseModel):
+    role: Literal["user", "assistant"]
+    content: Any
+
+    model_config = {"extra": "ignore"}
+
+
+class AnthropicMessagesRequest(BaseModel):
+    model: str = "apex:default"
+    max_tokens: int = 512
+    system: str | list[dict[str, Any]] | None = None
+    messages: list[AnthropicMessage] = Field(default_factory=list)
+    stream: bool = False
+    tools: list[dict[str, Any]] | None = None
+    tool_choice: str | dict[str, Any] | None = None
+
+    model_config = {"extra": "ignore"}
+
+
+def _content_vers_texte(raw_content: Any) -> str:
+    if isinstance(raw_content, str):
+        return raw_content.strip()
+    if isinstance(raw_content, list):
+        parts: list[str] = []
+        for part in raw_content:
+            if isinstance(part, dict):
+                text = part.get("text") or part.get("content") or part.get("value") or ""
+                if text:
+                    parts.append(str(text))
+            elif part is not None:
+                parts.append(str(part))
+        return " ".join(parts).strip()
+    if isinstance(raw_content, dict):
+        text = raw_content.get("text") or raw_content.get("content") or raw_content.get("value") or ""
+        return str(text).strip()
+    if raw_content is None:
+        return ""
+    return str(raw_content).strip()
+
+
+def _normaliser_max_tokens(max_tokens: int | None, fallback: int = 512) -> int:
+    raw_value = fallback if max_tokens is None else max_tokens
+    try:
+        value = int(raw_value)
+    except (TypeError, ValueError):
+        value = fallback
+    return max(1, min(value, 4096))
+
+
+def _prompt_depuis_openai(payload: OpenAIChatRequest) -> str:
+    system_prompt = ""
+    converted: list[dict[str, Any]] = []
+
+    for message in payload.messages:
+        role = (message.role or "user").strip().lower()
+        text = _content_vers_texte(message.content)
+        if not text:
+            continue
+        if role == "system":
+            system_prompt = text
+            continue
+        if role not in {"user", "assistant", "tool"}:
+            role = "user"
+        converted.append({"role": role, "content": text})
+
+    prompt = _messages_vers_prompt(converted, system=system_prompt or None)
+    tools_hint = _tools_vers_prompt(payload.tools)
+    if tools_hint:
+        prompt = f"{tools_hint}\n\n{prompt}" if prompt else tools_hint
+    return prompt
+
+
+def _anthropic_system_vers_texte(system: str | list[dict[str, Any]] | None) -> str:
+    if isinstance(system, str):
+        return system.strip()
+    if isinstance(system, list):
+        parts: list[str] = []
+        for block in system:
+            if isinstance(block, dict):
+                text = block.get("text") or block.get("content") or ""
+                if text:
+                    parts.append(str(text))
+        return " ".join(parts).strip()
+    return ""
+
+
+def _prompt_depuis_anthropic(payload: AnthropicMessagesRequest) -> str:
+    system_prompt = _anthropic_system_vers_texte(payload.system)
+    converted: list[dict[str, Any]] = []
+
+    for message in payload.messages:
+        role = (message.role or "user").strip().lower()
+        text = _content_vers_texte(message.content)
+        if not text:
+            continue
+        if role not in {"user", "assistant"}:
+            role = "user"
+        converted.append({"role": role, "content": text})
+
+    prompt = _messages_vers_prompt(converted, system=system_prompt or None)
+    tools_hint = _tools_vers_prompt(payload.tools)
+    if tools_hint:
+        prompt = f"{tools_hint}\n\n{prompt}" if prompt else tools_hint
+    return prompt
+
+
 def _build_prompt_v2(requete: RequeteClientV2) -> str:
     lines: list[str] = []
 
@@ -1149,6 +1284,175 @@ async def api_tools() -> dict[str, Any]:
 async def ollama_compat_version(request: Request) -> dict[str, str]:
     _verifier_cle_api_compat(request)
     return {"version": "0.3.12"}
+
+
+@app.get("/v1/models")
+async def openai_compat_models(request: Request) -> dict[str, Any]:
+    _verifier_cle_api_compat(request)
+    created = int(time.time())
+    data: list[dict[str, Any]] = []
+    for tier in MODEL_TIERS:
+        data.append(
+            {
+                "id": f"apex:{tier}",
+                "object": "model",
+                "created": created,
+                "owned_by": "apex",
+            }
+        )
+    return {"object": "list", "data": data}
+
+
+@app.post("/v1/chat/completions")
+async def openai_compat_chat_completions(payload: OpenAIChatRequest, request: Request) -> Any:
+    _verifier_cle_api_compat(request)
+    prompt = _prompt_depuis_openai(payload)
+    if not prompt:
+        raise HTTPException(status_code=422, detail="messages est vide pour /v1/chat/completions")
+
+    selected_tier = _tier_from_ollama_model(payload.model)
+    mots_max = _normaliser_max_tokens(payload.max_tokens)
+    chat_id = f"chatcmpl-{uuid.uuid4().hex}"
+    created = int(time.time())
+
+    if not payload.stream:
+        reponse, selected_tier = await _generer_reponse(prompt, mots_max, selected_tier)
+        return {
+            "id": chat_id,
+            "object": "chat.completion",
+            "created": created,
+            "model": f"apex:{selected_tier}",
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {"role": "assistant", "content": reponse},
+                    "finish_reason": "stop",
+                }
+            ],
+            "usage": {
+                "prompt_tokens": len(prompt.split()),
+                "completion_tokens": len(reponse.split()),
+                "total_tokens": len(prompt.split()) + len(reponse.split()),
+            },
+        }
+
+    async def stream_openai() -> AsyncIterator[str]:
+        total_completion_tokens = 0
+        try:
+            async for fragment, streamed_tier in _streamer_tokens(prompt, mots_max, selected_tier):
+                total_completion_tokens += len(fragment.split())
+                chunk = {
+                    "id": chat_id,
+                    "object": "chat.completion.chunk",
+                    "created": created,
+                    "model": f"apex:{streamed_tier}",
+                    "choices": [
+                        {
+                            "index": 0,
+                            "delta": {"role": "assistant", "content": fragment},
+                            "finish_reason": None,
+                        }
+                    ],
+                }
+                yield f"data: {json.dumps(chunk, ensure_ascii=False)}\n\n"
+
+            final_chunk = {
+                "id": chat_id,
+                "object": "chat.completion.chunk",
+                "created": created,
+                "model": f"apex:{selected_tier}",
+                "choices": [{"index": 0, "delta": {}, "finish_reason": "stop"}],
+                "usage": {
+                    "prompt_tokens": len(prompt.split()),
+                    "completion_tokens": total_completion_tokens,
+                    "total_tokens": len(prompt.split()) + total_completion_tokens,
+                },
+            }
+            yield f"data: {json.dumps(final_chunk, ensure_ascii=False)}\n\n"
+            yield "data: [DONE]\n\n"
+        except HTTPException as exc:
+            error_chunk = {
+                "error": {
+                    "message": str(exc.detail),
+                    "type": "api_error",
+                    "code": exc.status_code,
+                }
+            }
+            yield f"data: {json.dumps(error_chunk, ensure_ascii=False)}\n\n"
+            yield "data: [DONE]\n\n"
+
+    return StreamingResponse(stream_openai(), media_type="text/event-stream")
+
+
+@app.post("/v1/messages")
+async def anthropic_compat_messages(payload: AnthropicMessagesRequest, request: Request) -> Any:
+    _verifier_cle_api_compat(request)
+    prompt = _prompt_depuis_anthropic(payload)
+    if not prompt:
+        raise HTTPException(status_code=422, detail="messages est vide pour /v1/messages")
+
+    selected_tier = _tier_from_ollama_model(payload.model)
+    mots_max = _normaliser_max_tokens(payload.max_tokens)
+    message_id = f"msg_{uuid.uuid4().hex}"
+
+    if not payload.stream:
+        reponse, selected_tier = await _generer_reponse(prompt, mots_max, selected_tier)
+        return {
+            "id": message_id,
+            "type": "message",
+            "role": "assistant",
+            "content": [{"type": "text", "text": reponse}],
+            "model": f"apex:{selected_tier}",
+            "stop_reason": "end_turn",
+            "stop_sequence": None,
+            "usage": {
+                "input_tokens": len(prompt.split()),
+                "output_tokens": len(reponse.split()),
+            },
+        }
+
+    async def stream_anthropic() -> AsyncIterator[str]:
+        output_tokens = 0
+        started = {
+            "type": "message_start",
+            "message": {
+                "id": message_id,
+                "type": "message",
+                "role": "assistant",
+                "content": [],
+                "model": f"apex:{selected_tier}",
+                "stop_reason": None,
+                "stop_sequence": None,
+                "usage": {"input_tokens": len(prompt.split()), "output_tokens": 0},
+            },
+        }
+        yield f"event: message_start\ndata: {json.dumps(started, ensure_ascii=False)}\n\n"
+        yield "event: content_block_start\ndata: {\"type\":\"content_block_start\",\"index\":0,\"content_block\":{\"type\":\"text\",\"text\":\"\"}}\n\n"
+
+        try:
+            async for fragment, _ in _streamer_tokens(prompt, mots_max, selected_tier):
+                output_tokens += len(fragment.split())
+                delta = {
+                    "type": "content_block_delta",
+                    "index": 0,
+                    "delta": {"type": "text_delta", "text": fragment},
+                }
+                yield f"event: content_block_delta\ndata: {json.dumps(delta, ensure_ascii=False)}\n\n"
+        except HTTPException as exc:
+            err = {"type": "error", "error": {"type": "api_error", "message": str(exc.detail)}}
+            yield f"event: error\ndata: {json.dumps(err, ensure_ascii=False)}\n\n"
+            return
+
+        yield "event: content_block_stop\ndata: {\"type\":\"content_block_stop\",\"index\":0}\n\n"
+        message_delta = {
+            "type": "message_delta",
+            "delta": {"stop_reason": "end_turn", "stop_sequence": None},
+            "usage": {"output_tokens": output_tokens},
+        }
+        yield f"event: message_delta\ndata: {json.dumps(message_delta, ensure_ascii=False)}\n\n"
+        yield "event: message_stop\ndata: {\"type\":\"message_stop\"}\n\n"
+
+    return StreamingResponse(stream_anthropic(), media_type="text/event-stream")
 
 
 @app.get("/api/tags")
@@ -1660,9 +1964,19 @@ async def ui_developer() -> FileResponse:
     return FileResponse(developer_path)
 
 
+@app.get("/ui/developer.html")
+async def ui_developer_legacy() -> FileResponse:
+    return await ui_developer()
+
+
 @app.get("/pricing")
 async def ui_pricing() -> FileResponse:
     pricing_path = os.path.join(UI_DIR, "pricing.html")
     if not os.path.isfile(pricing_path):
         raise HTTPException(status_code=404, detail="Page pricing introuvable.")
     return FileResponse(pricing_path)
+
+
+@app.get("/ui/pricing.html")
+async def ui_pricing_legacy() -> FileResponse:
+    return await ui_pricing()
