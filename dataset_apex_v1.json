@@ -1,0 +1,452 @@
+[
+  {
+    "instruction": "Explain this Python code in one sentence: def fib(n): return n if n < 2 else fib(n-1) + fib(n-2)",
+    "input": "",
+    "output": "This function recursively computes the nth Fibonacci number by summing the two preceding numbers until reaching the base cases of 0 or 1."
+  },
+  {
+    "instruction": "Find the bug in this code: def get_user(user_id): return db.query('SELECT * FROM users WHERE id = ' + user_id)",
+    "input": "",
+    "output": "SQL injection vulnerability — user_id is concatenated directly into the query string. Fix: use parameterized queries like db.query('SELECT * FROM users WHERE id = ?', user_id) or an ORM."
+  },
+  {
+    "instruction": "Write a minimal FastAPI endpoint that returns JSON and accepts a query parameter called 'name'.",
+    "input": "",
+    "output": "from fastapi import FastAPI\napp = FastAPI()\n\n@app.get('/hello')\ndef hello(name: str = 'World'):\n    return {'message': f'Hello, {name}'}"
+  },
+  {
+    "instruction": "What does this shell command do? chmod 755 script.sh && ./script.sh",
+    "input": "",
+    "output": "It sets read/write/execute permissions for the owner and read/execute for group/others, then runs the script."
+  },
+  {
+    "instruction": "Convert this SQL to an ORM query: SELECT name, email FROM users WHERE active = true ORDER BY created_at DESC LIMIT 10",
+    "input": "",
+    "output": "User.query.filter_by(active=True).order_by(User.created_at.desc()).limit(10).all()\n# Or with SQLAlchemy core:\nselect(users.c.name, users.c.email).where(users.c.active==True).order_by(desc(users.c.created_at)).limit(10)"
+  },
+  {
+    "instruction": "Fix this Python list comprehension: [x for x in range(10) if x % 2 == 0 if x > 5]",
+    "input": "",
+    "output": "The logic is correct but unclear — prefer separating conditions with 'or' or rewriting for clarity:\n[x for x in range(10) if x % 2 == 0 and x > 5]\n# Returns [6, 8]"
+  },
+  {
+    "instruction": "What is the time complexity of binary search?",
+    "input": "",
+    "output": "O(log n) — the search space is halved at each step, making it efficient for sorted arrays."
+  },
+  {
+    "instruction": "Write a Python decorator that logs function call arguments and execution time.",
+    "input": "",
+    "output": "import time\nimport functools\n\ndef log_call(func):\n    @functools.wraps(func)\n    def wrapper(*args, **kwargs):\n        start = time.perf_counter()\n        result = func(*args, **kwargs)\n        elapsed = time.perf_counter() - start\n        print(f'{func.__name__}(args={args}, kwargs={kwargs}) -> {elapsed:.4f}s')\n        return result\n    return wrapper"
+  },
+  {
+    "instruction": "Explain why 'NaN is NaN' returns False in Python.",
+    "input": "",
+    "output": "NaN is not equal to itself by IEEE 754 floating-point definition — NaN represents an undefined or unrepresentable value, so identity checks against it are always False. Use math.isnan(x) instead."
+  },
+  {
+    "instruction": "Write a one-line Python expression to flatten [[1, 2], [3, 4]] into [1, 2, 3, 4].",
+    "input": "",
+    "output": "[x for sub in [[1, 2], [3, 4]] for x in sub]\n# Or: sum([[1,2],[3,4]], [])"
+  },
+  {
+    "instruction": "What is the difference between a mutex and a semaphore?",
+    "input": "",
+    "output": "A mutex is a binary lock (0 or 1) that only the owner can release — for protecting shared state. A semaphore is a counter that multiple threads/processes can increment/decrement — for coordinating access to N resources."
+  },
+  {
+    "instruction": "Write a Dockerfile that runs a Python FastAPI app with uvicorn.",
+    "input": "",
+    "output": "FROM python:3.12-slim\nWORKDIR /app\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\nCOPY . .\nEXPOSE 8000\nCMD [\"uvicorn\", \"main:app\", \"--host\", \"0.0.0.0\", \"--port\", \"8000\"]"
+  },
+  {
+    "instruction": "What does this Git command do? git rebase -i HEAD~3",
+    "input": "",
+    "output": "Opens an interactive editor showing the last 3 commits, allowing you to squash, reorder, edit, or drop them to rewrite commit history."
+  },
+  {
+    "instruction": "Fix this async Python bug: async def get_data(): data = requests.get(url); return data",
+    "input": "",
+    "output": "Blocking call inside async function — requests is synchronous and blocks the event loop. Use aiohttp or httpx instead:\nasync def get_data():\n    async with httpx.AsyncClient() as client:\n        return await client.get(url)"
+  },
+  {
+    "instruction": "What is the output of print(type([] == False)) in Python?",
+    "input": "",
+    "output": "<class 'bool'> — [] == False evaluates to True (empty list is falsy), so type() receives a boolean and returns <class 'bool'>."
+  },
+  {
+    "instruction": "Write a bash one-liner to find all .py files modified in the last 7 days.",
+    "input": "",
+    "output": "find . -name '*.py' -mtime -7 -print"
+  },
+  {
+    "instruction": "Explain this React pattern: const [count, setCount] = useState(0)",
+    "input": "",
+    "output": "useState returns a pair: the current state value and a setter function. Calling setCount(newValue) triggers a re-render with the new value. Never mutate state directly — always use the setter."
+  },
+  {
+    "instruction": "What is CORS and why does it exist?",
+    "input": "",
+    "output": "Cross-Origin Resource Sharing — a browser security mechanism that blocks JavaScript on site A from reading data from site B unless B explicitly allows it via CORS headers. Prevents malicious sites from abusing your credentials to call APIs on your behalf."
+  },
+  {
+    "instruction": "Write a Python class that implements __enter__ and __exit__ for use in a 'with' statement.",
+    "input": "",
+    "output": "class DatabaseConnection:\n    def __enter__(self):\n        self.conn = connect()\n        return self.conn\n    def __exit__(self, exc_type, exc_val, exc_tb):\n        self.conn.close()\n        return False  # Don't suppress exceptions\n\n# Usage:\nwith DatabaseConnection() as conn:\n    conn.query('SELECT 1')"
+  },
+  {
+    "instruction": "What is the difference between PUT and PATCH HTTP methods?",
+    "input": "",
+    "output": "PUT replaces the entire resource — idempotent, safe to retry. PATCH applies a partial update — not necessarily idempotent. POST creates a resource with a server-assigned ID."
+  },
+  {
+    "instruction": "Write a Python function that retry a failing operation up to 3 times with exponential backoff.",
+    "input": "",
+    "output": "import time, functools\n\ndef retry(func, max_retries=3, base_delay=1):\n    @functools.wraps(func)\n    def wrapper(*args, **kwargs):\n        for attempt in range(max_retries):\n            try:\n                return func(*args, **kwargs)\n            except Exception as e:\n                if attempt == max_retries - 1:\n                    raise\n                time.sleep(base_delay * (2 ** attempt))\n    return wrapper"
+  },
+  {
+    "instruction": "What does this CSS do? .parent { display: grid; grid-template-columns: 1fr 2fr; }",
+    "input": "",
+    "output": "Creates a 2-column grid where the first column takes 1 fraction of available space and the second takes 2 fractions — typically 33.3% and 66.6%."
+  },
+  {
+    "instruction": "Explain why a Python dict maintains insertion order (as of 3.7+).",
+    "input": "",
+    "output": "Dictionaries now use a compact array + sparse table design where the array index directly corresponds to insertion index, preserving order as a consequence of the implementation, not by accident."
+  },
+  {
+    "instruction": "Write a curl command that POSTs JSON data to an API endpoint with a custom header.",
+    "input": "",
+    "output": "curl -X POST https://api.example.com/endpoint \\\n  -H 'Content-Type: application/json' \\\n  -H 'Authorization: Bearer YOUR_TOKEN' \\\n  -d '{\"key\": \"value\"}'"
+  },
+  {
+    "instruction": "What is a race condition? Give a one-sentence example.",
+    "input": "",
+    "output": "Two threads access shared state simultaneously and the outcome depends on execution order — e.g., two threads both reading balance=100, then both writing balance+10, resulting in 110 instead of 120."
+  },
+  {
+    "instruction": "Fix this JavaScript: setTimeout(console.log('hi'), 0); console.log('bye')",
+    "input": "",
+    "output": "The code is correct — 'bye' prints first because setTimeout queues the callback for the next event loop tick even with 0ms delay. Output: bye, then hi."
+  },
+  {
+    "instruction": "What does the LRU in LRU cache stand for and how does it work?",
+    "input": "",
+    "output": "Least Recently Used — when the cache is full, the item accessed least recently is evicted. Implemented with a doubly-linked list + hashmap for O(1) get and put operations."
+  },
+  {
+    "instruction": "Write a Python type hint for a function that takes a list of integers and returns a generator of floats.",
+    "input": "",
+    "output": "from typing import Generator\n\ndef process(items: list[int]) -> Generator[float, None, None]:\n    for item in items:\n        yield float(item)"
+  },
+  {
+    "instruction": "What is the difference between a process and a thread?",
+    "input": "",
+    "output": "A process is an isolated memory space with its own address space — threads share the same memory within a process. Creating a thread is cheaper than creating a process, but a crashing thread can corrupt other threads in the same process."
+  },
+  {
+    "instruction": "Explain why you should avoid using 'eval' in Python code.",
+    "input": "",
+    "output": "eval executes arbitrary string input as Python code — a security disaster if the input comes from user data. It also bypasses static analysis, hides bugs, and makes debugging harder. Use ast.literal_eval for safe expression parsing, or restructure the code entirely."
+  },
+  {
+    "instruction": "Write a Python one-liner to count word frequencies in a string.",
+    "input": "",
+    "output": "from collections import Counter\nCounter('hello world hello'.split())  # Counter({'hello': 2, 'world': 1})"
+  },
+  {
+    "instruction": "What does HTTP status code 429 mean?",
+    "input": "",
+    "output": "Too Many Requests — the client has sent too many requests in a given time window (rate limit exceeded). The response should include a Retry-After header indicating when to retry."
+  },
+  {
+    "instruction": "Fix this Python code: data = {k: v for k, v in [('a', 1), ('b', 2)]} if condition else None",
+    "input": "",
+    "output": "Conditional expression after comprehension — syntax error. Rewrite as:\ndata = {k: v for k, v in [('a', 1), ('b', 2)]} if condition else {}\n# Or split into two statements for clarity."
+  },
+  {
+    "instruction": "What is the difference between a shallow copy and a deep copy in Python?",
+    "input": "",
+    "output": "Shallow copy copies only the object references — nested objects still point to the originals. Deep copy recursively copies all nested objects, creating a fully independent clone. Use copy.deepcopy() for deep, copy.copy() for shallow."
+  },
+  {
+    "instruction": "Write a JavaScript arrow function that filters even numbers from an array.",
+    "input": "",
+    "output": "const evens = arr => arr.filter(n => n % 2 === 0);"
+  },
+  {
+    "instruction": "What is a database index and when should you create one?",
+    "input": "",
+    "output": "An index is a data structure that speeds up lookups on a column — like a book index. Create one on columns frequently used in WHERE, JOIN, or ORDER BY clauses. Downside: slows down writes and uses extra storage."
+  },
+  {
+    "instruction": "Explain this SQL: SELECT department, COUNT(*) FROM employees GROUP BY department HAVING COUNT(*) > 5",
+    "input": "",
+    "output": "Groups employees by department, counts how many are in each, then filters to only show departments with more than 5 employees — unlike WHERE which filters before grouping."
+  },
+  {
+    "instruction": "What does 'idempotent' mean in API design?",
+    "input": "",
+    "output": "An operation is idempotent if calling it multiple times produces the same result as calling it once — GET, PUT, DELETE are idempotent; POST and PATCH are generally not."
+  },
+  {
+    "instruction": "Write a Python function that merges two sorted lists into one sorted list.",
+    "input": "",
+    "output": "def merge(a, b):\n    result = []\n    i = j = 0\n    while i < len(a) and j < len(b):\n        if a[i] <= b[j]:\n            result.append(a[i]); i += 1\n        else:\n            result.append(b[j]); j += 1\n    result.extend(a[i:])\n    result.extend(b[j:])\n    return result"
+  },
+  {
+    "instruction": "What is the difference between SQL and NoSQL databases?",
+    "input": "",
+    "output": "SQL databases are relational with fixed schemas and ACID transactions — good for structured data with complex joins. NoSQL databases trade ACID guarantees for horizontal scalability and flexibility — document, key-value, or graph stores for unstructured or high-throughput use cases."
+  },
+  {
+    "instruction": "Write a Python @dataclass decorator that represents a Point with x and y coordinates.",
+    "input": "",
+    "output": "from dataclasses import dataclass\n\n@dataclass\nclass Point:\n    x: float\n    y: float\n    \n    def distance_to(self, other: 'Point') -> float:\n        return ((self.x - other.x)**2 + (self.y - other.y)**2) ** 0.5"
+  },
+  {
+    "instruction": "What is the purpose of __init__.py in Python packages?",
+    "input": "",
+    "output": "It marks a directory as a Python package, allowing imports like from package import module. It can also run initialization code when the package is first imported. Empty file is sufficient."
+  },
+  {
+    "instruction": "Explain why '0.1 + 0.2 != 0.3' in Python.",
+    "input": "",
+    "output": "Floating-point arithmetic is base-2 limited — 0.1, 0.2, and 0.3 cannot be represented exactly in binary, so the sum is 0.30000000000000004, not 0.3. Use math.isclose(a, b) for comparisons instead of ==."
+  },
+  {
+    "instruction": "Write a SQL query to find the second-highest salary from an employees table.",
+    "input": "",
+    "output": "SELECT salary FROM employees ORDER BY salary DESC LIMIT 1 OFFSET 1;\n-- Or for DBs without OFFSET:\nSELECT MAX(salary) FROM employees WHERE salary < (SELECT MAX(salary) FROM employees);"
+  },
+  {
+    "instruction": "What is Docker layer caching and how does it speed up builds?",
+    "input": "",
+    "output": "Each Dockerfile instruction creates a layer — Docker caches unchanged layers and reuses them across builds. Put instructions that change often (COPY, RUN with dynamic paths) at the bottom of the Dockerfile to maximize cache hits."
+  },
+  {
+    "instruction": "Write a Python function that checks if a string is a palindrome.",
+    "input": "",
+    "output": "def is_palindrome(s: str) -> bool:\n    s = s.lower().replace(' ', '')\n    return s == s[::-1]"
+  },
+  {
+    "instruction": "What is the difference between SSH keys ED25519 and RSA?",
+    "input": "",
+    "output": "ED25519 uses elliptic curves — shorter keys (256 bits vs 4096), faster signing, better security per key size. RSA is widely compatible but slower and requires larger keys for equivalent security. Use ED25519 for new keys."
+  },
+  {
+    "instruction": "Explain what this Python code prints: print([i for i in range(3)] == [0, 1, 2])",
+    "input": "",
+    "output": "True — both list comprehensions and literal lists produce the same [0, 1, 2] in the same order, so equality comparison returns True."
+  },
+  {
+    "instruction": "What is JWT and what are its three parts?",
+    "input": "",
+    "output": "JSON Web Token — a URL-safe token format for stateless authentication. Three parts separated by dots: (1) Header (algorithm and token type), (2) Payload (claims like user_id, exp), (3) Signature (proves the token wasn't tampered with)."
+  },
+  {
+    "instruction": "Write a Python function that reverses a singly linked list in-place.",
+    "input": "",
+    "output": "def reverse(head):\n    prev = None\n    curr = head\n    while curr:\n        nxt = curr.next\n        curr.next = prev\n        prev = curr\n        curr = nxt\n    return prev"
+  },
+  {
+    "instruction": "What is a webhook and how does it differ from a polling API?",
+    "input": "",
+    "output": "A webhook is a reverse-API call — the server POSTs data to your URL when an event happens. Polling repeatedly asks the server 'any new data?' — webhooks are more efficient and faster since data arrives immediately rather than on the next poll interval."
+  },
+  {
+    "instruction": "Explain why you should use environment variables for secrets instead of hardcoding them.",
+    "input": "",
+    "output": "Environment variables keep secrets out of source code and version control, allow different values per environment (dev/staging/prod), and are the standard interface for 12-factor apps and containerized deployments."
+  },
+  {
+    "instruction": "Write a Python context manager using 'contextlib' that suppresses FileNotFoundError.",
+    "input": "",
+    "output": "from contextlib import contextmanager\nimport os\n\n@contextmanager\ndef open_safe(path, mode='r'):\n    try:\n        f = open(path, mode)\n        yield f\n        f.close()\n    except FileNotFoundError:\n        yield None\n\n# Usage:\nwith open_safe('missing.txt') as f:\n    if f:\n        print(f.read())\n    else:\n        print('File not found')"
+  },
+  {
+    "instruction": "What is the purpose of a load balancer in a distributed system?",
+    "input": "",
+    "output": "Distributes incoming traffic across multiple servers to prevent any single server from being overloaded, improves availability, and enables rolling deployments and failure isolation. Common algorithms: round-robin, least-connections, IP-hash."
+  },
+  {
+    "instruction": "Write a Python function that calculates the factorial of n recursively.",
+    "input": "",
+    "output": "def factorial(n: int) -> int:\n    if n < 2:\n        return 1\n    return n * factorial(n - 1)"
+  },
+  {
+    "instruction": "What is the difference between mocking and stubbing in testing?",
+    "input": "",
+    "output": "Stubbing provides canned responses to specific calls — you pre-program what the fake should return. Mocking also verifies that the calls were made correctly — assertion on call count, arguments, and order. Mocks check interactions; stubs just replace behavior."
+  },
+  {
+    "instruction": "Explain what this Linux command does: ps aux | grep python | awk '{print $2}' | xargs kill",
+    "input": "",
+    "output": "Lists all Python processes, extracts their PIDs (column 2), then kills each one. Warning: dangerous in production — will kill all matching python processes for the current user."
+  },
+  {
+    "instruction": "Write a Python class that implements a simple stack with push and pop.",
+    "input": "",
+    "output": "class Stack:\n    def __init__(self):\n        self._items = []\n    \n    def push(self, item):\n        self._items.append(item)\n    \n    def pop(self):\n        if not self._items:\n            raise IndexError('pop from empty stack')\n        return self._items.pop()\n    \n    def __len__(self): return len(self._items)\n    def __bool__(self): return bool(self._items)"
+  },
+  {
+    "instruction": "What is eventual consistency in distributed systems?",
+    "input": "",
+    "output": "A consistency model where updates propagate asynchronously across replicas — reads may return stale data immediately after a write, but all replicas converge to the same value given enough time without new writes. Common in NoSQL databases and DNS."
+  },
+  {
+    "instruction": "Write a Python function that checks if two strings are anagrams.",
+    "input": "",
+    "output": "def is_anagram(a: str, b: str) -> bool:\n    return sorted(a.lower()) == sorted(b.lower())"
+  },
+  {
+    "instruction": "What is the difference betweenauthentication and authorization?",
+    "input": "",
+    "output": "Authentication (authN) verifies WHO you are — username/password, OAuth token. Authorization (authZ) verifies WHAT you can do — permissions, roles, access control lists. You authenticate first, then authorization gates access."
+  },
+  {
+    "instruction": "Write a Python decorator that caches function results using a dictionary.",
+    "input": "",
+    "output": "def cache(func):\n    cache_dict = {}\n    @functools.wraps(func)\n    def wrapper(*args, **kwargs):\n        key = (args, tuple(sorted(kwargs.items())))\n        if key not in cache_dict:\n            cache_dict[key] = func(*args, **kwargs)\n        return cache_dict[key]\n    return wrapper"
+  },
+  {
+    "instruction": "What is a circuit breaker pattern and when should you use it?",
+    "input": "",
+    "output": "A resilience pattern that 'trips' (opens) when a downstream service fails repeatedly, fast-failing requests instead of waiting for timeouts. Prevents cascading failures when a dependency is down. Use it for calls to external APIs or microservices that can fail."
+  },
+  {
+    "instruction": "Write a Python function that finds the longest common prefix of an array of strings.",
+    "input": "",
+    "output": "def longest_common_prefix(strs):\n    if not strs:\n        return ''\n    prefix = strs[0]\n    for s in strs[1:]:\n        while not s.startswith(prefix):\n            prefix = prefix[:-1]\n            if not prefix:\n                return ''\n    return prefix"
+  },
+  {
+    "instruction": "What is the difference between TCP and UDP?",
+    "input": "",
+    "output": "TCP is connection-oriented, guarantees ordered delivery and no data loss — HTTP, SSH, email use TCP. UDP is connectionless, no guarantee of delivery or order — video streaming, DNS, VoIP use UDP for speed over reliability."
+  },
+  {
+    "instruction": "Write a Python function that merges two dictionaries, summing values for common keys.",
+    "input": "",
+    "output": "from collections import Counter\n\ndef merge_dicts(a: dict, b: dict) -> dict:\n    return dict(Counter(a) + Counter(b))"
+  },
+  {
+    "instruction": "What is horizontal and vertical scaling?",
+    "input": "",
+    "output": "Vertical scaling (scale-up) adds more CPU/RAM/disk to a single machine. Horizontal scaling (scale-out) adds more machines to your pool. Horizontal is harder (distributed systems challenges) but scales further — most modern cloud-native apps prefer it."
+  },
+  {
+    "instruction": "Write a Python type annotation for a dictionary mapping strings to lists of integers.",
+    "input": "",
+    "output": "from typing import Dict, List\n\ndef process(data: Dict[str, List[int]]) -> None:\n    ..."
+  },
+  {
+    "instruction": "What is the purpose of .gitignore and what should typically be in it?",
+    "input": "",
+    "output": "Lists files and patterns that Git should ignore — build artifacts (__pycache__, node_modules, .pyc), IDE configs, secrets, credentials, environment files, and system files (DS_Store, Thumbs.db) that shouldn't be committed."
+  },
+  {
+    "instruction": "Write a Python one-liner that generates a list of squares from 1 to 10.",
+    "input": "",
+    "output": "squares = [x**2 for x in range(1, 11)]\n# [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]"
+  },
+  {
+    "instruction": "What is the difference between a virtual environment and a container (Docker)?",
+    "input": "",
+    "output": "A virtual environment (venv) isolates Python packages only — same OS kernel, lighter. A container packages the entire OS + app + dependencies — fully reproducible across machines. Docker is for application isolation; venv is for Python dependency isolation."
+  },
+  {
+    "instruction": "Write a SQL query to get the total revenue per customer from an orders table.",
+    "input": "",
+    "output": "SELECT customer_id, SUM(amount) AS total_revenue\nFROM orders\nGROUP BY customer_id\nORDER BY total_revenue DESC;"
+  },
+  {
+    "instruction": "What is a producer-consumer problem and why does it need synchronization?",
+    "input": "",
+    "output": "Multiple threads produce data into a shared buffer while others consume it — without synchronization, data can be lost (producer overwrites before consumer reads) or consumed multiple times. Use locks, semaphores, or queues to coordinate access."
+  },
+  {
+    "instruction": "Write a Python function that calculates the power of a number using recursion.",
+    "input": "",
+    "output": "def power(base: float, exp: int) -> float:\n    if exp == 0:\n        return 1\n    if exp < 0:\n        return 1 / power(base, -exp)\n    return base * power(base, exp - 1)"
+  },
+  {
+    "instruction": "What is the difference between a央企 and a private cloud deployment?",
+    "input": "",
+    "output": "On-premises: you own and manage all hardware in your data center — full control, high upfront cost, your team's responsibility. Cloud: rent capacity from a provider — elastic scaling, pay-as-you-go, managed services. Hybrid mixes both — sensitive workloads on-prem, bursty workloads in cloud."
+  },
+  {
+    "instruction": "Write a Python function that validates an email address using regex.",
+    "input": "",
+    "output": "import re\n\ndef is_valid_email(email: str) -> bool:\n    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'\n    return bool(re.match(pattern, email))"
+  },
+  {
+    "instruction": "What is a CDN and what performance benefit does it provide?",
+    "input": "",
+    "output": "Content Delivery Network — geographically distributed servers that cache static assets (images, CSS, JS) close to users. Reduces latency, decreases origin server load, and improves availability. Users get faster loads; your server handles less traffic."
+  },
+  {
+    "instruction": "Write a Python function that removes duplicates from a list while preserving order.",
+    "input": "",
+    "output": "def dedupe(items):\n    seen = set()\n    result = []\n    for item in items:\n        if item not in seen:\n            seen.add(item)\n            result.append(item)\n    return result"
+  },
+  {
+    "instruction": "What is the difference between乐观锁 and pessimistic locking?",
+    "input": "",
+    "output": "Optimistic locking assumes conflicts are rare — you check a version number before committing and retry if it changed. Pessimistic locking assumes conflicts are likely — you acquire a lock before reading, blocking other transactions until you're done."
+  },
+  {
+    "instruction": "Write a Python class for a circular buffer with fixed capacity.",
+    "input": "",
+    "output": "class CircularBuffer:\n    def __init__(self, capacity):\n        self.capacity = capacity\n        self.buffer = [None] * capacity\n        self.head = self.tail = self.size = 0\n    \n    def append(self, item):\n        self.buffer[self.tail] = item\n        self.tail = (self.tail + 1) % self.capacity\n        if self.size < self.capacity:\n            self.size += 1\n        else:\n            self.head = (self.head + 1) % self.capacity\n    \n    def get(self):\n        if self.size == 0:\n            raise IndexError('buffer is empty')\n        item = self.buffer[self.head]\n        self.head = (self.head + 1) % self.capacity\n        self.size -= 1\n        return item"
+  },
+  {
+    "instruction": "What is the CAP theorem?",
+    "input": "",
+    "output": "A distributed system can guarantee only 2 of 3: Consistency (all nodes see the same data), Availability (every request gets a response), Partition tolerance (system works despite network partitions). In practice, partitions happen — so you choose between CP (prioritize consistency) or AP (prioritize availability)."
+  },
+  {
+    "instruction": "Write a Python function that implements binary search on a sorted list.",
+    "input": "",
+    "output": "def binary_search(arr, target):\n    left, right = 0, len(arr) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1"
+  },
+  {
+    "instruction": "What is a message queue and when should you use one?",
+    "input": "",
+    "output": "A message queue decouples producers from consumers — producers publish messages to a queue, consumers process them asynchronously. Use when: tasks are slow/heavy, you need reliability/ordering, you want to scale consumers independently, or you need retry logic for failed jobs. Examples: RabbitMQ, Redis Streams, AWS SQS."
+  },
+  {
+    "instruction": "Write a Python decorator that rate-limits a function to max n calls per second.",
+    "input": "",
+    "output": "import time\nfrom functools import wraps\n\ndef rate_limit(max_calls, period=1.0):\n    def decorator(func):\n        calls = []\n        @wraps(func)\n        def wrapper(*args, **kwargs):\n            now = time.monotonic()\n            calls[:] = [t for t in calls if now - t < period]\n            if len(calls) >= max_calls:\n                raise RuntimeError(f'Rate limit exceeded: {max_calls} calls per {period}s')\n            calls.append(now)\n            return func(*args, **kwargs)\n        return wrapper\n    return decorator"
+  },
+  {
+    "instruction": "What is the difference between CI and CD in software development?",
+    "input": "",
+    "output": "CI (Continuous Integration) automatically builds and tests code on every commit — catches bugs early. CD (Continuous Delivery/Deployment) automatically deploys tested code to staging or production — CI + delivery pipeline, sometimes used interchangeably."
+  },
+  {
+    "instruction": "Write a Python function that returns all permutations of a string.",
+    "input": "",
+    "output": "def permutations(s):\n    if len(s) == 1:\n        return [s]\n    result = []\n    for i, char in enumerate(s):\n        for perm in permutations(s[:i] + s[i+1:]):\n            result.append(char + perm)\n    return result"
+  },
+  {
+    "instruction": "What is a memory leak in a program?",
+    "input": "",
+    "output": "Memory that is no longer needed but is never freed — usually because references to objects are still held unintentionally (e.g., global caches without eviction, lingering event listeners, circular references in languages without GC). Over time, available memory shrinks until the program crashes."
+  },
+  {
+    "instruction": "Write a Python function that checks if a number is prime.",
+    "input": "",
+    "output": "def is_prime(n):\n    if n < 2:\n        return False\n    if n == 2:\n        return True\n    if n % 2 == 0:\n        return False\n    for i in range(3, int(n**0.5) + 1, 2):\n        if n % i == 0:\n            return False\n    return True"
+  },
+  {
+    "instruction": "What is the difference between a stack and a queue data structure?",
+    "input": "",
+    "output": "Stack: LIFO (Last In First Out) — think of a stack of plates. Queue: FIFO (First In First Out) — think of a line. Use a stack when you need to reverse order or track nested operations (DFS, function calls). Use a queue for breadth-first operations or task scheduling."
+  },
+  {
+    "instruction": "Write a Python function that returns the Nth Fibonacci number using dynamic programming.",
+    "input": "",
+    "output": "def fib(n):\n    if n < 2:\n        return n\n    a, b = 0, 1\n    for _ in range(2, n + 1):\n        a, b = b, a + b\n    return b"
+  }
+]

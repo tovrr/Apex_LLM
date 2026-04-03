@@ -11,7 +11,8 @@ print("==========================================")
 print("🚀 DÉMARRAGE DU FINE-TUNING APEX (AVEC LoRA)")
 print("==========================================")
 
-DATASET_FILE = os.getenv("APEX_DATASET_FILE", "dataset_expert.json")
+# 2026-04-03: dataset_apex_v1.json — 90 vrais exemples, zéro duplicate
+DATASET_FILE = os.getenv("APEX_DATASET_FILE", "dataset_apex_v1.json")
 
 # Garde CPU : BitsAndBytes 4-bit requiert un GPU.
 # Sur CPU seul, on valide uniquement la pipeline de données (smoke test partiel).
@@ -72,8 +73,8 @@ print(f"🔧 Modules LoRA detectes: {target_modules_lora}")
 # 3. LA CONFIGURATION LORA (La Clé USB de personnalité)
 # On gèle le cerveau principal et on cible seulement certaines zones pour l'apprentissage
 configuration_lora = LoraConfig(
-    r=8, # La taille de notre "clé USB" (8 est un bon standard)
-    lora_alpha=16,
+    r=32,  # 4x plus grand que l'ancien (8→32) = LoRA plus expressif
+    lora_alpha=32,  # alpha = 2*r pour un bon scaling
     target_modules=target_modules_lora, # On modifie l'Attention du modèle
     lora_dropout=0.05,
     task_type="CAUSAL_LM"
