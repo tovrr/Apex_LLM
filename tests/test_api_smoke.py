@@ -16,6 +16,7 @@ class TestApiSmoke(unittest.TestCase):
         os.environ["APEX_API_KEY"] = "test-key"
         os.environ["APEX_SKIP_MODEL_LOAD"] = "1"
         os.environ["APEX_RATE_LIMIT_PER_WINDOW"] = "100"
+        os.environ["APEX_OPENAI_COMPAT_URL"] = ""
         # Point key_store at an isolated temp file for this test run.
         os.environ["APEX_KEYS_DB"] = _tmp_db
 
@@ -26,6 +27,9 @@ class TestApiSmoke(unittest.TestCase):
         importlib.reload(key_store)
         cls.serveur_api = importlib.reload(serveur_api)
         os.environ["APEX_SKIP_MODEL_LOAD"] = "1"
+        os.environ["APEX_OPENAI_COMPAT_URL"] = ""
+        os.environ["APEX_OLLAMA_URL"] = ""
+        setattr(cls.serveur_api, "APEX_OPENAI_COMPAT_URL", "")
         setattr(cls.serveur_api, "APEX_OLLAMA_URL", "")
         try:
             cls.serveur_api.key_store.add_key("test-key", label="test-key", plan="internal")
@@ -288,12 +292,22 @@ class TestUsageEndpoint(unittest.TestCase):
         os.environ["APEX_API_KEY"] = "test-key"
         os.environ["APEX_SKIP_MODEL_LOAD"] = "1"
         os.environ["APEX_RATE_LIMIT_PER_WINDOW"] = "100"
+        os.environ["APEX_OPENAI_COMPAT_URL"] = ""
         os.environ["APEX_KEYS_DB"] = _db
 
         import key_store
         import serveur_api
         importlib.reload(key_store)
         cls.serveur_api = importlib.reload(serveur_api)
+        os.environ["APEX_SKIP_MODEL_LOAD"] = "1"
+        os.environ["APEX_OPENAI_COMPAT_URL"] = ""
+        os.environ["APEX_OLLAMA_URL"] = ""
+        setattr(cls.serveur_api, "APEX_OPENAI_COMPAT_URL", "")
+        setattr(cls.serveur_api, "APEX_OLLAMA_URL", "")
+        try:
+            cls.serveur_api.key_store.add_key("test-key", label="test-key", plan="internal")
+        except ValueError:
+            pass
         cls.client = TestClient(cls.serveur_api.app)
 
     def test_usage_endpoint_rejects_invalid_key(self) -> None:
@@ -325,10 +339,14 @@ class TestPublicPages(unittest.TestCase):
         os.environ["APEX_API_KEY"] = "test-key"
         os.environ["APEX_SKIP_MODEL_LOAD"] = "1"
         os.environ["APEX_RATE_LIMIT_PER_WINDOW"] = "100"
+        os.environ["APEX_OPENAI_COMPAT_URL"] = ""
+        os.environ["APEX_OLLAMA_URL"] = ""
 
         import serveur_api
 
         cls.serveur_api = importlib.reload(serveur_api)
+        setattr(cls.serveur_api, "APEX_OPENAI_COMPAT_URL", "")
+        setattr(cls.serveur_api, "APEX_OLLAMA_URL", "")
         cls.client = TestClient(cls.serveur_api.app)
 
     def test_developer_page_available(self) -> None:
@@ -401,6 +419,7 @@ class TestTaskTypeTagging(unittest.TestCase):
         os.environ["APEX_API_KEY"] = "test-key"
         os.environ["APEX_SKIP_MODEL_LOAD"] = "1"
         os.environ["APEX_RATE_LIMIT_PER_WINDOW"] = "100"
+        os.environ["APEX_OPENAI_COMPAT_URL"] = ""
         os.environ["APEX_KEYS_DB"] = _db
 
         import key_store
@@ -408,6 +427,15 @@ class TestTaskTypeTagging(unittest.TestCase):
         importlib.reload(key_store)
         cls.key_store = key_store
         cls.serveur_api = importlib.reload(serveur_api)
+        os.environ["APEX_SKIP_MODEL_LOAD"] = "1"
+        os.environ["APEX_OPENAI_COMPAT_URL"] = ""
+        os.environ["APEX_OLLAMA_URL"] = ""
+        setattr(cls.serveur_api, "APEX_OPENAI_COMPAT_URL", "")
+        setattr(cls.serveur_api, "APEX_OLLAMA_URL", "")
+        try:
+            cls.serveur_api.key_store.add_key("test-key", label="test-key", plan="internal")
+        except ValueError:
+            pass
         cls.client = TestClient(cls.serveur_api.app)
 
     def test_task_type_recorded_in_event(self) -> None:

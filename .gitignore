@@ -22,6 +22,8 @@ checkpoint-*/
 # Runtime data artifacts (local-only)
 data/*.db
 data/*.jsonl
+.openclaw/
+apex_lora_sauvegarde_backup_*/
 
 # Server logs
 *.log
