@@ -115,7 +115,8 @@ parametres_entrainement = TrainingArguments(
     max_steps=10, # Smoke test rapide
     optim="paged_adamw_8bit",
     gradient_checkpointing=True,
-    fp16=True,
+    fp16=False,
+    bf16=False,
     report_to="none"
 )
 
