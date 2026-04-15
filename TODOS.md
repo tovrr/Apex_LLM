@@ -19,7 +19,7 @@
 - [ ] Validate end-to-end UX with real prompts on CPU/GPU host and tune defaults (`mots_max`, timeout, rate limits)
 - [x] Validate stable full Phi-4 LoRA run on Colab T4 — 10/10 steps completed, adapter imported into `apex_lora_sauvegarde`
 - [x] Run hard eval after new adapter export — 11/20 (75.8%) via Ollama fallback; real Phi-4+LoRA eval requires GPU (Ollama does not apply PEFT adapters)
-- [ ] Finalize public docs for web + mobile integration path
+- [x] Finalize public docs for web + mobile integration path — added Web & Mobile Integration section to README (proxy, SSE, OpenAI-compat, Ollama note)
 - [ ] Evaluate Phi-4+LoRA adapter quality directly on GPU (disable APEX_OLLAMA_URL, load HF model)
 
 ## 📝 Technical Findings & Considerations

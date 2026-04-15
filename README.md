@@ -27,7 +27,7 @@ Apex LLM is a local-first FastAPI gateway for chat inference, model-tier routing
 
 ## Current Model Routing
 
-- fast: microsoft/Phi-3-mini-4k-instruct
+- fast: unsloth/phi-4-unsloth-bnb-4bit + LoRA adapter (`apex_lora_sauvegarde`)
 - default: Qwen/Qwen2.5-7B-Instruct
 - reasoning: Jackrong/Qwen3.5-27B-Claude-4.6-Opus-Reasoning-Distilled
 
@@ -49,7 +49,7 @@ Create [.env](.env) from [.env.example](.env.example) and set at least:
 
 ```dotenv
 APEX_API_KEY=your_key_here
-APEX_MODEL_FAST_NAME=microsoft/Phi-3-mini-4k-instruct
+APEX_MODEL_FAST_NAME=unsloth/phi-4-unsloth-bnb-4bit
 APEX_MODEL_FAST_LORA_DIR=./apex_lora_sauvegarde
 ```
 
@@ -134,7 +134,57 @@ CI runs on push and pull request through [ci.yml](.github/workflows/ci.yml).
 - [evals](evals): Dataset validation and eval helpers.
 - [quill-proxy](quill-proxy): Next.js proxy templates.
 
+## Web & Mobile Integration
+
+### Server-side proxy (recommended)
+
+Never expose `APEX_API_KEY` in browser or mobile clients. Route all requests through a server-side proxy.
+
+A Next.js proxy template is provided in [quill-proxy](quill-proxy). It injects the key server-side and forwards to `/chat` or `/chat/stream`.
+
+Minimal fetch from the browser:
+
+```js
+const res = await fetch('/api/apex/chat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ question: 'Hello', mots_max: 200, model_tier: 'fast' }),
+});
+const { reponse_apex } = await res.json();
+```
+
+### Streaming (SSE)
+
+Use `/chat/stream` for token-by-token streaming. The endpoint emits `data: <token>\n\n` chunks.
+
+```js
+const res = await fetch('/api/apex/stream', { method: 'POST', ... });
+const reader = res.body.getReader();
+const decoder = new TextDecoder();
+while (true) {
+  const { done, value } = await reader.read();
+  if (done) break;
+  const chunk = decoder.decode(value);
+  // parse 'data: ...' lines
+}
+```
+
+### OpenAI-compatible endpoint
+
+For clients that support the OpenAI SDK, use:
+
+```
+POST /v1/chat/completions
+```
+
+with `model: "apex:fast"` (or `apex:default`, `apex:reasoning`). Tool-call detection is supported via `tools` and `tool_choice` fields.
+
+### Ollama local fallback
+
+Set `APEX_OLLAMA_URL=http://127.0.0.1:11434` to delegate inference to a local Ollama instance. The LoRA adapter is **not** applied in Ollama mode — it is only used when loading the HuggingFace model directly (requires GPU).
+
 ## Notes
 
 - Keep secrets out of git. Use [.env](.env) locally.
 - LoRA artifacts and backups should stay local unless intentionally published.
+- Large model files (*.safetensors, *.pt, *.bin) are tracked via Git LFS.
