@@ -25,6 +25,12 @@ class TestApiSmoke(unittest.TestCase):
         # Reload both modules so the env vars above take effect.
         importlib.reload(key_store)
         cls.serveur_api = importlib.reload(serveur_api)
+        os.environ["APEX_SKIP_MODEL_LOAD"] = "1"
+        setattr(cls.serveur_api, "APEX_OLLAMA_URL", "")
+        try:
+            cls.serveur_api.key_store.add_key("test-key", label="test-key", plan="internal")
+        except ValueError:
+            pass
         cls.client = TestClient(cls.serveur_api.app)
 
     def test_health_ok(self) -> None:
@@ -144,6 +150,34 @@ class TestApiSmoke(unittest.TestCase):
         }
         response = self.client.post("/chat/v2", headers={"X-API-Key": "wrong-key"}, json=payload)
         self.assertEqual(response.status_code, 403)
+
+    def test_openai_chat_ignores_forced_tool_not_declared(self) -> None:
+        payload = {
+            "model": "apex:fast",
+            "messages": [{"role": "user", "content": "Hello there"}],
+            "tools": [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "weather_tool",
+                        "description": "Get weather",
+                        "parameters": {"type": "object", "properties": {}},
+                    },
+                }
+            ],
+            "tool_choice": {"type": "function", "function": {"name": "different_tool"}},
+            "stream": False,
+            "max_tokens": 20,
+        }
+
+        response = self.client.post("/v1/chat/completions", json=payload)
+        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        choice = body["choices"][0]
+        self.assertEqual(choice["finish_reason"], "stop")
+        self.assertEqual(choice["message"]["role"], "assistant")
+        self.assertIsNotNone(choice["message"]["content"])
+        self.assertNotIn("tool_calls", choice["message"])
 
 
 class TestKeyStore(unittest.TestCase):

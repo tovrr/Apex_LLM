@@ -893,6 +893,140 @@ def _prompt_depuis_openai(payload: OpenAIChatRequest) -> str:
     return prompt
 
 
+def _normaliser_tool_choice_openai(tool_choice: str | dict[str, Any] | None) -> tuple[str, str | None]:
+    if tool_choice is None:
+        return "auto", None
+
+    if isinstance(tool_choice, str):
+        choice = tool_choice.strip().lower()
+        if choice in {"none", "auto", "required"}:
+            return choice, None
+        return "auto", None
+
+    if not isinstance(tool_choice, dict):
+        return "auto", None
+
+    if str(tool_choice.get("type", "")).strip().lower() == "function":
+        function = tool_choice.get("function", {})
+        if isinstance(function, dict):
+            forced_name = str(function.get("name", "")).strip()
+            if forced_name:
+                return "required", forced_name
+
+    return "auto", None
+
+
+def _detect_tool_calls_openai(payload: OpenAIChatRequest) -> list[dict[str, Any]]:
+    if not payload.tools:
+        return []
+
+    mode, forced_name = _normaliser_tool_choice_openai(payload.tool_choice)
+    if mode == "none":
+        return []
+
+    user_text_parts: list[str] = []
+    for message in payload.messages:
+        role = (message.role or "").strip().lower()
+        if role != "user":
+            continue
+        text = _content_vers_texte(message.content)
+        if text:
+            user_text_parts.append(text.lower())
+    user_text = "\n".join(user_text_parts)
+
+    def _extract_name(tool: dict[str, Any]) -> str:
+        fn = tool.get("function", tool)
+        if isinstance(fn, dict):
+            return str(fn.get("name", "")).strip()
+        return ""
+
+    declared_names = {
+        name
+        for name in (_extract_name(tool) for tool in payload.tools if isinstance(tool, dict))
+        if name
+    }
+    if forced_name and forced_name not in declared_names:
+        forced_name = None
+        mode = "auto"
+
+    selected: list[str] = []
+    if forced_name and forced_name in declared_names:
+        selected = [forced_name]
+    else:
+        for tool in payload.tools:
+            if not isinstance(tool, dict):
+                continue
+            name = _extract_name(tool)
+            if not name:
+                continue
+            if mode == "required":
+                selected.append(name)
+                continue
+            name_parts = [p for p in name.lower().replace("-", "_").split("_") if p]
+            if name.lower() in user_text or any(p in user_text for p in name_parts):
+                selected.append(name)
+
+    # Keep responses deterministic and bounded.
+    unique_names = list(dict.fromkeys(selected))[:3]
+    tool_calls: list[dict[str, Any]] = []
+    for name in unique_names:
+        tool_calls.append(
+            {
+                "id": f"call_{uuid.uuid4().hex[:24]}",
+                "type": "function",
+                "function": {
+                    "name": name,
+                    "arguments": "{}",
+                },
+            }
+        )
+    return tool_calls
+
+
+def _detect_tool_calls_ollama(payload: OllamaChatRequest) -> list[dict[str, Any]]:
+    if not payload.tools:
+        return []
+
+    user_text_parts: list[str] = []
+    for message in payload.messages:
+        role = (message.role or "").strip().lower()
+        if role != "user":
+            continue
+        text = _content_vers_texte(message.content)
+        if text:
+            user_text_parts.append(text.lower())
+    user_text = "\n".join(user_text_parts)
+
+    selected: list[str] = []
+    for tool in payload.tools:
+        if not isinstance(tool, dict):
+            continue
+        fn = tool.get("function", tool)
+        if not isinstance(fn, dict):
+            continue
+        name = str(fn.get("name", "")).strip()
+        if not name:
+            continue
+        name_parts = [p for p in name.lower().replace("-", "_").split("_") if p]
+        if name.lower() in user_text or any(p in user_text for p in name_parts):
+            selected.append(name)
+
+    unique_names = list(dict.fromkeys(selected))[:3]
+    tool_calls: list[dict[str, Any]] = []
+    for name in unique_names:
+        tool_calls.append(
+            {
+                "id": f"call_{uuid.uuid4().hex[:24]}",
+                "type": "function",
+                "function": {
+                    "name": name,
+                    "arguments": {},
+                },
+            }
+        )
+    return tool_calls
+
+
 def _anthropic_system_vers_texte(system: str | list[dict[str, Any]] | None) -> str:
     if isinstance(system, str):
         return system.strip()
@@ -1314,8 +1448,33 @@ async def openai_compat_chat_completions(payload: OpenAIChatRequest, request: Re
     mots_max = _normaliser_max_tokens(payload.max_tokens)
     chat_id = f"chatcmpl-{uuid.uuid4().hex}"
     created = int(time.time())
+    tool_calls = _detect_tool_calls_openai(payload)
 
     if not payload.stream:
+        if tool_calls:
+            return {
+                "id": chat_id,
+                "object": "chat.completion",
+                "created": created,
+                "model": f"apex:{selected_tier}",
+                "choices": [
+                    {
+                        "index": 0,
+                        "message": {
+                            "role": "assistant",
+                            "content": None,
+                            "tool_calls": tool_calls,
+                        },
+                        "finish_reason": "tool_calls",
+                    }
+                ],
+                "usage": {
+                    "prompt_tokens": len(prompt.split()),
+                    "completion_tokens": 0,
+                    "total_tokens": len(prompt.split()),
+                },
+            }
+
         reponse, selected_tier = await _generer_reponse(prompt, mots_max, selected_tier)
         return {
             "id": chat_id,
@@ -1339,6 +1498,41 @@ async def openai_compat_chat_completions(payload: OpenAIChatRequest, request: Re
     async def stream_openai() -> AsyncIterator[str]:
         total_completion_tokens = 0
         try:
+            if tool_calls:
+                first_chunk = {
+                    "id": chat_id,
+                    "object": "chat.completion.chunk",
+                    "created": created,
+                    "model": f"apex:{selected_tier}",
+                    "choices": [
+                        {
+                            "index": 0,
+                            "delta": {
+                                "role": "assistant",
+                                "tool_calls": tool_calls,
+                            },
+                            "finish_reason": None,
+                        }
+                    ],
+                }
+                yield f"data: {json.dumps(first_chunk, ensure_ascii=False)}\n\n"
+
+                final_tool_chunk = {
+                    "id": chat_id,
+                    "object": "chat.completion.chunk",
+                    "created": created,
+                    "model": f"apex:{selected_tier}",
+                    "choices": [{"index": 0, "delta": {}, "finish_reason": "tool_calls"}],
+                    "usage": {
+                        "prompt_tokens": len(prompt.split()),
+                        "completion_tokens": 0,
+                        "total_tokens": len(prompt.split()),
+                    },
+                }
+                yield f"data: {json.dumps(final_tool_chunk, ensure_ascii=False)}\n\n"
+                yield "data: [DONE]\n\n"
+                return
+
             async for fragment, streamed_tier in _streamer_tokens(prompt, mots_max, selected_tier):
                 total_completion_tokens += len(fragment.split())
                 chunk = {
@@ -1569,8 +1763,24 @@ async def ollama_compat_chat(payload: OllamaChatRequest, request: Request) -> An
     mots_max = _mots_max_depuis_options(payload.options)
     created_at = datetime.now(timezone.utc).isoformat()
     t0_ns = time.perf_counter_ns()
+    tool_calls = _detect_tool_calls_ollama(payload)
 
     if not payload.stream:
+        if tool_calls:
+            total_ns = time.perf_counter_ns() - t0_ns
+            return {
+                "model": f"apex:{selected_tier}",
+                "created_at": created_at,
+                "message": {"role": "assistant", "content": "", "tool_calls": tool_calls},
+                "done": True,
+                "done_reason": "tool_calls",
+                "total_duration": total_ns,
+                "load_duration": 0,
+                "prompt_eval_count": len(prompt.split()),
+                "eval_count": 0,
+                "eval_duration": total_ns,
+            }
+
         reponse, selected_tier = await _generer_reponse(prompt, mots_max, selected_tier)
         total_ns = time.perf_counter_ns() - t0_ns
         return {
@@ -1589,6 +1799,24 @@ async def ollama_compat_chat(payload: OllamaChatRequest, request: Request) -> An
     async def stream_chat() -> AsyncIterator[str]:
         eval_count = 0
         try:
+            if tool_calls:
+                total_ns = time.perf_counter_ns() - t0_ns
+                yield _ndjson(
+                    {
+                        "model": f"apex:{selected_tier}",
+                        "created_at": created_at,
+                        "message": {"role": "assistant", "content": "", "tool_calls": tool_calls},
+                        "done": True,
+                        "done_reason": "tool_calls",
+                        "total_duration": total_ns,
+                        "load_duration": 0,
+                        "prompt_eval_count": len(prompt.split()),
+                        "eval_count": 0,
+                        "eval_duration": total_ns,
+                    }
+                )
+                return
+
             async for fragment, streamed_tier in _streamer_tokens(prompt, mots_max, selected_tier):
                 eval_count += len(fragment.split())
                 yield _ndjson(
