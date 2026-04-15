@@ -235,14 +235,30 @@ APEX_OLLAMA_COMPAT_REQUIRE_KEY = (os.getenv("APEX_OLLAMA_COMPAT_REQUIRE_KEY", "0
     "on",
 }
 
+# ── OpenAI-compatible backend (optional, e.g. LM Studio) ─────────────────────
+# Set APEX_OPENAI_COMPAT_URL=http://localhost:1234 to delegate inference to any
+# OpenAI-compatible server (LM Studio, vLLM, text-generation-webui, etc.).
+# Takes priority over Ollama when both are set.
+APEX_OPENAI_COMPAT_URL = os.getenv("APEX_OPENAI_COMPAT_URL", "").rstrip("/")
+OPENAI_COMPAT_MODEL_NAMES: dict[str, str] = {
+    "fast": os.getenv("APEX_OPENAI_COMPAT_MODEL_FAST", "phi-4"),
+    "default": os.getenv("APEX_OPENAI_COMPAT_MODEL_DEFAULT", "phi-4"),
+    "reasoning": os.getenv("APEX_OPENAI_COMPAT_MODEL_REASONING", "phi-4"),
+}
+APEX_OPENAI_COMPAT_API_KEY = os.getenv("APEX_OPENAI_COMPAT_API_KEY", "lm-studio")
+
 # ── Xiaomi MiMo fallback (quota MiniMax dépassé) ───────────────────────────────
 XIAOMI_MIMO_API_KEY = os.getenv("XIAOMI_MIMO_API_KEY", "").strip()
 XIAOMI_MIMO_BASE_URL = os.getenv("XIAOMI_MIMO_BASE_URL", "https://api.minimax.chat/v1").rstrip("/")
 XIAOMI_MIMO_MODEL = os.getenv("XIAOMI_MIMO_MODEL", "MiMo-7B-Instruct")
 
 
+def _openai_compat_active() -> bool:
+    return bool(APEX_OPENAI_COMPAT_URL)
+
+
 def _ollama_active() -> bool:
-    return bool(APEX_OLLAMA_URL)
+    return bool(APEX_OLLAMA_URL) and not _openai_compat_active()
 
 tokenizer: Any | None = None
 modele_apex: Any | None = None
@@ -587,8 +603,86 @@ You must respond according to the above system prompt. Do not deviate from it.
         raise HTTPException(status_code=500, detail=f"Erreur Ollama: {exc}") from exc
 
 
+async def _generer_reponse_openai_compat(question: str, mots_max: int, selected_tier: str) -> str:
+    """Delegate generation to an OpenAI-compatible server (e.g. LM Studio, vLLM)."""
+    model_name = OPENAI_COMPAT_MODEL_NAMES[selected_tier]
+    system_prompt, user_text = _extraire_systeme_depuis_prompt(question)
+    if not system_prompt:
+        system_prompt = APEX_DEFAULT_SYSTEM_PROMPT
+
+    payload = {
+        "model": model_name,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_text},
+        ],
+        "max_tokens": mots_max,
+        "temperature": 0.7,
+        "stream": False,
+    }
+    headers = {"Authorization": f"Bearer {APEX_OPENAI_COMPAT_API_KEY}", "Content-Type": "application/json"}
+    try:
+        async with httpx.AsyncClient(timeout=DELAI_GENERATION_SEC) as client:
+            r = await client.post(f"{APEX_OPENAI_COMPAT_URL}/v1/chat/completions", json=payload, headers=headers)
+            r.raise_for_status()
+            data = r.json()
+            return data["choices"][0]["message"]["content"].strip()
+    except httpx.TimeoutException as exc:
+        raise HTTPException(status_code=504, detail="Temps de génération dépassé (OpenAI-compat).") from exc
+    except Exception as exc:
+        logger.exception("Erreur OpenAI-compat pendant la génération")
+        raise HTTPException(status_code=500, detail=f"Erreur OpenAI-compat: {exc}") from exc
+
+
+async def _streamer_tokens_openai_compat(question: str, mots_max: int, selected_tier: str) -> Any:
+    """Stream tokens from an OpenAI-compatible server."""
+    model_name = OPENAI_COMPAT_MODEL_NAMES[selected_tier]
+    system_prompt, user_text = _extraire_systeme_depuis_prompt(question)
+    if not system_prompt:
+        system_prompt = APEX_DEFAULT_SYSTEM_PROMPT
+
+    payload = {
+        "model": model_name,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_text},
+        ],
+        "max_tokens": mots_max,
+        "temperature": 0.7,
+        "stream": True,
+    }
+    headers = {"Authorization": f"Bearer {APEX_OPENAI_COMPAT_API_KEY}", "Content-Type": "application/json"}
+    try:
+        async with httpx.AsyncClient(timeout=DELAI_GENERATION_SEC) as client:
+            async with client.stream("POST", f"{APEX_OPENAI_COMPAT_URL}/v1/chat/completions", json=payload, headers=headers) as resp:
+                resp.raise_for_status()
+                async for line in resp.aiter_lines():
+                    if not line or not line.startswith("data: "):
+                        continue
+                    raw = line[len("data: "):].strip()
+                    if raw == "[DONE]":
+                        break
+                    try:
+                        chunk = json.loads(raw)
+                        delta = chunk["choices"][0].get("delta", {})
+                        fragment = delta.get("content", "")
+                        if fragment:
+                            yield fragment, selected_tier
+                    except (json.JSONDecodeError, KeyError, IndexError):
+                        continue
+    except httpx.TimeoutException as exc:
+        raise HTTPException(status_code=504, detail="Temps de génération dépassé (OpenAI-compat stream).") from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Erreur OpenAI-compat stream: {exc}") from exc
+
+
 async def _generer_reponse(question: str, mots_max: int, model_tier: str | None = None) -> tuple[str, str]:
     selected_tier = _normalize_tier(model_tier)
+
+    if _openai_compat_active():
+        reponse = await _generer_reponse_openai_compat(question, mots_max, selected_tier)
+        _model_runtime_state_by_tier[selected_tier] = "ready"
+        return reponse, selected_tier
 
     if _ollama_active():
         reponse = await _generer_reponse_ollama(question, mots_max, selected_tier)
@@ -627,6 +721,11 @@ async def _generer_reponse(question: str, mots_max: int, model_tier: str | None 
 
 async def _streamer_tokens(question: str, mots_max: int, model_tier: str | None = None) -> Any:
     selected_tier = _normalize_tier(model_tier)
+
+    if _openai_compat_active():
+        async for fragment, tier in _streamer_tokens_openai_compat(question, mots_max, selected_tier):
+            yield fragment, tier
+        return
 
     if _ollama_active():
         # Ollama streaming: use stream=True and yield chunks.
