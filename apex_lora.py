@@ -11,6 +11,8 @@ print("==========================================")
 print("🚀 DÉMARRAGE DU FINE-TUNING APEX (AVEC LoRA)")
 print("==========================================")
 
+os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
+
 # 2026-04-15: default dataset updated to V4 for final training quality.
 DATASET_FILE = os.getenv("APEX_DATASET_FILE", "dataset_expert_v4.json")
 
@@ -32,6 +34,9 @@ if not torch.cuda.is_available():
 # 1. LE CHOIX DU MODÈLE DE BASE
 # On aligne le fine-tuning sur la base déjà utilisée par l'adapter actuel.
 nom_modele = os.getenv("APEX_BASE_MODEL", "unsloth/phi-4-unsloth-bnb-4bit")
+lora_rank = int(os.getenv("APEX_LORA_RANK", "16"))
+lora_alpha = int(os.getenv("APEX_LORA_ALPHA", str(lora_rank)))
+attention_impl = os.getenv("APEX_ATTENTION_IMPL", "sdpa")
 
 # 2. LA COMPRESSION (4-bit)
 # On compresse le modèle pour qu'il rentre dans ta carte graphique
@@ -44,14 +49,17 @@ quant_config = BitsAndBytesConfig(
 print(f"📥 Téléchargement et compression de {nom_modele}...")
 tokenizer = AutoTokenizer.from_pretrained(nom_modele)
 tokenizer.pad_token = tokenizer.eos_token
+tokenizer.model_max_length = min(tokenizer.model_max_length, 1024)
 
 modele_base = AutoModelForCausalLM.from_pretrained(
     nom_modele,
     quantization_config=quant_config,
     torch_dtype=torch.float16,
     device_map="auto",
-    attn_implementation="eager",
+    attn_implementation=attention_impl,
 )
+modele_base.config.use_cache = False
+modele_base.gradient_checkpointing_enable()
 
 
 def _detect_target_modules(model: Any) -> list[str]:
@@ -72,8 +80,8 @@ print(f"🔧 Modules LoRA detectes: {target_modules_lora}")
 # 3. LA CONFIGURATION LORA (La Clé USB de personnalité)
 # On gèle le cerveau principal et on cible seulement certaines zones pour l'apprentissage
 configuration_lora = LoraConfig(
-    r=32,  # 4x plus grand que l'ancien (8→32) = LoRA plus expressif
-    lora_alpha=32,  # alpha = 2*r pour un bon scaling
+    r=lora_rank,
+    lora_alpha=lora_alpha,
     target_modules=target_modules_lora, # On modifie l'Attention du modèle
     lora_dropout=0.05,
     task_type="CAUSAL_LM"
@@ -105,7 +113,10 @@ parametres_entrainement = TrainingArguments(
     learning_rate=2e-4,
     logging_steps=10,
     max_steps=10, # Smoke test rapide
-    optim="paged_adamw_8bit"
+    optim="paged_adamw_8bit",
+    gradient_checkpointing=True,
+    fp16=True,
+    report_to="none"
 )
 
 entraineur = SFTTrainer(
