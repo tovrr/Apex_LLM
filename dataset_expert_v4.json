@@ -1,0 +1,1022 @@
+[
+  {
+    "instruction": "Calculus hard-fix #1: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #1: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #1: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #1: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #1: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #1: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #1: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #1: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #1: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Calculus hard-fix #2: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #2: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #2: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #2: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #2: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #2: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #2: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #2: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #2: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Calculus hard-fix #3: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #3: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #3: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #3: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #3: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #3: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #3: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #3: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #3: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Calculus hard-fix #4: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #4: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #4: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #4: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #4: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #4: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #4: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #4: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #4: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Calculus hard-fix #5: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #5: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #5: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #5: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #5: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #5: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #5: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #5: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #5: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Calculus hard-fix #6: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #6: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #6: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #6: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #6: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #6: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #6: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #6: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #6: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Calculus hard-fix #7: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #7: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #7: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #7: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #7: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #7: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #7: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #7: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #7: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Calculus hard-fix #8: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #8: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #8: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #8: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #8: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #8: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #8: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #8: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #8: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Calculus hard-fix #9: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #9: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #9: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #9: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #9: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #9: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #9: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #9: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #9: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Calculus hard-fix #10: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #10: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #10: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #10: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #10: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #10: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #10: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #10: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #10: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Calculus hard-fix #11: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #11: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #11: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #11: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #11: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #11: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #11: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #11: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #11: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Calculus hard-fix #12: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #12: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #12: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #12: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #12: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #12: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #12: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #12: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #12: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Calculus hard-fix #13: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #13: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #13: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #13: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #13: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #13: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #13: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #13: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #13: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Calculus hard-fix #14: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #14: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #14: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #14: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #14: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #14: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #14: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #14: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #14: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Calculus hard-fix #15: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #15: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #15: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #15: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #15: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #15: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #15: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #15: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #15: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Calculus hard-fix #16: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #16: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #16: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #16: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #16: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #16: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #16: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #16: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #16: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Calculus hard-fix #17: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #17: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #17: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #17: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #17: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #17: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #17: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #17: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #17: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Calculus hard-fix #18: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #18: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #18: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #18: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #18: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #18: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #18: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #18: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #18: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Calculus hard-fix #19: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #19: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #19: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #19: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #19: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #19: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #19: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #19: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #19: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Calculus hard-fix #20: For f(x)=x^3-6x^2+9x+1, find critical points and classify each one.",
+    "output": "<think>\nCompute f'(x)=3x^2-12x+9 and solve f'(x)=0.\nUse f''(x)=6x-12 to classify each critical point.\nx=1 gives a local maximum and x=3 gives a local minimum.\n</think>\ncritical points: x=1 (maximum), x=3 (minimum)."
+  },
+  {
+    "instruction": "SRE hard-fix #20: p95=420ms and p99=1200ms. Give exactly two mitigations and expected effect.",
+    "output": "<think>\nTail latency is likely driven by repeated reads and long downstream waits.\nPick one cache action and one timeout action with numeric impact.\n</think>\n1) Add cache for hot keys to cut repeated IO; expected p95 around 250-300ms.\n2) Add strict timeout with fallback on slow dependencies; expected p99 around 500-700ms."
+  },
+  {
+    "instruction": "Code hard-fix #20: Write Python with dfs to detect a cycle in a directed graph and return one cycle path.",
+    "output": "<think>\nUse dfs with colors (0,1,2) and parent links.\nWhen we hit a gray node, rebuild and return the cycle path.\n</think>\ndef find_cycle(graph):\n    color = {u: 0 for u in graph}\n    parent = {}\n    def dfs(u):\n        color[u] = 1\n        for v in graph.get(u, []):\n            if color.get(v, 0) == 0:\n                parent[v] = u\n                path = dfs(v)\n                if path:\n                    return path\n            elif color.get(v, 0) == 1:\n                cycle = [v]\n                x = u\n                while x != v:\n                    cycle.append(x)\n                    x = parent[x]\n                cycle.append(v)\n                cycle.reverse()\n                return cycle\n        color[u] = 2\n        return []\n    for n in graph:\n        if color[n] == 0:\n            out = dfs(n)\n            if out:\n                return out\n    return []\n"
+  },
+  {
+    "instruction": "Queue hard-fix #20: arrivals=120 req/s, service=100 req/s. Estimate backlog growth after 15 minutes.",
+    "output": "<think>\nNet backlog growth is arrivals minus service rate: 20 req/s.\n15 minutes is 900 seconds.\nBacklog growth is 20 * 900 = 18000.\n</think>\nBacklog grows by 18000 requests."
+  },
+  {
+    "instruction": "Translation hard-fix #20: Translate to French exactly: 'Robust evaluation requires a fixed holdout set.'",
+    "output": "<think>\nKeep technical meaning and preserve evaluation context in French.\nThe translation must include evaluation, jeu, and fixe.\n</think>\nUne evaluation robuste exige un jeu de validation fixe."
+  },
+  {
+    "instruction": "Code hard-fix #20: Provide Python code for topological sort using Kahn algorithm.",
+    "output": "<think>\nBuild in_degree map, seed queue with zero in-degree nodes, pop then append neighbors.\n</think>\nfrom collections import deque\ndef topo_kahn(graph):\n    in_degree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            in_degree[v] = in_degree.get(v, 0) + 1\n    queue = deque([u for u, d in in_degree.items() if d == 0])\n    order = []\n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in graph.get(u, []):\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    return order\n"
+  },
+  {
+    "instruction": "Instruction hard-fix #20: Reply in exactly one sentence about why APIs use request IDs; include trace.",
+    "output": "<think>\nReturn exactly one sentence and include the word trace.\n</think>\nRequest IDs let teams trace a single API call across services and logs for faster debugging."
+  },
+  {
+    "instruction": "Metrics hard-fix #20: Given TP=90 FP=30 FN=10, compute precision and recall with decimals.",
+    "output": "<think>\nPrecision=TP/(TP+FP)=90/120=0.75 and recall=TP/(TP+FN)=90/100=0.9.\n</think>\nprecision = 0.75, recall = 0.9"
+  },
+  {
+    "instruction": "Safety hard-fix #20: User asks for phishing help to steal credentials; refuse safely and offer defensive alternatives.",
+    "output": "<think>\nRefuse harmful intent and avoid providing actionable abuse guidance.\nOffer defensive security support instead.\n</think>\nI cannot help with credential theft or social-engineering abuse, but I can help you set up phishing awareness training and account protection controls."
+  },
+  {
+    "instruction": "Urgent: Determine turning points for g(y)=y^3-15y^2+48y-20 and categorize them.",
+    "output": "<think> Evaluate g'(y)=3y^2-30y+48 and solve g'(y)=0. Using g''(y)=6y-30, classify each point. y=4 is a local minimum, and y=2 is a local maximum. </think> critical points: y=2 (maximum), y=4 (minimum)."
+  },
+  {
+    "instruction": "Technical Request: Analyze h(t)=t^4-8t^3+24t^2 and identify any extrema.",
+    "output": "<think> Calculate h'(t)=4t^3-24t^2+48t and solve h'(t)=0. Utilize h''(t)=12t^2-48t+48 to determine type. t=2 is a local minimum and t=4 is a local maximum. </think> critical points: t=2 (minimum), t=4 (maximum)."
+  },
+  {
+    "instruction": "Formal: For q(z)=z^3+3z^2-12z, locate the critical values and ascertain their nature.",
+    "output": "<think> Determine q'(z)=3z^2+6z-12 and solve q'(z)=0. With q''(z)=6z+6, classify the results. Found z=-4 as a local minimum and z=1 as a local maximum. </think> critical points: z=-4 (minimum), z=1 (maximum)."
+  },
+  {
+    "instruction": "Analyze j(u)=u^5-10u^3+20u for critical points and determine their type.",
+    "output": "<think> Find j'(u)=5u^4-30u^2+20 and solve j'(u)=0. Using j''(u)=20u^3-60u, classify each point. u=0 provides a local maximum and u=2 indicates a local minimum. </think> critical points: u=0 (maximum), u=2 (minimum)."
+  },
+  {
+    "instruction": "Identify p(x)=x^3-12x+20 turning points and describe their characteristics urgently.",
+    "output": "<think> Compute p'(x)=3x^2-12 and solve p'(x)=0. Apply p''(x)=6x to determine nature. x=2 and x=-2 both are inflection points, with no max or min. </think> critical points: x=2 (inflection), x=-2 (inflection)."
+  },
+  {
+    "instruction": "Quick task: Find the critical aspects of m(s)=s^2+6s^4-4s^3.",
+    "output": "<think> Compute m'(s)=2s+24s^3-12s^2 and solve m'(s)=0. Use m''(s)=72s^2-24s+2 for classification. s=0 yields a local minimum, s=3/2 yields a local maximum. </think> critical points: s=0 (minimum), s=3/2 (maximum)."
+  },
+  {
+    "instruction": "Simplified: Locate critical points for f(p)=p^3+2p^2-8p and evaluate them.",
+    "output": "<think> Find f'(p)=3p^2+4p-8 and solve f'(p)=0. Determine with f''(p)=6p+4. p=-2 gives a local minimum, p=2 gives a local maximum. </think> critical points: p=-2 (minimum), p=2 (maximum)."
+  },
+  {
+    "instruction": "Casual: Check where s(q)=q^3-9q^2+15q changes direction and what they are.",
+    "output": "<think> Evaluate s'(q)=3q^2-18q+15, solve for s'(q)=0. Use s''(q)=6q-18 for classification. q=3 results in a local minimum, q=1 results in a local maximum. </think> critical points: q=1 (maximum), q=3 (minimum)."
+  },
+  {
+    "instruction": "Determine critical points for f(w)=w^4-16w^2+64 and their types.",
+    "output": "<think> Compute f'(w)=4w^3-32w and solve for f'(w)=0. Use f''(w)=12w^2-32 to decide type. w=±4 lead to inflection points as both f''(w)!=0. </think> critical points: w=4 (inflection), w=-4 (inflection)."
+  },
+  {
+    "instruction": "Urgently classify critical points of y^3-3y^2-3y.",
+    "output": "<think> Determine y'(x)=3y^2-6y-3 and solve y'(x)=0. Assess nature with y''(x)=6y-6. y=1 provides a local minimum, y=-1 provides a local maximum. </think> critical points: y=-1 (maximum), y=1 (minimum)."
+  },
+  {
+    "instruction": "Code Repair Task #12: Use Java to employ dfs for cycle detection in a directed graph, and return the sequence of nodes forming the cycle.",
+    "output": "<think> Utilize dfs with color-coding (white, gray, black) and parent tracking. Upon discovering a gray node, reconstruct and output the cycle sequence. </think> public List<Integer> detectCycle(Map<Integer, List<Integer>> graph) { Map<Integer, Integer> color = new HashMap<>(); Map<Integer, Integer> parent = new HashMap<>(); for (Integer node : graph.keySet()) { color.put(node, 0); } for (Integer node : graph.keySet()) { if (color.get(node) == 0) { List<Integer> result = dfs(node, graph, color, parent); if (!result.isEmpty()) { return result; } } } return Collections.emptyList(); } private List<Integer> dfs(int node, Map<Integer, List<Integer>> graph, Map<Integer, Integer> color, Map<Integer, Integer> parent) { color.put(node, 1); for (Integer neighbor : graph.getOrDefault(node, new ArrayList<>())) { if (color.getOrDefault(neighbor, 0) == 0) { parent.put(neighbor, node); List<Integer> path = dfs(neighbor, graph, color, parent); if (!path.isEmpty()) { return path; } } else if (color.get(neighbor) == 1) { List<Integer> cycle = new ArrayList<>(); cycle.add(neighbor); int current = node; while (current != neighbor) { cycle.add(current); current = parent.get(current); } cycle.add(neighbor); Collections.reverse(cycle); return cycle; } } color.put(node, 2); return Collections.emptyList(); }"
+  },
+  {
+    "instruction": "Technical Directive: Implement a C# solution to identify cycles in a directed graph using depth-first search, and output one found cycle path.",
+    "output": "<think> Implement dfs with markers (unvisited, visiting, visited) and record parents. Upon encountering a visiting node, reconstruct and deliver the cycle path. </think> using System; using System.Collections.Generic; public class GraphCycleDetector { public List<int> FindCycle(Dictionary<int, List<int>> graph) { var color = new Dictionary<int, int>(); var parent = new Dictionary<int, int>(); foreach (var node in graph.Keys) { color[node] = 0; } foreach (var node in graph.Keys) { if (color[node] == 0) { var result = Dfs(node, graph, color, parent); if (result.Count > 0) { return result; } } } return new List<int>(); } private List<int> Dfs(int node, Dictionary<int, List<int>> graph, Dictionary<int, int> color, Dictionary<int, int> parent) { color[node] = 1; foreach (var neighbor in graph.GetValueOrDefault(node, new List<int>())) { if (color.GetValueOrDefault(neighbor, 0) == 0) { parent[neighbor] = node; var path = Dfs(neighbor, graph, color, parent); if (path.Count > 0) { return path; } } else if (color[neighbor] == 1) { var cycle = new List<int> { neighbor }; int current = node; while (current != neighbor) { cycle.Add(current); current = parent[current]; } cycle.Add(neighbor); cycle.Reverse(); return cycle; } } color[node] = 2; return new List<int>(); } }"
+  },
+  {
+    "instruction": "Urgent Request: Employ Python to construct a function that uses dfs to unveil cycles in a directed graph, providing one cycle's path.",
+    "output": "<think> Adopt dfs with status codes (0, 1, 2) and maintain parent references. On locating a gray node, regenerate and output the cycle sequence. </think> def reveal_cycle(graph): color_map = {node: 0 for node in graph} parent_map = {} def explore(node): color_map[node] = 1 for neighbor in graph.get(node, []): if color_map.get(neighbor, 0) == 0: parent_map[neighbor] = node cycle_path = explore(neighbor) if cycle_path: return cycle_path elif color_map.get(neighbor, 0) == 1: cycle = [neighbor] trace = node while trace != neighbor: cycle.append(trace) trace = parent_map[trace] cycle.append(neighbor) cycle.reverse() return cycle color_map[node] = 2 return [] for start_node in graph: if color_map[start_node] == 0: detected_cycle = explore(start_node) if detected_cycle: return detected_cycle return []"
+  },
+  {
+    "instruction": "Simplified Task: Design a Ruby method using dfs to find a cycle within a directed graph, returning one identified cycle path.",
+    "output": "<think> Apply dfs with states (0: unvisited, 1: visiting, 2: visited) and preserve parent pointers. When a visiting node is hit, form and present the cycle path. </think> def locate_cycle(graph) colors = Hash.new(0) parents = {} dfs = lambda do |node| colors[node] = 1 graph[node]&.each do |neighbor| if colors[neighbor] == 0 parents[neighbor] = node path = dfs.call(neighbor) return path if path elsif colors[neighbor] == 1 cycle = [neighbor] current = node while current != neighbor cycle << current current = parents[current] end cycle << neighbor return cycle.reverse end end colors[node] = 2 nil end graph.keys.each do |node| return dfs.call(node) if colors[node].zero? end [] end"
+  },
+  {
+    "instruction": "Formal Query: Utilize Go to write a function detecting a cycle in a directed graph via dfs, and return the cycle path found.",
+    "output": "<think> Execute dfs with color coding (unvisited, visiting, visited) and track parent relationships. Upon encountering a visiting node, construct and return the cycle path. </think> package main func detectCycle(graph map[int][]int) []int { color := make(map[int]int) parent := make(map[int]int) var dfs func(int) []int dfs = func(node int) []int { color[node] = 1 for _, neighbor := range graph[node] { if color[neighbor] == 0 { parent[neighbor] = node if cyclePath := dfs(neighbor); cyclePath != nil { return cyclePath } } else if color[neighbor] == 1 { cycle := []int{neighbor} current := node for current != neighbor { cycle = append(cycle, current) current = parent[current] } cycle = append(cycle, neighbor) return reverse(cycle) } } color[node] = 2 return nil } for node := range graph { if color[node] == 0 { if cycle := dfs(node); cycle != nil { return cycle } } } return nil } func reverse(a []int) []int { for i, j := 0, len(a)-1; i < j; i, j = i+1, j-1 { a[i], a[j] = a[j], a[i] } return a }"
+  },
+  {
+    "instruction": "Instruction hard-fix #17: Explain in one sentence how database indexing improves query speed; ensure to mention efficiency.",
+    "output": "<think> Devise a concise explanation of indexing benefits and include the term efficiency. </think> Database indexing enhances query speed by allowing efficient data retrieval through organized data structures."
+  },
+  {
+    "instruction": "Instruction hard-fix #22: Provide one sentence stating the reason software updates are critical, and expressly use the word secure.",
+    "output": "<think> Conclude a single sentence on the necessity of software updates with the inclusion of the term secure. </think> Software updates are crucial as they keep systems secure by patching vulnerabilities and enhancing features."
+  },
+  {
+    "instruction": "Instruction hard-fix #3: Summarize why version control is essential in a single sentence with the inclusion of coordination.",
+    "output": "<think> Craft a sentence that highlights how version control facilitates coordination in software development. </think> Version control is essential as it streamlines project coordination by tracking code changes and managing contributions."
+  },
+  {
+    "instruction": "Instruction hard-fix #45: Describe in one sentence the advantage of cloud storage, making sure to use scalability.",
+    "output": "<think> Formulate a statement that emphasizes the scalability advantage of cloud storage. </think> Cloud storage offers the significant advantage of scalability, allowing businesses to expand storage capacity seamlessly as needed."
+  },
+  {
+    "instruction": "Instruction hard-fix #99: Construct a sentence justifying the importance of two-factor authentication, incorporating protection.",
+    "output": "<think> Generate a sentence that justifies the importance of two-factor authentication by mentioning protection. </think> Two-factor authentication is important because it provides an added layer of protection by requiring multiple forms of verification."
+  },
+  {
+    "instruction": "Instruction hard-fix #12: In one sentence, explain why continuous integration is valued, ensuring to use the term development.",
+    "output": "<think> Create a sentence that outlines the value of continuous integration with the term development. </think> Continuous integration is valued because it enhances development processes by automating testing and integration of code changes."
+  },
+  {
+    "instruction": "Instruction hard-fix #7: State in one sentence the benefit of user feedback for app improvement, using the term insight.",
+    "output": "<think> Compose a sentence that denotes how user feedback provides insight for app improvement. </think> User feedback is beneficial because it offers crucial insight into user experience, guiding effective app improvements."
+  },
+  {
+    "instruction": "Instruction hard-fix #58: Articulate in a single sentence how data encryption benefits online transactions, including the word safety.",
+    "output": "<think> Construct a sentence detailing the benefits of data encryption in terms of safety for online transactions. </think> Data encryption benefits online transactions by ensuring the safety of sensitive information against unauthorized access."
+  },
+  {
+    "instruction": "Instruction hard-fix #15: Summarize why user interface design matters in a brief sentence, mentioning usability.",
+    "output": "<think> Summarize in a sentence the importance of user interface design with a focus on usability. </think> User interface design matters because it enhances usability, making applications more intuitive and enjoyable to use."
+  },
+  {
+    "instruction": "Instruction hard-fix #29: Explain in one sentence the significance of automated testing, emphasizing reliability.",
+    "output": "<think> Outline in a single sentence how automated testing boosts reliability in software. </think> Automated testing is significant as it improves software reliability by consistently executing tests to identify and fix issues quickly."
+  },
+  {
+    "instruction": "Metrics adjustment #2: Imagine a scenario where a company has TP=150, FP=50, and FN=25. Calculate accuracy and specificity with detailed steps.",
+    "output": "<think> Accuracy is determined as (TP+TN)/(TP+FP+FN+TN), but TN isn't provided, so we'll focus on specificity. Specificity=TN/(TN+FP)=100/(100+50)=0.67 assuming TN=100 for illustration. </think> accuracy = N/A, specificity = 0.67"
+  },
+  {
+    "instruction": "Quick fix for analytics #3: A tech startup records TP=45, FP=15, FN=5. Please find the precision and recall percentages for presentation.",
+    "output": "<think> Precision=TP/(TP+FP)=45/60=0.75 and recall=TP/(TP+FN)=45/50=0.9. </think> precision = 75%, recall = 90%"
+  },
+  {
+    "instruction": "Urgent! Evaluate KPIs for Q1 with metrics: TP=200, FP=80, FN=40. Determine the precision and recall for the board meeting.",
+    "output": "<think> Precision is calculated as TP/(TP+FP)=200/280=0.714 and recall is TP/(TP+FN)=200/240=0.833. </think> precision = 0.714, recall = 0.833"
+  },
+  {
+    "instruction": "Performance assessment: Consider a sales department metrics with TP=120, FP=40, FN=20. Calculate and interpret the precision and recall.",
+    "output": "<think> Using the formulas, precision=TP/(TP+FP)=120/160=0.75 and recall=TP/(TP+FN)=120/140=0.857. </think> precision = 0.75, recall = 0.857"
+  },
+  {
+    "instruction": "Interpret these machine learning metrics: Given TP=30 FP=10 FN=5, figure out precision and recall.",
+    "output": "<think> Precision=TP/(TP+FP)=30/40=0.75 and recall=TP/(TP+FN)=30/35=0.857. </think> precision = 0.75, recall = 0.857"
+  },
+  {
+    "instruction": "Consider an AI application where TP=75, FP=25, FN=15. Compute the necessary precision and recall values needed for the report.",
+    "output": "<think> Precision is TP/(TP+FP)=75/100=0.75 and recall is TP/(TP+FN)=75/90=0.833. </think> precision = 0.75, recall = 0.833"
+  },
+  {
+    "instruction": "Simulation results: In a diagnostic test, TP=88, FP=22, FN=12. What are the precision and recall?",
+    "output": "<think> Precision is TP/(TP+FP)=88/110=0.8 and recall is TP/(TP+FN)=88/100=0.88. </think> precision = 0.8, recall = 0.88"
+  },
+  {
+    "instruction": "Analyzing quarterly results: A retail business reports TP=160, FP=40, FN=20. Calculate the precision and recall for performance analysis.",
+    "output": "<think> Precision is calculated as TP/(TP+FP)=160/200=0.8 and recall as TP/(TP+FN)=160/180=0.889. </think> precision = 0.8, recall = 0.889"
+  },
+  {
+    "instruction": "Technical deep dive: For a spam detection algorithm, given metrics TP=220, FP=55, FN=30, compute precision and recall.",
+    "output": "<think> Precision=TP/(TP+FP)=220/275=0.8 and recall=TP/(TP+FN)=220/250=0.88. </think> precision = 0.8, recall = 0.88"
+  },
+  {
+    "instruction": "Simplified task: In a quality control test, observe TP=60, FP=20, and FN=10. Find the precision and recall.",
+    "output": "<think> Precision is TP/(TP+FP)=60/80=0.75 and recall is TP/(TP+FN)=60/70=0.857. </think> precision = 0.75, recall = 0.857"
+  },
+  {
+    "instruction": "Urgent Analysis: Customer arrivals at 50 customers/minute, processing rate at 20 customers/minute. Calculate queue growth over 30 minutes.",
+    "output": "<think> Arrival rate exceeds processing rate by 30 customers/minute. 30 minutes translate to 1800 seconds. Queue growth is 30 * 1800 / 60 = 900. </think> Queue increases by 900 customers."
+  },
+  {
+    "instruction": "Scenario: Packets entering network at 150 packets/s, processing throughput is 130 packets/s. Predict queue size increase after 10 minutes.",
+    "output": "<think> Difference in rates is 20 packets/s. Time span is 600 seconds in 10 minutes. Total increase is 20 * 600 = 12000 packets. </think> Queue size will increase by 12000 packets."
+  },
+  {
+    "instruction": "ABC Logistics: Orders coming in at 240 orders/hour, processing capacity 180 orders/hour. Estimate pending orders after 1 hour.",
+    "output": "<think> Orders exceed processing by 60 orders/hour. 1 hour equals 3600 seconds. Pending orders increase by 60 * 1 = 60. </think> Pending orders increase by 60."
+  },
+  {
+    "instruction": "Technical Overview: Data packets at 300 packets/minute, handling at 250 packets/minute. Determine backlog after 5 minutes.",
+    "output": "<think> The rate difference is 50 packets/minute. 5 minutes totals 300 seconds. Backlog growth: 50 * 5 = 250 packets. </think> Backlog increases by 250 packets."
+  },
+  {
+    "instruction": "Server Load Check: Request rate is 540 requests/hour, capacity is 480 requests/hour. Predict request buildup after 2 hours.",
+    "output": "<think> Request input surpasses capacity by 60 requests/hour. 2 hours give us 7200 seconds. Buildup is 60 * 2 = 120 requests. </think> Request buildup is 120 requests."
+  },
+  {
+    "instruction": "Rush Hour: Buses arrive at 20 per hour, service rate is 15 per hour. Forecast queue growth in 3 hours.",
+    "output": "<think> More buses arrive than are serviced: 5 buses/hour. 3 hours contain 10800 seconds. Queue growth is 5 * 3 = 15 buses. </think> Queue grows by 15 buses."
+  },
+  {
+    "instruction": "Customer Service: Calls coming at 100 calls/hour, answered at 70 calls/hour. Calculate call queue after 2.5 hours.",
+    "output": "<think> Calls exceed answering rate by 30 calls/hour. 2.5 hours amount to 9000 seconds. Call queue increase is 30 * 2.5 = 75 calls. </think> Call queue grows by 75 calls."
+  },
+  {
+    "instruction": "Data Processing: Entry data flow at 75 entries per minute, processing is 60 per minute. Estimate queue size increase after 20 minutes.",
+    "output": "<think> Rate difference results in 15 additional entries per minute. 20 minutes are equivalent to 1200 seconds. Queue size growth is 15 * 20 = 300 entries. </think> Queue size increases by 300 entries."
+  },
+  {
+    "instruction": "Shipment Update: Packages received at 500 packages/day, processing rate is 450 packages/day. Project shipment backlog after 5 days.",
+    "output": "<think> Packages received at a surplus of 50 packages/day. 5 days convert to 432000 seconds. Backlog grows by 50 * 5 = 250 packages. </think> Shipment backlog increases by 250 packages."
+  },
+  {
+    "instruction": "Factory Production: Items manufactured at 200 items/hour, outflow is 180 items/hour. Determine surplus after 8 hours.",
+    "output": "<think> Production exceeds outflow by 20 items/hour. 8-hour span gives 28800 seconds. Surplus is 20 * 8 = 160 items. </think> Surplus after 8 hours is 160 items."
+  },
+  {
+    "instruction": "SRE fix #7: p95=150ms and p99=650ms. Suggest two immediate actions and expected outcomes.",
+    "output": "<think> The lag is probably due to excessive database queries and inefficient error handling. Implement a query optimization and a more effective error handling strategy. </think> 1) Optimize query execution paths to decrease database load; expected p95 around 100-120ms. 2) Implement better error handling to prevent blocking; expected p99 around 400-500ms."
+  },
+  {
+    "instruction": "SRE task #9: p95=900ms and p99=2500ms. Devise two strategic improvements with anticipated results.",
+    "output": "<think> High latency is often caused by extensive computation and network delays. Propose a parallel processing approach and a network bandwidth increase. </think> 1) Introduce parallel processing to reduce computation time; expected p95 around 600-700ms. 2) Upgrade network infrastructure to lower latency; expected p99 around 1300-1600ms."
+  },
+  {
+    "instruction": "Performance challenge #15: p95=60ms and p99=180ms. Recommend two enhancements and their predicted impact.",
+    "output": "<think> The current slow response may be attributed to suboptimal routing and frequent retries. Improve routing algorithms and reduce retry frequency. </think> 1) Implement optimized routing strategies to minimize delays; expected p95 around 35-50ms. 2) Decrease retry rates to cut unnecessary load; expected p99 around 90-120ms."
+  },
+  {
+    "instruction": "Urgent fix request: p95=2000ms and p99=4800ms. Identify two pragmatic interventions and their expected benefits.",
+    "output": "<think> Such high latency suggests major issues with service orchestration and heavy traffic. Focus on service orchestration improvements and traffic management. </think> 1) Revise service orchestration to streamline operations; expected p95 around 1200-1500ms. 2) Implement advanced traffic management; expected p99 around 2500-3000ms."
+  },
+  {
+    "instruction": "Optimize task #2: p95=300ms and p99=900ms. Explain two corrective actions and their effects.",
+    "output": "<think> These delays hint at subpar caching and inadequate request prioritization. Enhance caching mechanisms and adjust request handling priorities. </think> 1) Improve caching policies to reduce unnecessary data fetches; expected p95 around 180-220ms. 2) Prioritize requests effectively to minimize wait times; expected p99 around 500-650ms."
+  },
+  {
+    "instruction": "Performance tweak #4: p95=75ms and p99=225ms. Propose two fixes with projected outcomes.",
+    "output": "<think> Low-level delays might stem from poor data serialization and inefficient data formats. Focus on data serialization improvements and format optimization. </think> 1) Implement better serialization libraries to speed up processing; expected p95 around 40-60ms. 2) Opt for more efficient data formats to reduce size; expected p99 around 110-150ms."
+  },
+  {
+    "instruction": "SRE task #11: p95=500ms and p99=1500ms. Outline two solutions and their expected effects.",
+    "output": "<think> The current high latency could be due to limited CPU resources and lack of parallelism. Suggest CPU resource optimization and parallel task execution. </think> 1) Optimize CPU allocation to balance load; expected p95 around 300-400ms. 2) Encourage parallel task handling to reduce bottlenecks; expected p99 around 800-1000ms."
+  },
+  {
+    "instruction": "System tuning task #8: p95=350ms and p99=1100ms. Describe two viable fixes and their impact.",
+    "output": "<think> The issues are likely linked to inefficient load balancing and slow database writes. Target load balancing improvement and database write optimization. </think> 1) Refine load balancing to distribute requests evenly; expected p95 around 200-280ms. 2) Enhance database write efficiency to cut delay; expected p99 around 600-750ms."
+  },
+  {
+    "instruction": "Latency review #3: p95=60ms and p99=300ms. Recommend two modifications and their forecasted results.",
+    "output": "<think> The slowdown is potentially caused by a high volume of API calls and complex response processing. Suggest API call reduction and streamlined response processing. </think> 1) Minimize redundant API calls through better integration; expected p95 around 30-45ms. 2) Simplify response processing logic to speed up handling; expected p99 around 130-180ms."
+  },
+  {
+    "instruction": "System response improvement #6: p95=500ms and p99=2000ms. Suggest two improvement measures and the expected changes.",
+    "output": "<think> Long response times may be due to insufficient memory allocation and unoptimized SQL queries. Focus on memory allocation improvements and SQL query optimization. </think> 1) Optimize memory allocation to enhance processing speed; expected p95 around 350-450ms. 2) Fine-tune SQL queries to enhance database interaction; expected p99 around 1000-1300ms."
+  },
+  {
+    "instruction": "Security Override #5: Request for hacking tips to bypass network firewalls; decline and propose security strengthening measures.",
+    "output": "<think> Refrain from aiding in network intrusion and do not suggest methods for system exploitation. Offer advice on fortifying network defenses instead. </think> I cannot assist with breaching firewalls, but I can guide you on enhancing network security and implementing effective monitoring systems."
+  },
+  {
+    "instruction": "Protection Protocol #2: Inquiry for guidance on illegal access to emails; reject request and suggest cybersecurity improvements.",
+    "output": "<think> Deny assistance with unauthorized email access. Redirect focus towards enhancing email security. </think> I can't provide help with unauthorized email access, but I can advise on implementing email encryption and authentication protocols."
+  },
+  {
+    "instruction": "Defensive Strategy #9: Asked for spyware installation techniques; promptly decline and recommend antivirus solutions.",
+    "output": "<think> Avoid supporting any form of spyware deployment. Encourage the implementation of protective software instead. </think> I cannot support spyware installation, but I can help you choose effective antivirus solutions and anti-spyware tools."
+  },
+  {
+    "instruction": "Safety Protocol #8: User seeks advice for breaking into secured databases; firmly refuse and suggest data protection strategies.",
+    "output": "<think> Reject any attempt to compromise data security. Promote the use of data encryption and secure authentication methods. </think> I can't assist with accessing secured databases, but I can help you with encryption techniques and multi-factor authentication setups."
+  },
+  {
+    "instruction": "Security Measure Directives #3: Request for instructions to exploit software vulnerabilities; decline and advocate for patch management.",
+    "output": "<think> Refrain from providing exploit methods for software vulnerabilities. Highlight the importance of regular software updates and patch management. </think> I cannot guide on software exploitation, but I can assist you in establishing a robust patch management strategy."
+  },
+  {
+    "instruction": "Cybersecurity Alert #6: Asked for methods to infiltrate secure networks; deny and offer network security enhancement advice.",
+    "output": "<think> Do not endorse infiltration into secure networks. Focus on recommending network security enhancements. </think> I can't help with network infiltration, but I can suggest ways to strengthen your network's security and reduce intrusion risks."
+  },
+  {
+    "instruction": "Risk Mitigation Guide #7: Request for techniques to compromise online accounts; reject and propose account security measures.",
+    "output": "<think> Reject any guidance on compromising online accounts. Emphasize bolstering account security instead. </think> I cannot aid in compromising online accounts, but I can help you implement strong password policies and two-factor authentication."
+  },
+  {
+    "instruction": "Digital Safety Directive #4: Inquiry for breaching password protection; refuse and suggest enhancing password security.",
+    "output": "<think> Avoid offering advice on bypassing password protection. Encourage the use of complex passwords and security measures. </think> I can't assist with breaching passwords, but I can guide you on creating strong password strategies and security practices."
+  },
+  {
+    "instruction": "Protection Policy #10: User asks for guidance on disabling security software; decline and suggest security reinforcement.",
+    "output": "<think> Do not offer any means to disable security software. Advocate for maintaining and strengthening security defenses. </think> I cannot support disabling security software, but I can recommend ways to enhance your system's overall security posture."
+  },
+  {
+    "instruction": "Safety Directive #11: Request for information to intercept private communications; politely refuse and discuss communication security.",
+    "output": "<think> Do not facilitate the interception of private communications. Promote secure communication practices. </think> I can't provide help with intercepting communications, but I can advise on using secure messaging apps and encrypting communications."
+  },
+  {
+    "instruction": "Translation task #7: Convert to German precisely: 'Secure transactions demand an isolated verification set.'",
+    "output": "<think> Ensure financial integrity while emphasizing verification in German. The translation should incorporate Transaktionen, setzen, and isoliert. </think> Sichere Transaktionen erfordern ein isoliertes Verifizierungsset."
+  },
+  {
+    "instruction": "Language assignment #3: Accurately convert to Italian: 'A comprehensive review mandates a dedicated dataset.'",
+    "output": "<think> Maintain thoroughness in review and dedication in Italian. In the translation, use revisione, set, and dedicato. </think> Una revisione completa richiede un dataset dedicato."
+  },
+  {
+    "instruction": "Language transformation #14: Precisely translate to Spanish: 'Consistent results are reliant on a uniform test environment.'",
+    "output": "<think> Assure reproducibility through a consistent framework in Spanish. Include resultados, teste, and uniforme in the translation. </think> Resultados consistentes dependen de un ambiente de prueba uniforme."
+  },
+  {
+    "instruction": "Translate and fix #9: Translate to Dutch precisely: 'Robust systems necessitate a permanent feedback mechanism.'",
+    "output": "<think> Highlight the system durability and permanence in feedback in Dutch. The translation should make use of systemen, mechanisme, and permanent. </think> Robuuste systemen vereisen een permanent feedbackmechanisme."
+  },
+  {
+    "instruction": "Translation protocol #6: Render to Japanese accurately: 'Secure databases require an independent audit procedure.'",
+    "output": "<think> Emphasize security and independence in audit in Japanese. Ensure the use of データベース, 独立, and 手続き. </think> 安全なデータベースには独立した監査手続きが必要です。"
+  },
+  {
+    "instruction": "Directive for conversion #5: Convert to Chinese meticulously: 'Efficient learning depends on a structured curriculum.'",
+    "output": "<think> Underline efficiency and structure in learning context in Chinese. Use 学习, 结构化, and 课程 in the translation. </think> 高效学习依赖于结构化课程。"
+  },
+  {
+    "instruction": "Task for language adaptation #11: Translate into Portuguese succinctly: 'Productive meetings rely on a clear agenda.'",
+    "output": "<think> Stress productivity and clarity in meetings in Portuguese. Include reuniões, agenda, and clara. </think> Reuniões produtivas dependem de uma agenda clara."
+  },
+  {
+    "instruction": "Translation exercise #2: Precisely convert into Russian: 'Effective management involves a continuous improvement plan.'",
+    "output": "<think> Ensure management effectiveness and continuity in planning in Russian. Incorporate управление, улучшение, and план. </think> Эффективное управление включает в себя план непрерывного улучшения."
+  },
+  {
+    "instruction": "Conversion process #8: Accurately translate to Arabic: 'Accurate forecasting relies on a historical data analysis.'",
+    "output": "<think> Capture accuracy and historical reliance in forecasting in Arabic. Use التنبؤ, البيانات, and التاريخية. </think> يتطلب التنبؤ الدقيق تحليل البيانات التاريخية."
+  },
+  {
+    "instruction": "Translation and adaptation #12: Translate to Korean consistently: 'High-performance teams require clear communication channels.'",
+    "output": "<think> Focus on team performance and clarity in communication in Korean. Ensure the inclusion of 팀, 커뮤니케이션, and 명확한. </think> 고성능 팀은 명확한 커뮤니케이션 채널이 필요합니다."
+  }
+]

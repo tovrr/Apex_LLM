@@ -11,8 +11,8 @@ print("==========================================")
 print("🚀 DÉMARRAGE DU FINE-TUNING APEX (AVEC LoRA)")
 print("==========================================")
 
-# 2026-04-03: dataset_apex_v1.json — 90 vrais exemples, zéro duplicate
-DATASET_FILE = os.getenv("APEX_DATASET_FILE", "dataset_apex_v1.json")
+# 2026-04-15: default dataset updated to V4 for final training quality.
+DATASET_FILE = os.getenv("APEX_DATASET_FILE", "dataset_expert_v4.json")
 
 # Garde CPU : BitsAndBytes 4-bit requiert un GPU.
 # Sur CPU seul, on valide uniquement la pipeline de données (smoke test partiel).
@@ -30,9 +30,8 @@ if not torch.cuda.is_available():
     raise SystemExit(0)
 
 # 1. LE CHOIX DU MODÈLE DE BASE
-# On utilise Phi-3 Mini (3.8B) de Microsoft — meilleur ratio intelligence/mémoire pour CPU i7 + 16 Go RAM.
-# (Tu pourras le remplacer par "Qwen/Qwen2.5-7B-Instruct" si tu as un PC plus puissant)
-nom_modele = "microsoft/Phi-3-mini-4k-instruct"
+# On aligne le fine-tuning sur la base déjà utilisée par l'adapter actuel.
+nom_modele = os.getenv("APEX_BASE_MODEL", "unsloth/phi-4-unsloth-bnb-4bit")
 
 # 2. LA COMPRESSION (4-bit)
 # On compresse le modèle pour qu'il rentre dans ta carte graphique
