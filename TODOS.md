@@ -9,12 +9,17 @@
 - [x] Smoke tests passing (`pytest`)
 - [x] Workspace environment lock on `./venv`
 - [x] Repository hygiene: `.gitignore`, checkpoint cleanup, cache cleanup
+- [x] Dataset V4 generated and validated (`dataset_expert_v4.json`, 255 examples)
+- [x] Colab notebook aligned to V4 dataset (`colab_finetune.ipynb`)
+- [x] LoRA base alignment to Phi-4 family in training script (`apex_lora.py`)
+- [x] Initial Colab crash triage completed (OOM and AMP/bfloat16 issues identified and patched)
 
 ## 🔄 In Progress / Pending
 
 - [ ] Validate end-to-end UX with real prompts on CPU/GPU host and tune defaults (`mots_max`, timeout, rate limits)
-- [ ] Stabilize LoRA compatibility warnings during load on local hardware
+- [ ] Validate stable full Phi-4 LoRA run on Colab T4 (beyond smoke test)
 - [ ] Finalize public docs for web + mobile integration path
+- [ ] Run hard eval after new adapter export and compare against baseline reports
 
 ## 📝 Technical Findings & Considerations
 

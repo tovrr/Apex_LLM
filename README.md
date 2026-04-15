@@ -90,7 +90,7 @@ Invoke-RestMethod -Uri "http://127.0.0.1:8000/health" -Method GET
 Validate dataset file format and minimum size:
 
 ```powershell
-venv\Scripts\python.exe evals/validate_dataset_expert.py --file dataset_expert.json --min-count 100
+venv\Scripts\python.exe evals/validate_dataset_expert.py --file dataset_expert_v4.json --min-count 200
 ```
 
 Generate a 100-example template dataset (project helper):
@@ -101,7 +101,21 @@ venv\Scripts\python.exe evals/generate_dataset_expert_100.py
 
 ### GPU training (Colab)
 
-Use [colab_smoke_test.ipynb](colab_smoke_test.ipynb), then export apex_lora_final.zip and update [apex_lora_sauvegarde](apex_lora_sauvegarde).
+Use [colab_finetune.ipynb](colab_finetune.ipynb), then export `apex_lora_final.zip` and update [apex_lora_sauvegarde](apex_lora_sauvegarde).
+
+Current defaults in [apex_lora.py](apex_lora.py):
+
+- Base model: `unsloth/phi-4-unsloth-bnb-4bit`
+- Dataset: `dataset_expert_v4.json`
+- LoRA smoke profile: `max_steps=10`
+
+Recommended Colab sequence:
+
+1. Restart runtime before retrying after any training crash.
+2. Re-run cells 1 -> 2 -> 3 -> 4 in order.
+3. Only run export/download after training finishes without traceback.
+
+Note: the notebook prints `=== FINE-TUNING COMPLETE ===` after the shell command returns; always verify the logs above for traceback-free completion.
 
 ## Testing
 
@@ -116,7 +130,7 @@ CI runs on push and pull request through [ci.yml](.github/workflows/ci.yml).
 - [serveur_api.py](serveur_api.py): FastAPI server and model routing.
 - [key_store.py](key_store.py): API keys, quotas, usage events.
 - [apex_lora.py](apex_lora.py): LoRA training entrypoint.
-- [dataset_expert.json](dataset_expert.json): Distillation dataset.
+- [dataset_expert_v4.json](dataset_expert_v4.json): Current distillation dataset.
 - [evals](evals): Dataset validation and eval helpers.
 - [quill-proxy](quill-proxy): Next.js proxy templates.
 
