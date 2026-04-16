@@ -19,6 +19,7 @@ from datetime import datetime, timezone
 from dotenv import load_dotenv
 import httpx
 import key_store
+from key_store import _connect  # for freemium quota checks
 
 # Les outils des pros (HuggingFace)
 from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer
@@ -123,6 +124,134 @@ DELAI_GENERATION_SEC = float(os.getenv("APEX_GENERATION_TIMEOUT_SECONDS", "45"))
 _historique_requetes: defaultdict[str, deque[float]] = defaultdict(deque)
 _rate_limit_lock = Lock()
 _runs_lock = Lock()
+
+# ── Freemium tier quotas (per-day limits) ──────────────────────────────────────
+# These come from key_store.py PLANS; checked on every /chat request.
+FREEMIUM_QUOTAS = {
+    "free": {"requests_per_day": 10, "tokens_per_day": 5_000},
+    "pro": {"requests_per_day": 1_000, "tokens_per_day": 500_000},
+    "internal": {"requests_per_day": -1, "tokens_per_day": -1},  # unlimited
+}
+_freemium_usage_lock = Lock()
+
+
+def _check_freemium_quota(api_key_hash: str, plan: str, tokens_this_request: int) -> dict[str, Any]:
+    """
+    Check if the key has exceeded daily quota for requests or tokens.
+    Returns {"allowed": bool, "reason": str, "usage": {...}}
+    """
+    quota = FREEMIUM_QUOTAS.get(plan, {})
+    req_limit = quota.get("requests_per_day", -1)
+    token_limit = quota.get("tokens_per_day", -1)
+
+    # Unlimited plans (-1) always allowed
+    if req_limit < 0 and token_limit < 0:
+        return {"allowed": True, "reason": "unlimited_plan", "usage": {}}
+
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    with _freemium_usage_lock:
+        with _connect() as conn:
+            row = conn.execute(
+                "SELECT requests_used, tokens_used FROM usage_daily WHERE key_hash = ? AND date = ?",
+                (api_key_hash, today),
+            ).fetchone()
+        used_req = row[0] if row else 0
+        used_tok = row[1] if row else 0
+
+    # Check request quota
+    if req_limit > 0 and used_req >= req_limit:
+        return {
+            "allowed": False,
+            "reason": f"exceeded_request_quota_{used_req}/{req_limit}",
+            "usage": {"requests_used": used_req, "requests_limit": req_limit},
+        }
+
+    # Check token quota
+    if token_limit > 0 and (used_tok + tokens_this_request) > token_limit:
+        return {
+            "allowed": False,
+            "reason": f"exceeded_token_quota_{used_tok + tokens_this_request}/{token_limit}",
+            "usage": {"tokens_used": used_tok, "tokens_limit": token_limit, "tokens_requested": tokens_this_request},
+        }
+
+    return {"allowed": True, "reason": "within_quota", "usage": {"requests_used": used_req, "tokens_used": used_tok}}
+
+
+def _record_freemium_usage(api_key_hash: str, tokens_used: int) -> None:
+    """Increment daily usage counters."""
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    with _freemium_usage_lock:
+        with _connect() as conn:
+            conn.execute(
+                "INSERT INTO usage_daily (key_hash, date, requests_used, tokens_used) VALUES (?, ?, 1, ?) "
+                "ON CONFLICT(key_hash, date) DO UPDATE SET requests_used = requests_used + 1, tokens_used = tokens_used + ?",
+                (api_key_hash, today, tokens_used, tokens_used),
+            )
+            conn.commit()
+
+# ── Freemium tier quotas (per-day limits) ──────────────────────────────────────
+# These come from key_store.py PLANS; checked on every /chat request.
+FREEMIUM_QUOTAS = {
+    "free": {"requests_per_day": 10, "tokens_per_day": 5_000},
+    "pro": {"requests_per_day": 1_000, "tokens_per_day": 500_000},
+    "internal": {"requests_per_day": -1, "tokens_per_day": -1},  # unlimited
+}
+_freemium_usage_lock = Lock()
+
+
+def _check_freemium_quota(api_key_hash: str, plan: str, tokens_this_request: int) -> dict[str, Any]:
+    """
+    Check if the key has exceeded daily quota for requests or tokens.
+    Returns {"allowed": bool, "reason": str, "usage": {...}}
+    """
+    quota = FREEMIUM_QUOTAS.get(plan, {})
+    req_limit = quota.get("requests_per_day", -1)
+    token_limit = quota.get("tokens_per_day", -1)
+
+    # Unlimited plans (-1) always allowed
+    if req_limit < 0 and token_limit < 0:
+        return {"allowed": True, "reason": "unlimited_plan", "usage": {}}
+
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    with _freemium_usage_lock:
+        with _connect() as conn:
+            row = conn.execute(
+                "SELECT requests_used, tokens_used FROM usage_daily WHERE key_hash = ? AND date = ?",
+                (api_key_hash, today),
+            ).fetchone()
+        used_req = row[0] if row else 0
+        used_tok = row[1] if row else 0
+
+    # Check request quota
+    if req_limit > 0 and used_req >= req_limit:
+        return {
+            "allowed": False,
+            "reason": f"exceeded_request_quota_{used_req}/{req_limit}",
+            "usage": {"requests_used": used_req, "requests_limit": req_limit},
+        }
+
+    # Check token quota
+    if token_limit > 0 and (used_tok + tokens_this_request) > token_limit:
+        return {
+            "allowed": False,
+            "reason": f"exceeded_token_quota_{used_tok + tokens_this_request}/{token_limit}",
+            "usage": {"tokens_used": used_tok, "tokens_limit": token_limit, "tokens_requested": tokens_this_request},
+        }
+
+    return {"allowed": True, "reason": "within_quota", "usage": {"requests_used": used_req, "tokens_used": used_tok}}
+
+
+def _record_freemium_usage(api_key_hash: str, tokens_used: int) -> None:
+    """Increment daily usage counters."""
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    with _freemium_usage_lock:
+        with _connect() as conn:
+            conn.execute(
+                "INSERT INTO usage_daily (key_hash, date, requests_used, tokens_used) VALUES (?, ?, 1, ?) "
+                "ON CONFLICT(key_hash, date) DO UPDATE SET requests_used = requests_used + 1, tokens_used = tokens_used + ?",
+                (api_key_hash, today, tokens_used, tokens_used),
+            )
+            conn.commit()
 
 
 def _log_event(name: str, **fields: Any) -> None:
@@ -1215,6 +1344,24 @@ async def discuter_avec_ia(requete: RequeteClient, request: Request, cle_api: st
     except key_store.QuotaExceededError as exc:
         raise HTTPException(status_code=429, detail=str(exc)) from exc
 
+    # ── Freemium tier quota check ──────────────────────────────────────────────────────────
+    # Estimate token usage (input + output)
+    tokens_estimated = len(requete.question.split()) + requete.mots_max
+    quota_check = _check_freemium_quota(key_info.key_hash, key_info.plan, tokens_estimated)
+    if not quota_check["allowed"]:
+        _log_event(
+            "freemium_quota_exceeded",
+            request_id=request_id,
+            plan=key_info.plan,
+            reason=quota_check["reason"],
+            usage=quota_check["usage"],
+        )
+        raise HTTPException(
+            status_code=429,
+            detail=f"Quota dépassé pour le plan {key_info.plan}: {quota_check['reason']}. "
+                   f"Upgrade ou attendez demain pour un renouvellement.",
+        )
+
     ip_client = request.client.host if request.client and request.client.host else "unknown"
     _verifier_rate_limit(key_info.key_hash, ip_client)
 
@@ -1247,6 +1394,10 @@ async def discuter_avec_ia(requete: RequeteClient, request: Request, cle_api: st
         latency_ms=int((time.perf_counter() - t0) * 1000),
         task_type=requete.task_type,
     )
+    
+    # Record freemium tier usage
+    tokens_final = len(requete.question.split()) + requete.mots_max
+    _record_freemium_usage(key_info.key_hash, tokens_final)
     _append_run(
         {
             "id": run_id,
