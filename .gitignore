@@ -9,6 +9,7 @@ venv/
 
 # Environment secrets
 .env
+.env.railway
 
 # Training checkpoints and temp artifacts
 checkpoint-*/

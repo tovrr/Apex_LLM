@@ -26,14 +26,19 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 import { APEX_BASE_URL, apexHeaders, safeMots } from "@/lib/apex-client";
 
 // ── Auth guard (same pattern as chat/route.ts) ────────────────────────────────
 async function getAuthenticatedUserId(req: NextRequest): Promise<string | null> {
-  const devUser = req.headers.get("x-dev-user");
-  if (process.env.NODE_ENV === "development") return devUser || "dev-local-user";
   if (process.env.APEX_ALLOW_ANON_PROXY === "1") return "anon-proxy-user";
-  return null;
+  try {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    if (!token) return null;
+    return (token.sub ?? token.email ?? String(token.id)) as string;
+  } catch {
+    return null;
+  }
 }
 
 // ── Route handler ─────────────────────────────────────────────────────────────

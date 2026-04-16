@@ -1,0 +1,20 @@
+# Dockerfile.railway — slim production image for Railway.
+# Uses requirements-prod.txt (no torch/transformers).
+# Set APEX_SKIP_MODEL_LOAD=1 and APEX_OPENAI_COMPAT_URL=https://api.groq.com/openai/v1
+# in Railway environment variables.
+
+FROM python:3.12-slim
+
+WORKDIR /app
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+COPY requirements-prod.txt ./
+RUN pip install --no-cache-dir -r requirements-prod.txt
+
+COPY . .
+
+EXPOSE 8000
+
+CMD ["uvicorn", "serveur_api:app", "--host", "0.0.0.0", "--port", "8000"]

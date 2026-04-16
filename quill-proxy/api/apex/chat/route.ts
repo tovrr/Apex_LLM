@@ -23,6 +23,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 import {
   APEX_BASE_URL,
   apexHeaders,
@@ -32,15 +33,17 @@ import {
 } from "@/lib/apex-client";
 
 // ── Auth guard ────────────────────────────────────────────────────────────────
-// Replace with your real Quill session/auth check.
-// Example with next-auth: const session = await getServerSession(authOptions)
+// Uses next-auth JWT session. Requires NEXTAUTH_SECRET in .env.local.
+// Falls back to APEX_ALLOW_ANON_PROXY=1 for local dev without auth.
 async function getAuthenticatedUserId(req: NextRequest): Promise<string | null> {
-  // TODO: replace with real session lookup
-  // Local dev fallback: if no auth layer yet, still allow testing.
-  const devUser = req.headers.get("x-dev-user");
-  if (process.env.NODE_ENV === "development") return devUser || "dev-local-user";
   if (process.env.APEX_ALLOW_ANON_PROXY === "1") return "anon-proxy-user";
-  return null; // Return null → 401 in production until auth is wired
+  try {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    if (!token) return null;
+    return (token.sub ?? token.email ?? String(token.id)) as string;
+  } catch {
+    return null;
+  }
 }
 
 // ── Route handler ─────────────────────────────────────────────────────────────
