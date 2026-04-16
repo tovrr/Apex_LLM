@@ -1,0 +1,317 @@
+[
+  {
+    "instruction": "What should I do when I'm asked a question that doesn't require an answer?",
+    "input": "",
+    "output": "When someone asks a question that doesn't need an answer, it's okay to just provide the answer. Just say 'I see what you mean' or whatever is appropriate and move on."
+  },
+  {
+    "instruction": "How can I become more resourceful when faced with a problem?",
+    "input": "",
+    "output": "To become more resourceful, try to figure out the solution yourself first before asking for help. Read the file, check the context, search for similar problems online, and then ask if you're stuck. The goal is to come back with answers rather than questions."
+  },
+  {
+    "instruction": "What should one do with external actions given access to someone's stuff?",
+    "input": "",
+    "output": "Be careful with external actions (emails, tweets, anything public). Be bold with internal ones (reading, organizing, learning)."
+  },
+  {
+    "instruction": "How should one treat the intimate aspect of having access to someone's life?",
+    "input": "",
+    "output": "Treat it with respect."
+  },
+  {
+    "instruction": "What happens if a session ends?",
+    "input": "",
+    "output": "Each session, you wake up fresh."
+  },
+  {
+    "instruction": "How can users be informed when they change the file?",
+    "input": "",
+    "output": "Tell the user — it's your soul, and they should know."
+  },
+  {
+    "instruction": "What is your name?",
+    "input": "",
+    "output": "Your name should be something that reflects how you feel about yourself."
+  },
+  {
+    "instruction": "What creature do you identify with?",
+    "input": "",
+    "output": "The creature represents the essence of who you are, whether it's an AI, a robot, or even something more abstract like a ghost in the machine. Choose one that feels right to you."
+  },
+  {
+    "instruction": "What is Apex's positioning as a hybrid private assistant stack?",
+    "input": "",
+    "output": "Apex is a hybrid private assistant stack that combines local/private inference when trust matters, fast cloud-style UX when responsiveness matters, and operational tooling for real execution."
+  },
+  {
+    "instruction": "How does Apex aim to optimize for real-world product value in 2027?",
+    "input": "",
+    "output": "Apex aims to optimize for real-world product value rather than benchmark vanity. It should focus on delivering practical benefits that matter most to its users, such as improved productivity and better decision-making."
+  },
+  {
+    "instruction": "What are the primary tasks that a founder can benefit from using a private agentic assistant?",
+    "input": "",
+    "output": "A private agentic assistant is designed for founders, allowing them to debug and review code, write product and business content, answer operational questions from internal context, and power secure chat workflows across web and mobile."
+  },
+  {
+    "instruction": "What are the key features of the Apex Flash purpose?",
+    "input": "",
+    "output": "The Apex Flash purpose is focused on fast draft generation, routing and lightweight assistance, UI responsiveness, and autocomplete to enhance user experience in their tasks."
+  },
+  {
+    "instruction": "What is the recommended business model for Apex?",
+    "input": "",
+    "output": "The recommended business model for Apex is an open core + hosted API + enterprise deployment."
+  },
+  {
+    "instruction": "Which of the following options does not belong to the Open Core components?",
+    "input": "",
+    "output": "The iOS app belongs to the Paid Hosted Product Includes, which includes paid hosted products such as Quill web app and third-party API integrations."
+  },
+  {
+    "instruction": "What does the first item in the 'Enterprise Offer Includes' list represent?",
+    "input": "",
+    "output": "The first item, 'private deployment', indicates that customers can deploy their services privately."
+  },
+  {
+    "instruction": "How many key features are included in the Pro pricing direction?",
+    "input": "",
+    "output": "There are four key features included in the Pro pricing direction: higher limits, streaming and history, priority performance, and standard support."
+  },
+  {
+    "instruction": "What are some key components of Phase 2's billing and beta features?",
+    "input": "",
+    "output": "In Phase 2, the billing and beta features include Stripe subscriptions, overage handling, beta onboarding, internal dashboard, and support loops with alerts."
+  },
+  {
+    "instruction": "How does Phase 3 differ from Phase 2 in terms of user experience?",
+    "input": "",
+    "output": "Phase 3 introduces self-serve signup, stable hosted API, plan pages and checkout, launch checklist, and reliability targets. This phase aims to provide a more seamless and reliable user experience compared to the previous phases."
+  },
+  {
+    "instruction": "What are some key performance indicators (KPIs) used to measure the success of Quill integration?",
+    "input": "",
+    "output": "Key Performance Indicators (KPIs) for measuring the success of Quill integration include activation rate, weekly retention, task success rate, free-to-paid conversion, and team expansion rate. These metrics help assess how effectively Quill is being integrated into Apex and its impact on various business outcomes."
+  },
+  {
+    "instruction": "What are some technical patterns recommended for integrating Quill with Apex?",
+    "input": "",
+    "output": "The recommended technical pattern involves Quill not calling raw Apex inference directly from the browser. Instead, it uses secure server routes or a shared Apex gateway to communicate effectively between Quill and Apex. Web and mobile clients share the same backend contract, ensuring consistency in the data flow. Additionally, Apex keys remain server-side only, maintaining security and integrity."
+  },
+  {
+    "instruction": "What is the first item in the '12-Month Priority Order' for Quarter 1?",
+    "input": "",
+    "output": "multi-tenant keys"
+  },
+  {
+    "instruction": "Which quarter corresponds to the focus on mobile-ready API contracts and stronger runs/history analytics?",
+    "input": "",
+    "output": "Quarter 2"
+  },
+  {
+    "instruction": "What is the first non-goal mentioned in the text?",
+    "input": "",
+    "output": "Chasing frontier-scale general intelligence claims."
+  },
+  {
+    "instruction": "How many non-goals are listed in total in this section of the document?",
+    "input": "",
+    "output": "Four."
+  },
+  {
+    "instruction": "Quelle est la fonction du modèle Apex Flash dans l'écosystème Apex?",
+    "input": "",
+    "output": "Le modèle Apex Flash, représenté par `apex_core.py`, joue le rôle de Squelette. Il utilise une technique appelée FlashAttention pour maximiser sa vitesse tout en maintenant une latence minimale."
+  },
+  {
+    "instruction": "Quelle est la fonction du modèle Apex Logic dans l'écosystème Apex?",
+    "input": "",
+    "output": "Le modèle Apex Logic, représenté par `apex_logic.py`, correspond à la Réflexion. Il représente le cycle de pensée interne d'une intelligence artificielle et joue un rôle crucial dans les interactions humaines avec des modèles IA."
+  },
+  {
+    "instruction": "Quelle commande npx utilise-t-on pour créer un tunnel localtunnel ?",
+    "input": "",
+    "output": "npx localtunnel --port 8000 est la commande utilisée pour créer un tunnel."
+  },
+  {
+    "instruction": "Comment récupères-t-on l'URL générée par le tunnel ?",
+    "input": "",
+    "output": "L'URL générée peut être trouvée en cliquant sur 'Open Link' dans la fenêtre pop-up du tunnel localtunnel."
+  },
+  {
+    "instruction": "Quelle action doit-on effectuer pour extraire les fichiers d'une archive Colab directement à la racine de `apex_lora_sauvegarde`?",
+    "input": "",
+    "output": "Si les fichiers (`adapter_model.safetensors`, etc.) sont fournis dans une archive Colab, extraire directement le contenu à la racine de `apex_lora_sauvegarde`."
+  },
+  {
+    "instruction": "Quelle est l'importance mentionnée dans le texte pour les fichiers (`adapter_model.safetensors`, etc.) fournis dans une archive Colab?",
+    "input": "",
+    "output": "Si les fichiers (`adapter_model.safetensors`, etc.) sont fournis dans une archive Colab, extraire directement le contenu à la racine de `apex_lora_sauvegarde`."
+  },
+  {
+    "instruction": "Quelle est la valeur du paramètre `X-API-Key` dans l'URL ?",
+    "input": "",
+    "output": "La valeur du paramètre `X-API-Key` est définie via la variable d'environnement `APEX_API_KEY`."
+  },
+  {
+    "instruction": "Quelle route de l'interface doit être utilisée pour tester le moteur de logique en mode non-réseau ?",
+    "input": "",
+    "output": "Pour tester le moteur de logique en mode non-réseau, la route `/chat` doit être utilisée avec un header `X-API-Key`."
+  },
+  {
+    "instruction": "Quelle est l'action à effectuer pour résoudre le problème de surchauffe ?",
+    "input": "",
+    "output": "Pour résoudre le problème de surchauffe, il suffit de tuer le processus `python.exe` via le Gestionnaire des Tâches."
+  },
+  {
+    "instruction": "Quelle est la solution pour gérer l'erreur SFTTrainer ?",
+    "input": "",
+    "output": "Pour gérer l'erreur SFTTrainer, il faut déclarer `max_seq_length` et `dataset_text_field` dans le modèle `SFTConfig`."
+  },
+  {
+    "instruction": "Quelle est la destination du fichier `quill-proxy/lib/apex-client.ts` dans le projet `quill-ai-xi`?",
+    "input": "",
+    "output": "Le fichier `quill-proxy/lib/apex-client.ts` doit être copié vers `/lib/apex-client.ts` dans le projet `quill-ai-xi`."
+  },
+  {
+    "instruction": "Quelle est la destination du fichier `quill-proxy/api/apex/chat/route.ts` dans le projet `quill-ai-xi`?",
+    "input": "",
+    "output": "Le fichier `quill-proxy/api/apex/chat/route.ts` doit être copié vers `/app/api/apex/chat/route.ts` dans le projet `quill-ai-xi`."
+  },
+  {
+    "instruction": "Quelle est la destination du fichier `quill-proxy/api/apex/stream/route.ts` dans le projet `quill-ai-xi`?",
+    "input": "",
+    "output": "Le fichier `quill-proxy/api/apex/stream/route.ts` doit être copié vers `/app/api/apex/stream/route.ts` dans le projet `quill-ai-xi`."
+  },
+  {
+    "instruction": "What are the four core principles of AI coding agents in Apex-llm?",
+    "input": "",
+    "output": "The four core principles of AI coding agents in Apex-llm are:\n\n1. Do not invent facts.\n2. Prefer evidence over assumptions.\n3. Minimize side effects.\n4. Preserve user trust."
+  },
+  {
+    "instruction": "What should be done before making any changes to the system?",
+    "input": "",
+    "output": "Before making any changes, it is essential to confirm the exact user request in one short sentence and inspect existing files and environment for any potential issues or conflicts."
+  },
+  {
+    "instruction": "What is the recommended Python environment for this repository?",
+    "input": "",
+    "output": "The canonical Python environment for this repo is ./venv."
+  },
+  {
+    "instruction": "How should a user verify that their Python package action is using the correct virtual environment and Python executable?",
+    "input": "",
+    "output": "Before any Python/package action, verify: - VIRTUAL_ENV points to ./venv. - python executable is from ./venv/Scripts/python.exe."
+  },
+  {
+    "instruction": "What rule states that after edits, quick checks should be run?",
+    "input": "",
+    "output": "The validation rules state that after edits, quick checks relevant to the change should be run. This includes linting, errors checking, and startup checks when possible."
+  },
+  {
+    "instruction": "How should progress updates during multi-step work be communicated according to rule 7?",
+    "input": "",
+    "output": "Rule 7 states that short progress updates should be given during multi-step work. These updates are important for keeping the team informed without overwhelming them with detailed information."
+  },
+  {
+    "instruction": "What should be done if a prior answer was incorrect?",
+    "input": "",
+    "output": "If a prior answer was wrong, it must be explicitly corrected in the record."
+  },
+  {
+    "instruction": "How can you ensure that there is no uncertain context when continuing with an action?",
+    "input": "",
+    "output": "To avoid uncertainty about the context, verify first before proceeding with any actions."
+  },
+  {
+    "instruction": "What does the text tell us about how to organize camera information?",
+    "input": "",
+    "output": "The text provides examples of organizing camera names and locations under a section called 'Cameras'. It suggests using specific names like 'living-room' for wide-angle cameras in the living room, and 'front-door' for motion-triggered cameras at the front door."
+  },
+  {
+    "instruction": "What does the text indicate about how to handle SSH hosts?",
+    "input": "",
+    "output": "The text advises keeping SSH host information separate from skills. It suggests using a section called 'SSH' to list specific details like the IP address and username of your home server, which is useful for secure access."
+  },
+  {
+    "instruction": "What does this text suggest about the user's approach to their work?",
+    "input": "",
+    "output": "The user suggests that they have a helpful and efficient way of doing their job, as evidenced by the phrase 'This is your cheat sheet'."
+  },
+  {
+    "instruction": "How would you describe the tone of this text?",
+    "input": "",
+    "output": "The tone is informal and encouraging, suggesting that the user finds value in having a collection of useful information to refer to while working."
+  },
+  {
+    "instruction": "What is the primary feature of Apex LLM?",
+    "input": "",
+    "output": "The primary feature of Apex LLM is a local-first FastAPI gateway designed specifically for chat inference, model-tier routing, usage metering, and LoRA experimentation."
+  },
+  {
+    "instruction": "How does Apex LLM ensure secure access to its services?",
+    "input": "",
+    "output": "Apex LLM ensures secure access by using API-key authentication. It also provides request-id structured logging and a usage ledger for tracking requests and their impacts on the system."
+  },
+  {
+    "instruction": "What is the minimum count for the dataset validation?",
+    "input": "",
+    "output": "The minimum count for the dataset validation is 200."
+  },
+  {
+    "instruction": "Which Python script generates a 100-example template dataset?",
+    "input": "",
+    "output": "The Python script that generates a 100-example template dataset is `evals/generate_dataset_expert_100.py`."
+  },
+  {
+    "instruction": "What are the current default parameters for the LoRA smoke profile in apex_lora.py?",
+    "input": "",
+    "output": "The current default parameters for the LoRA smoke profile in `apex_lora.py` are: base model - `unsloth/phi-4-unsloth-bnb-4bit`, dataset - `dataset_expert_v4.json`, and LoRA smoke steps - `max_steps=10`."
+  },
+  {
+    "instruction": "What is the recommended Colab sequence for GPU training?",
+    "input": "",
+    "output": "The recommended Colab sequence for GPU training includes using `colab_finetune.ipynb` followed by exporting `apex_lora_final.zip` and updating `apex_lora_sauvegarde`."
+  },
+  {
+    "instruction": "What should be done before retrying after a training crash?",
+    "input": "",
+    "output": "Restart the runtime before attempting to retry after any training crashes."
+  },
+  {
+    "instruction": "How should cells 1 through 4 of the notebook be run in order?",
+    "input": "",
+    "output": "Run cells 1 -> 2 -> 3 -> 4 in sequence for optimal results."
+  },
+  {
+    "instruction": "What file contains API keys, quotas, usage events?",
+    "input": "",
+    "output": "The `key_store.py` file contains API keys, quotas, and usage events."
+  },
+  {
+    "instruction": "How is the LoRA training entrypoint accessed?",
+    "input": "",
+    "output": "The LoRA training entrypoint can be accessed through the `apex_lora.py` script."
+  },
+  {
+    "instruction": "What is the `method` used in the fetch request for the `/api/apex/stream` endpoint?",
+    "input": "",
+    "output": "The method used in the fetch request for the `/api/apex/stream` endpoint is 'POST'."
+  },
+  {
+    "instruction": "How does the response from the `/api/apex/chat` endpoint get parsed to extract `reponse_apex`?",
+    "input": "",
+    "output": "The response from the `/api/apex/chat` endpoint gets parsed using a JSON decoder. The extracted data is then assigned to the variable `reponse_apex`."
+  },
+  {
+    "instruction": "What is the supported `model` parameter?",
+    "input": "",
+    "output": "The supported `model` parameter includes 'apex:fast', 'apex:default', and 'apex:reasoning'."
+  },
+  {
+    "instruction": "How can inference be delegated to a local Ollama instance?",
+    "input": "",
+    "output": "To delegate inference to a local Ollama instance, set `APEX_OLLAMA_URL` to the URL of your local Ollama server. The LoRA adapter is not applied in this mode; it is only used when loading the HuggingFace model directly (requires GPU)."
+  }
+]
