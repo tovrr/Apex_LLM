@@ -48,17 +48,17 @@ In **Apex-llm**, three keys have been created:
 
 | Tier | Key | Requests/day | Tokens/day |
 |------|-----|--------------|------------|
-| Free | `apx_4f6421b270f8b17cef41555938b58264` | 10 | 5,000 |
-| Pro | `apx_493f177847c00cd899741e5a2dbc40cb` | 1,000 | 500,000 |
-| Internal | `apx_33c15a1be8a8a8b94eaf6e9032ccb843` | ∞ | ∞ |
+| Free | `apx_replace_with_free_key` | 10 | 5,000 |
+| Pro | `apx_replace_with_pro_key` | 1,000 | 500,000 |
+| Internal | `apx_replace_with_internal_key` | ∞ | ∞ |
 
 Add these to your **quill-proxy/.env.local**:
 
 ```bash
 APEX_BASE_URL=https://your-apex-railway-app.railway.app
-APEX_KEY_FREE_TIER=apx_4f6421b270f8b17cef41555938b58264
-APEX_KEY_PRO_TIER=apx_493f177847c00cd899741e5a2dbc40cb
-APEX_KEY_INTERNAL=apx_33c15a1be8a8a8b94eaf6e9032ccb843
+APEX_KEY_FREE_TIER=apx_replace_with_free_key
+APEX_KEY_PRO_TIER=apx_replace_with_pro_key
+APEX_KEY_INTERNAL=apx_replace_with_internal_key
 ```
 
 ---

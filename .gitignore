@@ -10,6 +10,7 @@ venv/
 # Environment secrets
 .env
 .env.railway
+.rotated_keys_*.txt
 
 # Training checkpoints and temp artifacts
 checkpoint-*/
@@ -23,6 +24,8 @@ checkpoint-*/
 # Runtime data artifacts (local-only)
 data/*.db
 data/*.jsonl
+key_store.db
+.tmp_*.py
 .openclaw/
 apex_lora_sauvegarde_backup_*/
 
