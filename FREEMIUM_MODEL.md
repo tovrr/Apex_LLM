@@ -1,5 +1,13 @@
 # Freemium Model for Apex
 
+## Overview
+
+**Freemium tiers are for SaaS deployments only** (like Quill). Self-hosted Apex users are unrestricted.
+
+See [QUILL_INTEGRATION_GUIDE.md](./QUILL_INTEGRATION_GUIDE.md) for how to wire this into a web app.
+
+---
+
 ## Tier Structure
 
 ### Free Tier
@@ -236,3 +244,21 @@ stripe.billing_meter_event.create(
 ```
 
 This is already schema-ready in `key_store.py` (usage_events table).
+
+---
+
+## Self-Hosted & Open Source
+
+**This freemium model only applies to SaaS deployments** (where you control the API keys and distribute them to users).
+
+If you self-host Apex locally:
+
+1. Clone the repo
+2. Create your own API keys:
+   ```bash
+   python manage_keys.py add --label local-dev --plan internal
+   ```
+3. Use the `internal` key in your requests → **unlimited quotas**
+4. No limits, fully free
+
+The freemium tier enforcement code is there for anyone who wants to monetize Apex, but it does not restrict open source users. Self-hosted users have full control and can disable quotas if they choose.

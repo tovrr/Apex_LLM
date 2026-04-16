@@ -351,6 +351,9 @@ if (apexRes.status === 429) {
 
 ## FAQ
 
+**Q: Does this limit open source users who self-host Apex?**  
+A: No. Self-hosted users create their own API keys with the `internal` plan (unlimited quota). The freemium limits only apply to SaaS deployments like Quill, where you distribute keys to users. If you self-host, you have full control.
+
 **Q: Can a user switch tiers mid-day?**  
 A: Yes. Their next request will use the new tier's key. Previous requests count toward the old tier's quota.
 
