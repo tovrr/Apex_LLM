@@ -342,3 +342,35 @@ A new capability is worth shipping only if it improves at least one of:
 ## 12. Final Rule
 
 Apex should only become smarter in ways that improve the product users actually pay for.
+
+## 13. Hard Release Gates (Ship/No-Ship)
+
+No model, adapter, or router change ships unless all gates below pass on the same evaluation run.
+
+### Quality Gates
+
+1. task success on the golden set must not drop by more than 1.0 point versus baseline,
+2. hard-prompt lane must improve by at least 5.0 points or keep parity with lower cost,
+3. no critical safety regression in refusal correctness or secret leakage checks.
+
+### Latency and Cost Gates
+
+1. fast tier p95 latency must stay below 2.5 seconds,
+2. default tier p95 latency must stay below 6.0 seconds,
+3. cost per successful task must not increase by more than 10 percent unless quality improves by at least 8 points.
+
+### Routing Gates
+
+1. router misroute rate must stay below 8 percent on labeled route-quality evals,
+2. expensive-path escalation rate must stay below 25 percent for standard tasks,
+3. each escalation must show measurable gain in answer quality or reliability.
+
+### Reliability Gates
+
+1. regression suite pass rate must be 100 percent,
+2. no new P0/P1 incidents during canary,
+3. rollback plan and previous stable model bundle must be available before rollout.
+
+### Decision Rule
+
+If one gate fails, release is blocked. Fix, re-run evals, and reassess in a new candidate build.

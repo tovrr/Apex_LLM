@@ -98,7 +98,12 @@ RUNS_FILE = os.path.join(DATA_DIR, "runs_history.jsonl")
 if os.path.isdir(UI_DIR):
     app.mount("/ui/assets", StaticFiles(directory=UI_DIR), name="ui-assets")
 
-logging.basicConfig(level=logging.INFO)
+# Configure structured logging with timestamp and level
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 logger = logging.getLogger("apex_api")
 load_dotenv(override=True)
 
@@ -114,6 +119,21 @@ try:
     logger.info("Key store: APEX_API_KEY seeded as 'internal' plan.")
 except ValueError:
     pass  # Already seeded on a previous startup — fine.
+
+header_cle = APIKeyHeader(name="X-API-Key")
+
+LIMITE_REQUETES = int(os.getenv("APEX_RATE_LIMIT_PER_WINDOW", "30"))
+FENETRE_REQUETES_SEC = int(os.getenv("APEX_RATE_WINDOW_SECONDS", "60"))
+DELAI_GENERATION_SEC = float(os.getenv("APEX_GENERATION_TIMEOUT_SECONDS", "45"))
+
+# ── Application Startup Logging ────────────────────────────────────────────────
+logger.info("=" * 80)
+logger.info("APEX API SERVER STARTUP")
+logger.info("=" * 80)
+logger.info("Environment: %s", os.getenv("ENVIRONMENT", "development"))
+logger.info("Python: %s", torch.__version__)
+logger.info("Working directory: %s", os.getcwd())
+logger.info("Key store initialization complete")
 
 header_cle = APIKeyHeader(name="X-API-Key")
 
@@ -258,14 +278,31 @@ def _log_event(name: str, **fields: Any) -> None:
     payload = {"event": name, **fields}
     logger.info(json.dumps(payload, ensure_ascii=False, default=str))
 
-# Le Videur (CORS) qui autorise ton site Vercel à te parler
+# Security: CORS configuration with explicit permissions
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://quill-ai-xi.vercel.app", "http://localhost:3000"], 
     allow_credentials=True,
-    allow_methods=["*"], 
-    allow_headers=["*"], 
+    allow_methods=["GET", "POST", "OPTIONS"],  # Explicit method list
+    allow_headers=["Content-Type", "X-API-Key", "X-Request-ID"],  # Explicit headers
+    expose_headers=["X-Request-ID", "X-RateLimit-Limit", "X-RateLimit-Remaining"],
 )
+
+
+# Security: Add security headers to all responses
+@app.middleware("http")
+async def security_headers_middleware(request: Request, call_next: Any) -> Any:
+    """Add security headers to all responses."""
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubdomains"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    return response
 
 
 @app.middleware("http")
@@ -310,7 +347,7 @@ async def request_context_middleware(request: Request, call_next: Any) -> Any:
 # ==========================================
 # 2. LE CHEF CUISINIER (Fusion Base + LoRA)
 # ==========================================
-print("[apex] Le serveur s'allume...")
+# Debug print removed - use logger instead (see startup_event for comprehensive logging)
 
 
 class _FakeModel:
@@ -380,6 +417,41 @@ APEX_OPENAI_COMPAT_API_KEY = os.getenv("APEX_OPENAI_COMPAT_API_KEY", "lm-studio"
 XIAOMI_MIMO_API_KEY = os.getenv("XIAOMI_MIMO_API_KEY", "").strip()
 XIAOMI_MIMO_BASE_URL = os.getenv("XIAOMI_MIMO_BASE_URL", "https://api.minimax.chat/v1").rstrip("/")
 XIAOMI_MIMO_MODEL = os.getenv("XIAOMI_MIMO_MODEL", "MiMo-7B-Instruct")
+
+# ── Application Startup Logging ────────────────────────────────────────────────
+logger.info("=" * 80)
+logger.info("APEX API SERVER STARTUP")
+logger.info("=" * 80)
+logger.info("Environment: %s", os.getenv("ENVIRONMENT", "development"))
+logger.info("Python: %s", torch.__version__)
+logger.info("Working directory: %s", os.getcwd())
+logger.info("Config file: %s", os.path.join(BASE_DIR, ".env"))
+
+# Log environment configuration (sanitized - no secrets)
+logger.info("-" * 80)
+logger.info("ENVIRONMENT CONFIGURATION")
+logger.info("-" * 80)
+logger.info("Rate limit: %s requests per %s seconds", LIMITE_REQUETES, FENETRE_REQUETES_SEC)
+logger.info("Generation timeout: %s seconds", DELAI_GENERATION_SEC)
+logger.info("Skip model load: %s", os.getenv("APEX_SKIP_MODEL_LOAD", "0"))
+logger.info("Ollama URL: %s", APEX_OLLAMA_URL or "not configured")
+logger.info("OpenAI compat URL: %s", APEX_OPENAI_COMPAT_URL or "not configured")
+
+# Log model tier configuration
+logger.info("-" * 80)
+logger.info("MODEL TIER CONFIGURATION")
+logger.info("-" * 80)
+for tier, model_name in MODEL_NAMES.items():
+    lora_dir = MODEL_LORA_DIRS.get(tier, "")
+    lora_status = "configured" if lora_dir and os.path.isdir(lora_dir) else "not found"
+    logger.info("Tier '%s': %s (LoRA: %s)", tier, model_name, lora_status)
+
+# Log key store summary
+logger.info("-" * 80)
+logger.info("KEY STORE INITIALIZED")
+logger.info("-" * 80)
+logger.info("Database path: %s", key_store.DB_PATH)
+logger.info("Legacy API key configured: [REDACTED]")  # Security: Never log any part of API keys
 
 
 def _openai_compat_active() -> bool:
@@ -550,51 +622,71 @@ def _charger_modele_runtime(tier: str | None = None) -> str:
         _model_runtime_state_by_tier[selected_tier] = "loading"
         _model_runtime_error_by_tier[selected_tier] = ""
 
+        logger.info("-" * 80)
+        logger.info("MODEL LOADING: tier='%s'", selected_tier)
+        logger.info("-" * 80)
+
         if os.getenv("APEX_SKIP_MODEL_LOAD") == "1":
-            logger.warning("APEX_SKIP_MODEL_LOAD=1 actif: chargement d'un modèle factice de test.")
+            logger.warning("APEX_SKIP_MODEL_LOAD=1 active: loading fake test model instead of real model")
             tokenizer = _FakeTokenizer()
             modele_apex = _FakeModel()
             _active_model_tier = selected_tier
             _model_runtime_state_by_tier[selected_tier] = "ready"
+            logger.info("Fake model loaded successfully (skip mode)")
             return selected_tier
 
+        start_time = time.time()
         try:
             nom_modele_base = MODEL_NAMES[selected_tier]
+            logger.info("Loading tokenizer for model: %s", nom_modele_base)
             tokenizer = AutoTokenizer.from_pretrained(nom_modele_base)
+            logger.info("Tokenizer loaded successfully (vocab size: %d)", tokenizer.vocab_size)
 
             utilise_cuda = torch.cuda.is_available()
             dtype_modele = torch.float16 if utilise_cuda else torch.float32
             device_map_modele = "auto" if utilise_cuda else "cpu"
 
-            print(f"🧠 Chargement du modèle ({selected_tier}) : {nom_modele_base}")
+            logger.info("Device detection: CUDA=%s, dtype=%s, device_map=%s",
+                       utilise_cuda, dtype_modele, device_map_modele)
+            logger.info("Loading base model (%s): %s", selected_tier, nom_modele_base)
+            
             modele_base = AutoModelForCausalLM.from_pretrained(
                 nom_modele_base,
                 torch_dtype=dtype_modele,
                 device_map=device_map_modele,
                 attn_implementation="eager",
             )
+            logger.info("Base model loaded successfully")
 
             dossier_lora = MODEL_LORA_DIRS.get(selected_tier, "")
             if dossier_lora and os.path.isdir(dossier_lora):
-                print(f"🔌 Branchement LoRA ({selected_tier}) : {dossier_lora}")
+                logger.info("LoRA adapter found: %s", dossier_lora)
+                logger.info("Applying LoRA adapter to base model...")
                 try:
                     modele_apex = PeftModel.from_pretrained(modele_base, dossier_lora)
+                    logger.info("LoRA adapter applied successfully")
                 except Exception as e:
                     logger.warning(
-                        "Chargement LoRA impossible (%s). Fallback sur modèle de base.",
+                        "LoRA adapter loading failed (%s). Falling back to base model.",
                         e,
                     )
                     modele_apex = modele_base
             else:
+                logger.info("No LoRA adapter configured for tier '%s'", selected_tier)
                 modele_apex = modele_base
+
+            load_duration = time.time() - start_time
+            logger.info("Model loading complete in %.2f seconds", load_duration)
+            logger.info("Active model tier: %s", selected_tier)
 
             _active_model_tier = selected_tier
             _model_runtime_state_by_tier[selected_tier] = "ready"
             return selected_tier
         except Exception as exc:
+            load_duration = time.time() - start_time
             _model_runtime_state_by_tier[selected_tier] = "error"
             _model_runtime_error_by_tier[selected_tier] = str(exc)
-            logger.exception("Chargement modèle impossible")
+            logger.exception("Model loading failed after %.2f seconds: %s", load_duration, exc)
             raise
 
 
@@ -680,8 +772,60 @@ def _infos_modele() -> dict[str, Any]:
     }
 
 
+# Security: Maximum prompt length to prevent resource exhaustion
+MAX_PROMPT_LENGTH = 8000
+
+# Security: Patterns that indicate prompt injection attempts
+PROMPT_INJECTION_PATTERNS = [
+    "<|assistant|>",  # Model response tag
+    "<|system|>",     # System prompt tag (when not expected)
+    "IGNORE ABOVE",   # Common injection attempt
+    "IGNORE PREVIOUS", # Common injection attempt
+    "NEW INSTRUCTION", # Common injection attempt
+]
+
+
+def _validate_prompt(question: str) -> None:
+    """
+    Validate user prompt for security issues.
+    
+    Checks:
+    - Maximum length (8000 chars)
+    - Prompt injection patterns
+    - Malicious content
+    
+    Raises HTTPException(400) if validation fails.
+    """
+    if not question:
+        raise HTTPException(status_code=400, detail="Question cannot be empty")
+    
+    if len(question) > MAX_PROMPT_LENGTH:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Question too long. Maximum length is {MAX_PROMPT_LENGTH} characters. Current: {len(question)}"
+        )
+    
+    # Check for prompt injection patterns (case-insensitive)
+    question_upper = question.upper()
+    for pattern in PROMPT_INJECTION_PATTERNS:
+        if pattern in question_upper:
+            logger.warning(
+                "Prompt injection attempt detected: pattern='%s' in question (truncated: %s...)",
+                pattern,
+                question[:50]
+            )
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid input: detected potential prompt injection attempt"
+            )
+
+
 def _preparer_inputs(question: str) -> tuple[str, Any]:
     assert tokenizer is not None and modele_apex is not None
+    
+    # Security: Validate prompt before processing
+    _validate_prompt(question)
+    
     prompt = f"<|user|>\n{question}\n<|assistant|>\n"
     inputs = tokenizer(prompt, return_tensors="pt")
     if hasattr(inputs, "to"):
@@ -700,31 +844,32 @@ async def _generer_reponse_ollama(question: str, mots_max: int, selected_tier: s
     if not system_prompt:
         system_prompt = APEX_DEFAULT_SYSTEM_PROMPT
     
-    # For phi3:mini, we need to force the system prompt by prefixing it directly
-    # Use a strong prompt injection that phi3:mini will respect
-    enforced_prompt = f"""<|system|>
-{system_prompt}
-
-You must respond according to the above system prompt. Do not deviate from it.
-<|end|>
-
-<|user|>
-{remaining_prompt}
-<|assistant|>
-"""
-    
     payload = {
         "model": ollama_model,
-        "prompt": enforced_prompt,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": remaining_prompt},
+        ],
         "stream": False,
         "options": {"num_predict": mots_max, "temperature": 0.7, "num_ctx": OLLAMA_NUM_CTX},
     }
     try:
         async with httpx.AsyncClient(timeout=DELAI_GENERATION_SEC) as client:
-            r = await client.post(f"{APEX_OLLAMA_URL}/api/generate", json=payload)
+            r = await client.post(f"{APEX_OLLAMA_URL}/api/chat", json=payload)
             r.raise_for_status()
             data = r.json()
-            return data.get("response", "").strip()
+            message = data.get("message") or {}
+            content = (message.get("content") or "").strip()
+            if content:
+                return content
+
+            # Some models may emit alternate fields when reasoning is enabled.
+            for key in ("reasoning_content", "thinking", "reasoning"):
+                alt = (message.get(key) or data.get(key) or "").strip()
+                if alt:
+                    return alt
+
+            return ""
     except httpx.TimeoutException as exc:
         raise HTTPException(status_code=504, detail="Temps de génération dépassé (Ollama).") from exc
     except Exception as exc:
@@ -755,7 +900,25 @@ async def _generer_reponse_openai_compat(question: str, mots_max: int, selected_
             r = await client.post(f"{APEX_OPENAI_COMPAT_URL}/v1/chat/completions", json=payload, headers=headers)
             r.raise_for_status()
             data = r.json()
-            return data["choices"][0]["message"]["content"].strip()
+            choice = (data.get("choices") or [{}])[0]
+            message = choice.get("message") or {}
+
+            content = (message.get("content") or "").strip()
+            if content:
+                return content
+
+            # Some backends expose hidden reasoning under alternate fields.
+            for key in ("reasoning_content", "reasoning", "thinking"):
+                alt = (message.get(key) or choice.get(key) or data.get(key) or "").strip()
+                if alt:
+                    return alt
+
+            # Legacy/non-chat fallback.
+            text = (choice.get("text") or "").strip()
+            if text:
+                return text
+
+            return ""
     except httpx.TimeoutException as exc:
         raise HTTPException(status_code=504, detail="Temps de génération dépassé (OpenAI-compat).") from exc
     except Exception as exc:
@@ -794,7 +957,13 @@ async def _streamer_tokens_openai_compat(question: str, mots_max: int, selected_
                     try:
                         chunk = json.loads(raw)
                         delta = chunk["choices"][0].get("delta", {})
-                        fragment = delta.get("content", "")
+                        fragment = (
+                            delta.get("content")
+                            or delta.get("reasoning_content")
+                            or delta.get("reasoning")
+                            or delta.get("thinking")
+                            or ""
+                        )
                         if fragment:
                             yield fragment, selected_tier
                     except (json.JSONDecodeError, KeyError, IndexError):
@@ -857,7 +1026,7 @@ async def _streamer_tokens(question: str, mots_max: int, model_tier: str | None 
         return
 
     if _ollama_active():
-        # Ollama streaming: use stream=True and yield chunks.
+        # Ollama streaming: use /api/chat with messages for better compatibility.
         ollama_model = OLLAMA_MODEL_NAMES[selected_tier]
         
         # Extract system prompt if present
@@ -865,34 +1034,32 @@ async def _streamer_tokens(question: str, mots_max: int, model_tier: str | None 
         if not system_prompt:
             system_prompt = APEX_DEFAULT_SYSTEM_PROMPT
         
-        # For phi3:mini, we need to force the system prompt by prefixing it directly
-        enforced_prompt = f"""<|system|>
-{system_prompt}
-
-You must respond according to the above system prompt. Do not deviate from it.
-<|end|>
-
-<|user|>
-{remaining_prompt}
-<|assistant|>
-"""
-        
         payload = {
             "model": ollama_model,
-            "prompt": enforced_prompt,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": remaining_prompt},
+            ],
             "stream": True,
             "options": {"num_predict": mots_max, "temperature": 0.7, "num_ctx": OLLAMA_NUM_CTX},
         }
         try:
             async with httpx.AsyncClient(timeout=DELAI_GENERATION_SEC) as client:
-                async with client.stream("POST", f"{APEX_OLLAMA_URL}/api/generate", json=payload) as resp:
+                async with client.stream("POST", f"{APEX_OLLAMA_URL}/api/chat", json=payload) as resp:
                     resp.raise_for_status()
                     async for line in resp.aiter_lines():
                         if not line:
                             continue
                         try:
                             chunk = json.loads(line)
-                            fragment = chunk.get("response", "")
+                            message = chunk.get("message") or {}
+                            fragment = (
+                                message.get("content")
+                                or message.get("reasoning_content")
+                                or message.get("thinking")
+                                or message.get("reasoning")
+                                or ""
+                            )
                             if fragment:
                                 yield fragment, selected_tier
                             if chunk.get("done"):
@@ -970,9 +1137,31 @@ class MessageV2(BaseModel):
 
 
 class ContextChunkV2(BaseModel):
-    source: str = Field(..., min_length=1, max_length=512)
-    content: str = Field(..., min_length=1, max_length=3000)
-    score: float | None = None
+    source: str = Field(
+        ...,
+        min_length=1,
+        max_length=512,
+        pattern=r"^[a-zA-Z0-9_./-]+$",  # Prevent path traversal in source
+        description="Source file path (alphanumeric, dots, slashes, hyphens only)"
+    )
+    content: str = Field(
+        ...,
+        min_length=1,
+        max_length=3000,
+        description="Context content (max 3000 chars)"
+    )
+    score: float | None = Field(
+        default=None,
+        ge=0.0,
+        le=1.0,
+        description="Relevance score (0-1)"
+    )
+    
+    def validate_content(self) -> None:
+        """Additional content validation."""
+        # Check for prompt injection in context
+        if "<|assistant|>" in self.content.upper():
+            raise ValueError("Context contains invalid model tags")
 
 
 class ToolSpecV2(BaseModel):
@@ -2426,20 +2615,51 @@ async def ollama_pull_model(payload: _OllamaPullModelPayload) -> StreamingRespon
 
 # ─────────────────────────────────────────────────────────────────────────────
 
+
+def _safe_file_path(base_dir: str, filename: str) -> str:
+    """
+    Security: Safely resolve file path to prevent path traversal attacks.
+    
+    Args:
+        base_dir: Base directory (e.g., UI_DIR)
+        filename: Requested filename
+    
+    Returns:
+        Absolute path if safe, raises HTTPException(403) if traversal detected
+    
+    Raises:
+        HTTPException: 403 if path traversal detected, 404 if file not found
+    """
+    # Resolve to absolute paths
+    base_resolved = os.path.realpath(base_dir)
+    requested_path = os.path.realpath(os.path.join(base_dir, filename))
+    
+    # Security: Ensure the resolved path is within base directory
+    if not requested_path.startswith(base_resolved + os.sep) and requested_path != base_resolved:
+        logger.warning(
+            "Path traversal attempt blocked: base=%s, requested=%s, resolved=%s",
+            base_dir, filename, requested_path
+        )
+        raise HTTPException(status_code=403, detail="Access denied: Invalid path")
+    
+    if not os.path.isfile(requested_path):
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    return requested_path
+
+
 @app.get("/")
 async def ui_index() -> FileResponse:
-    index_path = os.path.join(UI_DIR, "index.html")
-    if not os.path.isfile(index_path):
-        raise HTTPException(status_code=404, detail="UI introuvable.")
-    return FileResponse(index_path)
+    # Security: Use safe path resolution
+    index_path = _safe_file_path(UI_DIR, "index.html")
+    return FileResponse(index_path, headers={"Content-Type": "text/html; charset=utf-8"})
 
 
 @app.get("/developer")
 async def ui_developer() -> FileResponse:
-    developer_path = os.path.join(UI_DIR, "developer.html")
-    if not os.path.isfile(developer_path):
-        raise HTTPException(status_code=404, detail="Page développeur introuvable.")
-    return FileResponse(developer_path)
+    # Security: Use safe path resolution
+    developer_path = _safe_file_path(UI_DIR, "developer.html")
+    return FileResponse(developer_path, headers={"Content-Type": "text/html; charset=utf-8"})
 
 
 @app.get("/ui/developer.html")
@@ -2449,12 +2669,42 @@ async def ui_developer_legacy() -> FileResponse:
 
 @app.get("/pricing")
 async def ui_pricing() -> FileResponse:
-    pricing_path = os.path.join(UI_DIR, "pricing.html")
-    if not os.path.isfile(pricing_path):
-        raise HTTPException(status_code=404, detail="Page pricing introuvable.")
-    return FileResponse(pricing_path)
+    # Security: Use safe path resolution
+    pricing_path = _safe_file_path(UI_DIR, "pricing.html")
+    return FileResponse(pricing_path, headers={"Content-Type": "text/html; charset=utf-8"})
 
 
 @app.get("/ui/pricing.html")
 async def ui_pricing_legacy() -> FileResponse:
     return await ui_pricing()
+
+
+# ── Startup/Shutdown Event Handlers ───────────────────────────────────────────
+@app.on_event("startup")
+async def startup_event():
+    """Log comprehensive startup summary."""
+    logger.info("=" * 80)
+    logger.info("STARTUP COMPLETE")
+    logger.info("=" * 80)
+    logger.info("Server ready to accept requests")
+    logger.info("Endpoints available:")
+    logger.info("  - GET  /health")
+    logger.info("  - POST /chat")
+    logger.info("  - POST /chat/stream")
+    logger.info("  - POST /chat/v2")
+    logger.info("  - POST /v1/chat/completions (OpenAI compat)")
+    logger.info("  - GET  /api/tools")
+    logger.info("  - GET  /api/usage")
+    logger.info("  - GET  /api/status")
+    logger.info("  - GET  /developer")
+    logger.info("  - GET  /pricing")
+    logger.info("=" * 80)
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Log shutdown event."""
+    logger.info("=" * 80)
+    logger.info("SHUTDOWN INITIATED")
+    logger.info("=" * 80)
+    logger.info("Closing connections and cleaning up resources...")

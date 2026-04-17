@@ -27,9 +27,9 @@ Apex LLM is a local-first FastAPI gateway for chat inference, model-tier routing
 
 ## Current Model Routing
 
-- fast: unsloth/phi-4-unsloth-bnb-4bit + LoRA adapter (`apex_lora_sauvegarde`)
-- default: Qwen/Qwen2.5-7B-Instruct
-- reasoning: Jackrong/Qwen3.5-27B-Claude-4.6-Opus-Reasoning-Distilled
+- fast: qwen3:1.7b
+- default: qwen3.5:9b
+- reasoning: qwen3.5:27b
 
 Routing is configured via environment variables in [.env.example](.env.example).
 
@@ -49,8 +49,8 @@ Create [.env](.env) from [.env.example](.env.example) and set at least:
 
 ```dotenv
 APEX_API_KEY=your_key_here
-APEX_MODEL_FAST_NAME=unsloth/phi-4-unsloth-bnb-4bit
-APEX_MODEL_FAST_LORA_DIR=./apex_lora_sauvegarde
+APEX_MODEL_FAST_NAME=microsoft/Phi-4-mini-instruct
+APEX_MODEL_FAST_LORA_DIR=
 ```
 
 For local low-RAM development, you can bypass heavy model loading:
@@ -69,6 +69,77 @@ Health check:
 
 ```powershell
 Invoke-RestMethod -Uri "http://127.0.0.1:8000/health" -Method GET
+```
+
+### RunPod one-command bootstrap
+
+For a single-pod setup (Apex + Ollama + 3 model tiers), use:
+
+```bash
+export APEX_API_KEY="replace-me"
+./scripts/runpod_bootstrap_apex.sh
+```
+
+### RunPod recommended setup (supervised)
+
+For production-like stability on a single pod (auto-restart for Ollama + Apex + watchdog), use:
+
+```bash
+cd /workspace/Apex_LLM
+export APEX_API_KEY="replace-me"
+./scripts/runpod_supervisor_setup.sh
+supervisord -c ./scripts/supervisord.apex.conf
+```
+
+This setup provides:
+
+- Process supervision for `ollama serve` and `uvicorn`.
+- Automatic restart when a process exits.
+- A local watchdog that checks `/health` and forces restart if Apex is stuck.
+- A persistent runtime env file at `.env.runpod`.
+
+Quick verification from inside the pod:
+
+```bash
+./venv/bin/python - <<'PY'
+import httpx
+
+health = httpx.get("http://127.0.0.1:8000/health", timeout=10)
+print("health", health.status_code, health.text)
+
+resp = httpx.post(
+  "http://127.0.0.1:8000/v1/chat/completions",
+  headers={"Authorization": "Bearer replace-me", "Content-Type": "application/json"},
+  json={
+    "model": "default",
+    "messages": [{"role": "user", "content": "Reply exactly OK"}],
+    "max_tokens": 32,
+    "temperature": 0,
+  },
+  timeout=120,
+)
+print("chat", resp.status_code, resp.text)
+PY
+```
+
+RunPod HTTP service check (outside the pod):
+
+- `GET /health` must return `{"status":"ok"}`.
+- `POST /v1/chat/completions` must be called with JSON body and Authorization header.
+- Opening `/v1/chat/completions` directly in a browser issues `GET` and returns `{"detail":"Method Not Allowed"}` by design.
+
+Common troubleshooting:
+
+- `python: command not found`: run `./scripts/runpod_supervisor_setup.sh` (installs Python 3 + venv + pip).
+- `Exit 127` on uvicorn start: usually missing interpreter path; use supervisor setup and start scripts above.
+- 502 from proxy with 200 on `/health` previously: Apex process likely crashed/restarted; check `/workspace/apex-supervisor.err.log` and `/workspace/apex.log`.
+
+### Tier smoke test
+
+After Apex is running, validate all tiers with:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\smoke_test_tiers.ps1 -BaseUrl http://127.0.0.1:8000 -ApiKey <your_apex_key>
 ```
 
 ## API Surface
@@ -173,7 +244,7 @@ while (true) {
 
 For clients that support the OpenAI SDK, use:
 
-```
+```http
 POST /v1/chat/completions
 ```
 
@@ -187,4 +258,4 @@ Set `APEX_OLLAMA_URL=http://127.0.0.1:11434` to delegate inference to a local Ol
 
 - Keep secrets out of git. Use [.env](.env) locally.
 - LoRA artifacts and backups should stay local unless intentionally published.
-- Large model files (*.safetensors, *.pt, *.bin) are tracked via Git LFS.
+- Large model files (`*.safetensors`, `*.pt`, `*.bin`) are tracked via Git LFS.

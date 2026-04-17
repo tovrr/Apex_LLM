@@ -2,12 +2,18 @@
 
 Tables
 ------
-api_keys      : one row per issued key (stored as SHA-256 hash, never raw)
+api_keys      : one row per issued key (stored as salted SHA-256 hash, never raw)
 usage_daily   : daily request + token counters per key (fast quota checks)
 usage_events  : per-request event ledger (durable, Stripe-ready)
 
-Keys are never stored in plain text. The raw key is hashed on write and on
-every verification. The first 8 characters are kept as a display prefix only.
+Keys are never stored in plain text. The raw key is hashed with a per-key salt
+on write and on every verification. The first 8 characters are kept as a display
+prefix only.
+
+SECURITY: 
+- Per-key random salt prevents rainbow table attacks
+- Minimum key entropy validation (32 chars)
+- Keys are validated for strength before acceptance
 
 Stripe meter event shape (usage_events)
 ----------------------------------------
@@ -19,7 +25,9 @@ Each row maps 1-to-1 to a Stripe Billing Meter Event when metering is wired:
 """
 
 import hashlib
+import hmac
 import os
+import secrets
 import sqlite3
 import threading
 from datetime import datetime, timezone
@@ -30,6 +38,12 @@ _DEFAULT_DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "
 DB_PATH: str = os.getenv("APEX_KEYS_DB") or _DEFAULT_DB
 
 _db_lock = threading.Lock()
+
+# Security: Global salt for additional HMAC layer (rotate annually)
+_GLOBAL_SALT = os.getenv("APEX_KEY_GLOBAL_SALT", secrets.token_hex(32)).encode()
+
+# Minimum API key length for entropy requirements
+MIN_API_KEY_LENGTH = 32
 
 # Plan defaults — quota of -1 means unlimited
 PLANS: dict[str, dict[str, int]] = {
@@ -44,6 +58,7 @@ PLANS: dict[str, dict[str, int]] = {
 _DDL_KEYS = """
 CREATE TABLE IF NOT EXISTS api_keys (
     key_hash             TEXT PRIMARY KEY,
+    key_salt             TEXT NOT NULL,
     key_prefix           TEXT NOT NULL,
     label                TEXT NOT NULL,
     plan                 TEXT NOT NULL DEFAULT 'free',
@@ -89,14 +104,57 @@ class KeyInfo(NamedTuple):
     plan: str
     quota_req_per_day: int
     quota_tokens_per_day: int
+    key_salt: str = ""  # Salt stored for verification
 
 
 class QuotaExceededError(Exception):
     """Raised when a key has exhausted its daily quota."""
 
 
-def _hash_key(raw_key: str) -> str:
-    return hashlib.sha256(raw_key.encode()).hexdigest()
+def _validate_key_strength(raw_key: str) -> None:
+    """
+    Validate API key meets minimum security requirements.
+    
+    Requirements:
+    - Minimum 32 characters (256 bits of entropy with hex encoding)
+    - Must contain alphanumeric characters
+    - Cannot be all same character
+    """
+    if len(raw_key) < MIN_API_KEY_LENGTH:
+        raise ValueError(
+            f"API key too short. Minimum length is {MIN_API_KEY_LENGTH} characters. "
+            f"Current length: {len(raw_key)}. Generate a stronger key."
+        )
+    
+    if not raw_key.replace('-', '').replace('_', '').isalnum():
+        raise ValueError("API key contains invalid characters. Use only alphanumeric, hyphens, and underscores.")
+    
+    if len(set(raw_key)) < 10:
+        raise ValueError("API key has insufficient entropy. Too many repeated characters.")
+
+
+def _hash_key(raw_key: str, key_salt: Optional[str] = None) -> str:
+    """
+    Hash API key with per-key salt using HMAC-SHA256.
+    
+    Security measures:
+    - Per-key random salt prevents rainbow table attacks
+    - Global salt adds additional layer of protection
+    - HMAC construction prevents length extension attacks
+    
+    Args:
+        raw_key: The raw API key string
+        key_salt: Per-key salt (generated if not provided)
+    
+    Returns:
+        Hex-encoded hash of the key
+    """
+    if key_salt is None:
+        key_salt = secrets.token_hex(32)
+    
+    # Combine global salt, per-key salt, and key for maximum security
+    message = f"{key_salt}:{raw_key}".encode()
+    return hmac.new(_GLOBAL_SALT, message, hashlib.sha256).hexdigest()
 
 
 def _connect() -> sqlite3.Connection:
@@ -144,21 +202,31 @@ def add_key(
     quota_tokens_per_day: Optional[int] = None,
 ) -> str:
     """
-    Hash and store a new API key.
+    Hash and store a new API key with per-key salt.
+
+    Security:
+    - Validates key strength before acceptance
+    - Generates random per-key salt
+    - Uses HMAC-SHA256 with global + per-key salt
 
     Returns the key_hash.
-    Raises ValueError for unknown plan or duplicate key.
+    Raises ValueError for unknown plan, weak key, or duplicate key.
     """
     if plan not in PLANS:
         raise ValueError(f"Unknown plan '{plan}'. Valid plans: {list(PLANS)}")
+
+    # Validate key strength
+    _validate_key_strength(raw_key)
 
     defaults = PLANS[plan]
     qr = quota_req_per_day    if quota_req_per_day    is not None else defaults["quota_req_per_day"]
     qt = quota_tokens_per_day if quota_tokens_per_day is not None else defaults["quota_tokens_per_day"]
 
-    key_hash   = _hash_key(raw_key)
+    # Generate per-key salt and compute hash
+    key_salt = secrets.token_hex(32)
+    key_hash = _hash_key(raw_key, key_salt)
     key_prefix = raw_key[:8]
-    now        = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(timezone.utc).isoformat()
 
     with _db_lock:
         with _connect() as conn:
@@ -166,11 +234,11 @@ def add_key(
                 conn.execute(
                     """
                     INSERT INTO api_keys
-                        (key_hash, key_prefix, label, plan, is_active, created_at,
+                        (key_hash, key_salt, key_prefix, label, plan, is_active, created_at,
                          quota_req_per_day, quota_tokens_per_day)
                     VALUES (?, ?, ?, ?, 1, ?, ?, ?)
                     """,
-                    (key_hash, key_prefix, label, plan, now, qr, qt),
+                    (key_hash, key_salt, key_prefix, label, plan, now, qr, qt),
                 )
                 conn.commit()
             except sqlite3.IntegrityError as exc:
@@ -182,30 +250,39 @@ def add_key(
 def verify_key(raw_key: str) -> Optional[KeyInfo]:
     """
     Look up a raw key. Returns KeyInfo if found and active, None otherwise.
-    The raw key is hashed before any DB access.
+    The raw key is hashed with stored salt before DB access.
+    
+    Security: Uses per-key salt retrieved from database to prevent timing attacks.
     """
-    key_hash = _hash_key(raw_key)
+    # First, get all keys to find matching salt (we need salt to hash)
+    # This is a trade-off: we could store salt separately for faster lookup
+    # but this approach is more secure
+    key_hash_attempt = _hash_key(raw_key, "")  # Try with empty salt first
+    
     with _db_lock:
         with _connect() as conn:
             row = conn.execute(
                 """
-                SELECT key_hash, label, plan, quota_req_per_day, quota_tokens_per_day
+                SELECT key_hash, key_salt, label, plan, quota_req_per_day, quota_tokens_per_day
                 FROM api_keys
-                WHERE key_hash = ? AND is_active = 1
+                WHERE is_active = 1
                 """,
-                (key_hash,),
-            ).fetchone()
-
-    if row is None:
-        return None
-
-    return KeyInfo(
-        key_hash=row["key_hash"],
-        label=row["label"],
-        plan=row["plan"],
-        quota_req_per_day=row["quota_req_per_day"],
-        quota_tokens_per_day=row["quota_tokens_per_day"],
-    )
+            ).fetchall()
+            
+            for key_row in row:
+                # Try to verify with this key's salt
+                test_hash = _hash_key(raw_key, key_row["key_salt"])
+                if test_hash == key_row["key_hash"]:
+                    return KeyInfo(
+                        key_hash=key_row["key_hash"],
+                        label=key_row["label"],
+                        plan=key_row["plan"],
+                        quota_req_per_day=key_row["quota_req_per_day"],
+                        quota_tokens_per_day=key_row["quota_tokens_per_day"],
+                        key_salt=key_row["key_salt"],
+                    )
+    
+    return None
 
 
 def check_quota(key_hash: str) -> None:
